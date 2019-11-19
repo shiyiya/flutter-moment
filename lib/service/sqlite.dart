@@ -3,30 +3,44 @@ import "package:sqflite/sqflite.dart";
 import 'dart:math';
 import "package:moment/constants/app.dart";
 
-class DB {
-  factory() => getInstance();
+class DBHelper {
+  static final DBHelper _instance = DBHelper.internal();
 
-  static Database _instance;
+  factory DBHelper() => _instance;
 
-  static Future<String> getDatabasePath() async {
+  static Database _db;
+
+  static Future<Database> get db async {
+    if (_db == null) {
+      _db = await DBHelper().init();
+    }
+    return _db;
+  }
+
+  DBHelper.internal();
+
+  Future<String> getDatabasePath() async {
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, Constants.dbName);
     return path;
   }
 
-  static Future<Database> init() async {
+  init() async {
     String path = await getDatabasePath();
-
-    print(path);
 
     Database db = await openDatabase(path,
         version: 1,
         onUpgrade: (Database db, int o, int n) => print("---$o,----$n"),
-        onCreate: (Database db, int v) async {
-          print('---create new database---');
-          // final sql = await rootBundle.loadString("./lib/asserts/SQLite.sql");
+        onCreate: _onCreate);
 
-          const sql = ''' 
+    return db;
+  }
+
+  void _onCreate(Database db, int v) async {
+    print('---create new database---');
+    // final sql = await rootBundle.loadString("./lib/asserts/SQLite.sql");
+
+    const sql = ''' 
 CREATE TABLE moment_content (
 "cid" INTEGER NOT NULL PRIMARY KEY,
 "title" varchar(200) default NULL ,
@@ -44,39 +58,16 @@ CREATE TABLE moment_content (
 "commentsNum" int(10) default '0' ,
 "allowComment" int(10) default '0' )
           ''';
-          await db.rawQuery(sql);
+    await db.rawQuery(sql);
 
-          await initDevData(db);
-        });
-
-    return db;
-  }
-
-  static Future<Database> getInstance() async {
-    if (_instance == null) {
-      print('get new db instant');
-      _instance = await DB.init();
+    if (bool.fromEnvironment('dart.vm.product')) {
+      await initProdData(db);
     }
-    // debug
-//    await _instance.close();
-//    await delete();
-//    _instance = await DB.init();
-    return _instance;
+
+    await initDevData(db);
   }
 
-  static void close() async {
-    await _instance.close();
-  }
-
-  static void delete() async {
-    print('---delete database---');
-
-    var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, Constants.dbName);
-    await deleteDatabase(path);
-  }
-
-  static Future<void> initDevData(Database db) async {
+  Future<void> initDevData(Database db) async {
     print('---init dev data---');
     List event = ['吃饭', '睡觉', '打豆豆', '图书馆', '表白', '爬山', '看演唱会', '学习新语言', '新朋友'];
     List text = [
@@ -119,12 +110,29 @@ CREATE TABLE moment_content (
         'alum': ''
       });
     }
-    print('---insered dev data---');
-    final r = await db.rawQuery('SELECT cid FROM moment_content');
-    print(r);
   }
 
-  Future<Database> get() {
-    return getInstance();
+  initProdData(Database db) async {
+    await db.insert('moment_content', {
+      'title': 'Moment (瞬记)',
+      'text': '''
+      捕捉 & 记录生活中的美好瞬间。
+      
+      如你所见，它很简单；也许，你可以用它来写日记。
+      
+      ''',
+      'face': 2,
+      'event': '',
+      'created': DateTime.now().millisecondsSinceEpoch,
+      'alum': ''
+    });
+  }
+
+  Future<void> close() async {
+    await _db.close();
+  }
+
+  Future<int> delete() async {
+    return await _db.delete('moment_content');
   }
 }

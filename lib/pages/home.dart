@@ -10,7 +10,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/components/drawer.dart';
 import 'package:moment/components/row-icon-radio.dart';
 import 'package:moment/constants/app.dart';
-import 'package:moment/service/sqlite.dart';
+import 'package:moment/sql/query.dart';
+import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
 
 import 'package:moment/pages/view.dart';
@@ -33,7 +34,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _page = 0;
-  List _moments = [];
+  List<Moment> _moments = [];
+  MomentInfo momentInfo;
+
+  EasyRefreshController _controller = EasyRefreshController();
 
   // 筛选条件
   bool byFilter = false;
@@ -53,6 +57,7 @@ class _HomeState extends State<Home> {
       });
     }
     _loadMomentByPage(0);
+//    _queryAllMomentInfo()
   }
 
   @override
@@ -63,13 +68,18 @@ class _HomeState extends State<Home> {
       floatingActionButton: ModalRoute.of(context).isFirst
           ? FloatingActionButton(
               onPressed: () => Navigator.pushNamed(context, "/edit"),
-              tooltip: "Increment",
+              tooltip: "记录瞬间",
               child: Icon(Icons.add))
           : null,
       drawer: ModalRoute.of(context).isFirst ? DrawerWidget() : null,
       appBar: AppBar(
         title: Text(Constants.appName),
         actions: <Widget>[
+          IconButton(
+            tooltip: '刷新',
+            icon: Icon(Icons.refresh),
+            onPressed: () => _loadMomentByPage(-1),
+          ),
           IconButton(
             tooltip: '寻觅',
             icon: Icon(Icons.sort),
@@ -78,6 +88,7 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: EasyRefresh.custom(
+        controller: _controller,
         header: DeliveryHeader(),
         footer: MaterialFooter(enableInfiniteLoad: false),
         onRefresh: () => _loadMomentByPage(0),
@@ -86,42 +97,71 @@ class _HomeState extends State<Home> {
           SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
               if (index == 0) return buildWeather();
+              if (index == 1 && len == 0) {
+                return Container(
+                  height: MediaQuery.of(context).size.height * 0.75,
+                  child: Center(
+                      child: Text(Constants.randomNilTip(),
+                          style: Theme.of(context).textTheme.body2)),
+                );
+              }
+
               if (index <= len) {
-                return buildMomentCard(index - 1);
+                final i = len == 0 ? index - 2 : index - 1;
+                return buildMomentCard(i);
               }
               return null;
-            }, childCount: len + 1),
+            }, childCount: len + 2),
           )
         ],
       ),
     );
   }
 
+  /*_queryAllMomentInfo() async {
+    final MomentInfo res = await SQL.queryAllMomentInfo();
+    setState(() {
+      momentInfo = res;
+    });
+  }*/
+
   _loadMomentByPage(int page) async {
+//    await _queryAllMomentInfo();
+
+    // 刷新
+    if (page < 0) {
+      _loadMomentByPage(_page);
+      return;
+    }
+
+    // 筛选
     if (byFilter) {
-      _loadMomentByFilterWithPage(page);
+      await _loadMomentByFilterWithPage(page);
       return;
     }
 
     print('refresh monent by page $page');
 
-    List res = await (await DB.getInstance()).query('moment_content',
-        columns: ['*'], limit: 10, offset: page * 10, orderBy: 'created desc');
+    final List<Moment> momentList = await SQL.queryMomentByPage(page);
 
-    if (res.length > 0) {
+    if (momentList != null) {
       setState(() {
         if (page == 0) {
-          List r = [];
-          r.addAll(res);
-          _moments = r;
+          _moments = momentList;
         } else {
-          _moments.addAll(res);
+          _moments.addAll(momentList);
         }
+        _controller.finishRefresh(success: true);
         _page = page;
       });
-      Fluttertoast.showToast(msg: '加载成功 (#`O′)');
     } else {
-      Fluttertoast.showToast(msg: '没有更多啦 ∑( 口 ||');
+      if (page == 0) {
+        //刷新
+        setState(() {
+          _moments = [];
+        });
+      }
+      _controller.finishLoad(success: true, noMore: false);
     }
   }
 
@@ -145,8 +185,15 @@ class _HomeState extends State<Home> {
     print(whereColumns.length);
 
     if (widget.event != null && widget.event.length > 0) {
-      // by tag
-      whereColumns = 'event LIKE "%${widget.event}%"';
+      print(1);
+      if (whereColumns.length > 0) {
+        print(2);
+        whereColumns += 'event LIKE "%${widget.event}%"';
+      } else {
+        print(3);
+        // by tag
+        whereColumns = 'event LIKE "%${widget.event}%"';
+      }
     } else {
       if (whereColumns.length > 0) {
         whereColumns = whereColumns.substring(0, whereColumns.length - 5);
@@ -163,26 +210,17 @@ class _HomeState extends State<Home> {
 
     print('---loade by filter page$page \r\n $whereColumns  \r\n  $whereArgs');
 
-    final db = await DB().get();
-    final res = await db.query(
-      'moment_content',
-      columns: ['*'],
-      where: whereColumns,
-      whereArgs: whereArgs,
-      limit: 10,
-      offset: page * 10,
-      orderBy: 'created DESC',
-    );
+    final List<Moment> momentList =
+        await SQL.queryMomentByPageWithFilter(page, whereColumns, whereArgs);
 
     setState(() {
       if (page == 0) {
-        List r = [];
-        r.addAll(res);
-        _moments = r;
+        _moments = momentList;
         Fluttertoast.showToast(msg: '刷新成功 (#`O′)');
       } else {
-        _moments.addAll(res);
+        _moments.addAll(momentList);
       }
+      _controller.finishRefresh(success: true);
       _page = page;
     });
   }
@@ -293,24 +331,23 @@ class _HomeState extends State<Home> {
             children: <Widget>[
               ListTile(
                   leading: Icon(
-                    Constants.face[_moments[index]['face'] is int
-                        ? _moments[index]['face']
-                        : 4],
+                    Constants.face[
+                        _moments[index].face is int ? _moments[index].face : 4],
                     size: 40,
                   ),
-                  title: Text(_moments[index]['title']),
+                  title: Text(_moments[index].title),
                   subtitle: Text(
-                    _moments[index]['text'].length > 50
-                        ? _moments[index]['text'].substring(0, 20)
-                        : _moments[index]['text'],
+                    _moments[index].text.length > 50
+                        ? _moments[index].text.substring(0, 20)
+                        : _moments[index].text,
 //                    style: TextStyle(fontSize: 12),
                   ),
-                  trailing: _moments[index]['alum'] is String &&
-                          _moments[index]['alum'].length > 0
+                  trailing: _moments[index].alum is String &&
+                          _moments[index].alum.length > 0
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(5),
                           child: Image.file(
-                            File(_moments[index]['alum'].split('|')[0]),
+                            File(_moments[index].alum.split('|')[0]),
                             fit: BoxFit.cover,
                           ),
                         )
@@ -329,8 +366,7 @@ class _HomeState extends State<Home> {
 //                            size: 18,
 //                          ),
                           Text(
-                            Date.getDateFormatMD(
-                                ms: _moments[index]['created']),
+                            Date.getDateFormatMD(ms: _moments[index].created),
                             style: TextStyle(
                               fontSize: 10,
 //                              letterSpacing: 1,
@@ -353,7 +389,7 @@ class _HomeState extends State<Home> {
                         ],
                       ),
                       Row(
-                        children: _moments[index]['event'].length > 0
+                        children: _moments[index].event.length > 0
                             ? [
                                 Icon(
                                   Icons.monochrome_photos,
@@ -364,7 +400,7 @@ class _HomeState extends State<Home> {
                                   size: 12,
                                 ),
                                 Text(
-                                  ' ${_moments[index]['event']}',
+                                  ' ${_moments[index].event}',
                                   style: TextStyle(
                                     fontSize: 10,
                                     letterSpacing: 1,
@@ -386,11 +422,11 @@ class _HomeState extends State<Home> {
       onTap: () {
         Navigator.push(context,
             MaterialPageRoute(builder: (BuildContext context) {
-          return View(id: _moments[index]['cid']);
+          return View(id: _moments[index].cid);
         }));
       },
       onLongPress: () {
-        buildMomentCardDialog(index);
+        buildMomentCardDialog(_moments[index].cid);
       },
     );
   }
@@ -416,9 +452,7 @@ class _HomeState extends State<Home> {
                     FlatButton(
                       child: const Text('确定'),
                       onPressed: () {
-                        setState(() {
-                          _delMomentById(index);
-                        });
+                        SQL.delMomentById(index);
                         Navigator.pop(context);
                       },
                     ),
@@ -428,18 +462,5 @@ class _HomeState extends State<Home> {
             ],
           );
         });
-  }
-
-  void _delMomentById(int index) async {
-    final currDB = await DB.getInstance();
-
-    final count = await currDB
-        .rawDelete('DELETE FROM moment_content WHERE cid = ?', [index]);
-
-    if (count == 1) {
-      Fluttertoast.showToast(msg: '删除成功');
-    } else {
-      Fluttertoast.showToast(msg: '删除失败');
-    }
   }
 }

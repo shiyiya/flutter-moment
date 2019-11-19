@@ -70,3 +70,24 @@ class Moment {
     return data;
   }
 }
+
+
+class MomentInfo {
+  int count;
+  int wordCount;
+  int imgCount;
+
+  MomentInfo({this.count, this.wordCount,this.imgCount});
+
+  MomentInfo.fromJson(Map<String, dynamic> json) {
+    count = json['count'];
+    wordCount = json['wordCount'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['count'] = this.count;
+    data['wordCount'] = this.wordCount;
+    return data;
+  }
+}

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:io' as prefix0;
 import 'package:platform/platform.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
 
 Platform _platform = const LocalPlatform();

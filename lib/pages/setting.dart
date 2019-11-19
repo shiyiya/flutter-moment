@@ -95,7 +95,7 @@ class _SettingState extends State<Setting> {
   }
 
   _import() async {
-    Map<PermissionGroup, PermissionStatus> permissions =
+//    Map<PermissionGroup, PermissionStatus> permissions =
         await PermissionHandler().requestPermissions([PermissionGroup.storage]);
 
     String filePath = await FilePicker.getFilePath(type: FileType.ANY);
@@ -127,7 +127,7 @@ class _SettingState extends State<Setting> {
   }
 
   _export() async {
-    Map<PermissionGroup, PermissionStatus> permissions =
+//    Map<PermissionGroup, PermissionStatus> permissions =
         await PermissionHandler().requestPermissions([PermissionGroup.storage]);
 
     showDialog(
@@ -144,7 +144,7 @@ class _SettingState extends State<Setting> {
 
     String picPath = (await getExternalStorageDirectory()).path + '/Pictures';
 
-    File(await DB.getDatabasePath()).copySync(
+    File(await DBHelper().getDatabasePath()).copySync(
         '$picPath/moment-sqlite-${Date.getDateFormatYMD()}-$timeMS.db');
 
     String outFileName = 'moment-backup-${Date.getDateFormatYMD()}-$timeMS.zip';

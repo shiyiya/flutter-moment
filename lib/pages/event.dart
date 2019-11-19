@@ -18,7 +18,7 @@ class _EventPageState extends State<EventPage> {
   }
 
   loadEvents() async {
-    final db = await DB().get();
+    final db = await DBHelper.db;
     final event = await db.query('moment_content', columns: ['event', 'face']);
 
     final List l = event.toList();
@@ -50,7 +50,8 @@ class _EventPageState extends State<EventPage> {
                 ),
               )
             : Center(
-                child: Text(Constants.randomNilTip()),
+                child: Text(Constants.randomNilTip(),
+                    style: Theme.of(context).textTheme.body2),
               ));
   }
 

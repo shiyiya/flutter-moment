@@ -25,12 +25,15 @@ void main() async {
 
   int theme = await getTheme();
 
-  print(theme);
-
   runApp(ProviderNode(
     providers: providers,
     child: MyApp(theme),
   ));
+
+  ErrorWidget.builder = (FlutterErrorDetails flutterErrorDetails) {
+    debugPrint(flutterErrorDetails.toString());
+    return Center(child: Text('哎呀 被抓到啦（BUG）'));
+  };
 }
 
 class MyApp extends StatelessWidget {

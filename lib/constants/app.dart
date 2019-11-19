@@ -56,7 +56,7 @@ class Constants {
 
   static List tips = [
     '春有百花秋有月，夏有凉风冬有雪',
-    '我想，这世间能称之为的美好的东西，大概都像这四时四景，生而美好，恰逢其时。',
+    '我想，这世间能称之为的美好的东西，\r\n大概都像这四时四景，生而美好，恰逢其时。',
     '想珍惜的时间，每一秒都宝贵。想珍惜的人，每一个瞬间都想铭记。',
     '人生须尽欢，诗酒趁年华。',
     '终于见到你回来，我怎能不欢喜。',
@@ -78,10 +78,10 @@ class Constants {
   }
 
   static String randomErrorTip() {
-    return tips[Random().nextInt(errorTips.length)];
+    return errorTips[Random().nextInt(errorTips.length)];
   }
 
   static String randomNilTip() {
-    return tips[Random().nextInt(nilTips.length)];
+    return nilTips[Random().nextInt(nilTips.length)];
   }
 }

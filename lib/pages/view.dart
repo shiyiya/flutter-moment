@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:moment/service/sqlite.dart';
+import 'package:moment/components/gallery_photo_view.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 //import 'package:flutter_markdown/flutter_markdown.dart';
 
 import 'package:moment/components/alum.dart';
 import 'package:moment/constants/app.dart';
+import 'package:moment/sql/query.dart';
 import 'package:moment/utils/date.dart';
 import 'package:moment/pages/edit.dart';
 import 'package:moment/type/moment.dart';
@@ -42,15 +43,14 @@ class ViewState extends State<View> {
   }
 
   loadMomentById(int id) async {
-    final dynamic _moment = await (await DB.getInstance())
-        .rawQuery('SELECT * FROM moment_content WHERE cid = ?', [id]);
+    print('--load monent by id $id --');
 
-    print('load monent by page $id');
+    final _moment = await SQL.queryMomentById(id);
 
-    if (_moment.length > 0) {
+    if (_moment != null) {
       setState(() {
         _id = id;
-        moment = Moment.fromJson(_moment[0]);
+        moment = _moment;
         status = true;
         hasLoaded = true;
       });
@@ -94,6 +94,9 @@ class ViewState extends State<View> {
                               'https://cdn.jsdelivr.net/npm/typecho-theme-sagiri@1.1.5/assert/img/banner.jpg',
                               fit: BoxFit.cover,
                             ),
+                            onTap: (int index) {
+                              _showImgView(img, index);
+                            },
                           ),
                         ),
                         title: Text(moment.title),
@@ -200,10 +203,10 @@ class ViewState extends State<View> {
             value: "1",
             child: Text('分享为纯文本'),
           ),
-//          const PopupMenuItem<String>(
-//            value: "2",
-//            child: Text('分享为截图'),
-//          ),
+          const PopupMenuItem<String>(
+            value: "2",
+            child: Text('删除本瞬间'),
+          ),
         ],
         tooltip: "more",
         onSelected: (String result) {
@@ -212,11 +215,51 @@ class ViewState extends State<View> {
               shareText();
               break;
             case "2":
+              _delMoment();
               break;
           }
         },
       )
     ];
+  }
+
+  _delMoment() async {
+    showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('提示'),
+        content: new Text('确定返回么？可能有未保存的内容哦'),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('取消'),
+          ),
+          new FlatButton(
+            onPressed: () async {
+              bool delRes = await SQL.delMomentById(_id);
+              if (delRes) {
+                Future.delayed(Duration(microseconds: 700), () {
+                  Navigator.pop(context);
+                });
+              }
+              Navigator.of(context).pop(true);
+            },
+            child: new Text('确定'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _showImgView(List img, int initialIndex) {
+    showDialog(
+        context: context,
+        builder: (BuildContext _) {
+          return GalleryPhotoViewWrapper(
+            galleryItems: img,
+            initialIndex: initialIndex,
+          );
+        });
   }
 
   shareText() {
