@@ -87,3 +87,15 @@ class _CCCState extends State<CCC> {
 
 
  */
+
+/*
+
+生成密钥：
+keytool -genkey -v -keystore key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias key
+
+cool eg: : jarsigner -verbose -keystore demo.keystore -signedjar signed.apk CoolApkDevVerify_no_sign.apk demo.keystore
+
+最终：
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore key.jks CoolApkDevVerify_no_sign.apk -signedjar  CoolApkDevVerify_signed.apk key
+
+ */

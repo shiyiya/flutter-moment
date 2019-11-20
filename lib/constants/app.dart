@@ -68,6 +68,7 @@ class Constants {
   ];
 
   static List nilTips = [
+    '与君初相识，犹如故人归。',
     '往事已成空,还如一梦中。',
     '此情可待成追忆, 只是当时已惘然。',
   ];

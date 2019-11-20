@@ -233,6 +233,8 @@ class _HomeState extends State<Home> {
         barrierDismissible: true,
         builder: (BuildContext context) {
           return SimpleDialog(
+            title: Text('筛选条件'),
+            contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
             children: [
               RowIconRadio(
                 icon: Constants.face,

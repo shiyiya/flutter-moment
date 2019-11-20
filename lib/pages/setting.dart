@@ -33,12 +33,12 @@ class _SettingState extends State<Setting> {
             onTap: _buildThemeSwitchDialog,
           ),
           Divider(height: 0),
-          ListTile(
-            title: Text('导入 / 导出'),
-            leading: Icon(Icons.import_export),
-            onTap: _buildImpExpDialog,
-          ),
-          Divider(height: 0),
+          // ListTile(
+          //   title: Text('导入 / 导出'),
+          //   leading: Icon(Icons.import_export),
+          //   onTap: _buildImpExpDialog,
+          // ),
+          // Divider(height: 0),
         ],
       ),
     );
@@ -96,7 +96,7 @@ class _SettingState extends State<Setting> {
 
   _import() async {
 //    Map<PermissionGroup, PermissionStatus> permissions =
-        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    await PermissionHandler().requestPermissions([PermissionGroup.storage]);
 
     String filePath = await FilePicker.getFilePath(type: FileType.ANY);
     List<int> bytes = File(filePath).readAsBytesSync();
@@ -128,7 +128,7 @@ class _SettingState extends State<Setting> {
 
   _export() async {
 //    Map<PermissionGroup, PermissionStatus> permissions =
-        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    await PermissionHandler().requestPermissions([PermissionGroup.storage]);
 
     showDialog(
         context: context,
