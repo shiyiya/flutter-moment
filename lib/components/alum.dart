@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:moment/utils/img.dart';
 
 typedef AlumOnTap = void Function(int index);
 
@@ -51,10 +52,9 @@ class _AlumState extends State<Alum> {
               controller: _swiperController,
               itemBuilder: (BuildContext ctx, int index) {
                 return Container(
-                  child: Image.file(
-                    File(img[index]),
-                    fit: BoxFit.cover
-                  ),
+                  child: Img.isLocal(img[index])
+                      ? Image.file(File(img[index]), fit: BoxFit.cover)
+                      : Image.network(img[index]),
                 );
                 //          mainAxisAlignment: MainAxisAlignment.center,
 //          children: <Widget>[

@@ -125,6 +125,7 @@ class ViewState extends State<View> {
                                       Icon(
                                         Constants.face[moment.face],
                                         size: 45,
+                                        color: Theme.of(context).accentColor,
                                       ),
                                       SizedBox(
                                         width: 10,
@@ -139,7 +140,10 @@ class ViewState extends State<View> {
                                                 "${Date.getWeekByMS(ms: moment.created)} | ",
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .title,
+                                                    .title
+                                                    .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.normal),
                                               ),
                                               Icon(
                                                 Constants
@@ -149,7 +153,7 @@ class ViewState extends State<View> {
                                             ],
                                           ),
                                           Text(
-                                            Date.getDateFormatYMD(
+                                            Date.getDateFormatMDHM(
                                                 ms: moment.created),
                                             style: Theme.of(context)
                                                 .textTheme
@@ -160,9 +164,20 @@ class ViewState extends State<View> {
                                     ]),
                                     Padding(
                                       padding: EdgeInsets.only(right: 15),
-                                      child: Text(
-                                        moment.title,
-                                        style: TextStyle(fontSize: 18),
+                                      child: Row(
+                                        children: <Widget>[
+//                                          Icon(
+//                                            Icons.monochrome_photos,
+//                                            color: Theme.of(context)
+//                                                .textTheme
+//                                                .display3
+//                                                .color,
+//                                          ),
+                                          Text(
+                                            moment.event,
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ]));
@@ -172,7 +187,9 @@ class ViewState extends State<View> {
                           child: Text(
                             moment.text,
                             style: Theme.of(context).textTheme.body2.copyWith(
-                                fontSize: 16, fontWeight: FontWeight.normal),
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                height: 1.8),
                           ),
                         );
                       })),

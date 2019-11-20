@@ -15,6 +15,7 @@ import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
 
 import 'package:moment/pages/view.dart';
+import 'package:moment/utils/img.dart';
 
 class Filter {
   String k;
@@ -98,10 +99,11 @@ class _HomeState extends State<Home> {
             delegate: SliverChildBuilderDelegate((context, index) {
               if (index == 0) return buildWeather();
               if (index == 1 && len == 0) {
+                // 记录为空
                 return Container(
                   height: MediaQuery.of(context).size.height * 0.75,
                   child: Center(
-                      child: Text(Constants.randomNilTip(),
+                      child: Text('与君初相识，犹如故人归。' /*Constants.randomNilTip()*/,
                           style: Theme.of(context).textTheme.body2)),
                 );
               }
@@ -323,6 +325,13 @@ class _HomeState extends State<Home> {
   }
 
   Widget buildMomentCard(int index) {
+    final Moment item = _moments[index];
+    final String text =
+        item.text.length > 50 ? item.text.substring(0, 20) : item.text;
+    final String firstImg =
+        item.alum.length < 1 ? null : item.alum?.split('|')[0];
+    final int face = item.face ?? 2;
+
     return GestureDetector(
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
@@ -331,30 +340,37 @@ class _HomeState extends State<Home> {
             children: <Widget>[
               ListTile(
                   leading: Icon(
-                    Constants.face[
-                        _moments[index].face is int ? _moments[index].face : 4],
+                    Constants.face[face],
                     size: 40,
+                    color: Theme.of(context).accentColor,
                   ),
-                  title: Text(_moments[index].title),
-                  subtitle: Text(
-                    _moments[index].text.length > 50
-                        ? _moments[index].text.substring(0, 20)
-                        : _moments[index].text,
-//                    style: TextStyle(fontSize: 12),
+                  title: Text(
+                    item.title,
+                    style: TextStyle(
+                      color: Theme.of(context).accentColor,
+                    ),
                   ),
-                  trailing: _moments[index].alum is String &&
-                          _moments[index].alum.length > 0
+                  subtitle: Text(text),
+                  trailing: firstImg != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(5),
-                          child: Image.file(
-                            File(_moments[index].alum.split('|')[0]),
-                            fit: BoxFit.cover,
-                          ),
+                          child: Img.isLocal(firstImg)
+                              ? Image.file(
+                                  File(firstImg),
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.network(firstImg),
                         )
                       : null),
               ButtonTheme.bar(
                   child: Container(
-                padding: EdgeInsets.fromLTRB(10, 0, 8, 5),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                        width: 1, color: Color.fromRGBO(128, 128, 128, 0.1)),
+                  ),
+                ),
+                padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -366,7 +382,7 @@ class _HomeState extends State<Home> {
 //                            size: 18,
 //                          ),
                           Text(
-                            Date.getDateFormatMD(ms: _moments[index].created),
+                            Date.getDateFormatMDHM(ms: _moments[index].created),
                             style: TextStyle(
                               fontSize: 10,
 //                              letterSpacing: 1,
@@ -391,14 +407,14 @@ class _HomeState extends State<Home> {
                       Row(
                         children: _moments[index].event.length > 0
                             ? [
-                                Icon(
-                                  Icons.monochrome_photos,
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .display3
-                                      .color,
-                                  size: 12,
-                                ),
+//                                Icon(
+//                                  Icons.monochrome_photos,
+//                                  color: Theme.of(context)
+//                                      .textTheme
+//                                      .display3
+//                                      .color,
+//                                  size: 12,
+//                                ),
                                 Text(
                                   ' ${_moments[index].event}',
                                   style: TextStyle(
@@ -432,7 +448,6 @@ class _HomeState extends State<Home> {
   }
 
   void buildMomentCardDialog(int index) {
-//    showDatePicker(context: context, initialDate: null, firstDate: null, lastDate: null)
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -451,8 +466,13 @@ class _HomeState extends State<Home> {
                     ),
                     FlatButton(
                       child: const Text('确定'),
-                      onPressed: () {
-                        SQL.delMomentById(index);
+                      onPressed: () async {
+                        final bool d = await SQL.delMomentById(index);
+                        if (d) {
+                          setState(() {
+                            _moments.removeWhere((m) => m.cid == index);
+                          });
+                        }
                         Navigator.pop(context);
                       },
                     ),

@@ -226,10 +226,9 @@ class _EditState extends State<Edit> {
                             controller: _textController,
                             style: Theme.of(context).textTheme.body2.copyWith(
                                 fontSize: 16,
-                                wordSpacing: 1.2,
-                                letterSpacing: 1.2,
-                                fontWeight: FontWeight.normal),
-                            maxLines: 10,
+                                fontWeight: FontWeight.normal,
+                                height: 1.8),
+                            maxLines: 15,
                             maxLength: 10000,
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -341,6 +340,43 @@ class _EditState extends State<Edit> {
   }
 
   void buildMomentEventDialog() {
+    //todo 新增对应表
+    /*showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          contentPadding: EdgeInsets.symmetric(horizontal: 15),
+          title: Text('关键词：'),
+          children: <Widget>[
+            new TextField(
+              controller: TextEditingController.fromValue(
+                  TextEditingValue(text: moment.event)),
+              textAlignVertical: TextAlignVertical.center,
+              decoration: InputDecoration(hintText: '如：图书馆/玩新游,
+              onChanged: (t) {
+                setState(() {
+                  moment.event = t;
+                });
+              },
+            ),
+            Row(
+              children: <Widget>[],
+            ),
+            FlatButton(
+              child: Text(
+                '确定',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );*/
+
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -351,7 +387,7 @@ class _EditState extends State<Edit> {
             controller: TextEditingController.fromValue(
                 TextEditingValue(text: moment.event)),
             textAlignVertical: TextAlignVertical.center,
-            decoration: InputDecoration(hintText: '如：图书馆/玩新游（使用 “/” 隔开'),
+            decoration: InputDecoration(hintText: '如：图书馆/玩新游'),
             onChanged: (t) {
               setState(() {
                 moment.event = t;

@@ -15,11 +15,19 @@ class Date {
         : DateTime.now();
   }
 
-  static String getDateFormatYMD({String prefix = '-', int ms}) {
+  static getWeekByMS({int ms}) {
     DateTime now = getDateTimeByMS(ms: ms);
-    int y = now.year;
 
-    return "$y$prefix${getDateFormatMD(ms: ms)}";
+    return weekMap[now.weekday - 1];
+  }
+
+  static String getDateFormatHMByMS({String prefix = ':', int ms}) {
+    DateTime now = getDateTimeByMS(ms: ms);
+
+    int h = now.hour;
+    int m = now.minute;
+
+    return "$h$prefix$m";
   }
 
   static String getDateFormatMD({String prefix = '-', int ms}) {
@@ -31,10 +39,15 @@ class Date {
     return "$m$prefix$d";
   }
 
-  static getWeekByMS({int ms}) {
-    DateTime now = getDateTimeByMS(ms: ms);
+  static String getDateFormatMDHM({String prefix = ' ', int ms}) {
+    return "${getDateFormatMD(ms: ms)}$prefix${getDateFormatHMByMS()}";
+  }
 
-    return weekMap[now.weekday - 1];
+  static String getDateFormatYMD({String prefix = '-', int ms}) {
+    DateTime now = getDateTimeByMS(ms: ms);
+    int y = now.year;
+
+    return "$y$prefix${getDateFormatMD(ms: ms)}";
   }
 
   String getBeforeTimeByMS({int ms}) {

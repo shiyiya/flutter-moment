@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import "package:path/path.dart";
 import "package:sqflite/sqflite.dart";
 import 'dart:math';
@@ -40,7 +44,7 @@ class DBHelper {
     print('---create new database---');
     // final sql = await rootBundle.loadString("./lib/asserts/SQLite.sql");
 
-    const sql = ''' 
+    const sql = '''
 CREATE TABLE moment_content (
 "cid" INTEGER NOT NULL PRIMARY KEY,
 "title" varchar(200) default NULL ,
@@ -62,9 +66,9 @@ CREATE TABLE moment_content (
 
     if (bool.fromEnvironment('dart.vm.product')) {
       await initProdData(db);
+    } else {
+      await initDevData(db);
     }
-
-    await initDevData(db);
   }
 
   Future<void> initDevData(Database db) async {
@@ -117,14 +121,13 @@ CREATE TABLE moment_content (
       'title': 'Moment (瞬记)',
       'text': '''
       捕捉 & 记录生活中的美好瞬间。
-      
+
       如你所见，它很简单；也许，你可以用它来写日记。
-      
       ''',
       'face': 2,
-      'event': '',
+      'event': '相识',
       'created': DateTime.now().millisecondsSinceEpoch,
-      'alum': ''
+      'alum': 'https://i.loli.net/2019/11/20/6wI8eTmkbYQ5Zy9.gif'
     });
   }
 

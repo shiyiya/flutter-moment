@@ -73,7 +73,7 @@ class SQL {
         .rawQuery('SELECT * FROM moment_content WHERE cid = ?', [id]);
 
     if (res.length < 1) {
-      Fluttertoast.showToast(msg: '哎呀，没抓到那条瞬间');
+      Fluttertoast.showToast(msg: '哎呀，什么都没抓到');
       return null;
     }
 
