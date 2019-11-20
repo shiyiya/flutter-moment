@@ -62,15 +62,17 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/* 
+//todo 开屏页  https://www.cnblogs.com/hupo376787/p/10261424.html
+
+/*
   flutter build apk --target-platform android-arm,android-arm64 --split-per-abi
 
-  
+
  // template
 
 
 import "package:flutter/material.dart";
- 
+
 class CCC extends StatefulWidget {
   @override
   _CCCState createState() => _CCCState();
