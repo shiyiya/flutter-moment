@@ -123,7 +123,7 @@ CREATE TABLE moment_content (
       'face': 2,
       'event': '相识',
       'created': DateTime.now().millisecondsSinceEpoch,
-      'alum': 'https://i.loli.net/2019/11/20/6wI8eTmkbYQ5Zy9.gif'
+      'alum': '' //https://i.loli.net/2019/11/20/6wI8eTmkbYQ5Zy9.gif
     });
   }
 

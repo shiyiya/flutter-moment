@@ -90,8 +90,8 @@ class ViewState extends State<View> {
 //                          margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                           child: Alum(
                             img: img,
-                            emptyPlaceholder: Image.network(
-                              'https://cdn.jsdelivr.net/npm/typecho-theme-sagiri@1.1.5/assert/img/banner.jpg',
+                            emptyPlaceholder: Image.asset(
+                              'lib/asserts/images/alum_placeholder.jpg',
                               fit: BoxFit.cover,
                             ),
                             onTap: (int index) {
@@ -175,7 +175,7 @@ class ViewState extends State<View> {
 //                                          ),
                                           Text(
                                             moment.event,
-                                            style: TextStyle(fontSize: 18),
+                                            style: TextStyle(fontSize: 16),
                                           ),
                                         ],
                                       ),
