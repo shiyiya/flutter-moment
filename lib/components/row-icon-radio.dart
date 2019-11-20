@@ -4,13 +4,12 @@ typedef OnTap = void Function(int index);
 
 class RowIconRadio extends StatefulWidget {
   final List<IconData> icon;
-  int selected;
+  final int selected;
   final Colors selectedColor;
   final OnTap onTap;
 
   RowIconRadio(
-      {Key,
-      key,
+      {Key key,
       @required this.icon,
       this.selectedColor,
       this.selected,
@@ -22,29 +21,45 @@ class RowIconRadio extends StatefulWidget {
 }
 
 class _RowIconRadioState extends State<RowIconRadio> {
+  int active;
+
+  @override
+  void initState() {
+    super.initState();
+
+    active = widget.selected;
+  }
+
   @override
   Widget build(BuildContext context) {
+    int _active =
+        widget.selected == active ? active ?? widget.selected : active;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: widget.icon
           .asMap()
           .keys
-          .map((i) => IconButton(
+          .map(
+            (i) => IconButton(
                 icon: Icon(widget.icon[i]),
                 onPressed: () {
                   setState(() {
-                    if (i == widget.selected) {
-                      widget.selected = null;
+                    if (i == _active) {
+                      setState(() {
+                        active = null;
+                      });
                     } else {
-                      widget.selected = i;
+                      setState(() {
+                        active = i;
+                      });
                     }
                   });
                   widget.onTap(i);
                 },
-                color: widget.selected == i
-                    ? Theme.of(context).accentColor
-                    : Colors.grey,
-              ))
+                color:
+                    _active == i ? Theme.of(context).accentColor : Colors.grey),
+          )
           .toList(),
     );
   }

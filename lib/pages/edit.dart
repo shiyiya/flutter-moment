@@ -15,7 +15,7 @@ import 'package:moment/type/moment.dart';
 import 'package:moment/pages/view.dart';
 
 class Edit extends StatefulWidget {
-  int id;
+  final int id;
 
   Edit({Key key, this.id}) : super(key: key);
 
@@ -423,6 +423,7 @@ class _EditState extends State<Edit> {
       _alum += "$i|";
     });
 
+    //移除末尾符号
     if (_alum.length > 0) {
       _alum = _alum.substring(0, _alum.length - 1);
     }

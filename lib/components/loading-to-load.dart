@@ -8,7 +8,6 @@ class LoadingLoad extends StatefulWidget {
 class _LoadingLoad extends State<LoadingLoad> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return null;
   }
 }

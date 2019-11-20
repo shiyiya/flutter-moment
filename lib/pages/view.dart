@@ -280,22 +280,7 @@ class ViewState extends State<View> {
   }
 
   shareText() {
-    Share.share(moment.title + '\r\n' + moment.text);
+    Share.share(
+        '${moment.title} \r\n ${Date.getDateFormatMDHM(ms: moment.created)} ${moment.text}');
   }
 }
-
-/*
-  
-
-//todo sup markdown
-//                ListBody(
-//                  children: [
-//                    Markdown(
-//                      data: moment['text'] != null ? moment['text'] : '',
-//                    )
-//                  ],
-//                )
-                  ],
-                )
-  
-*/

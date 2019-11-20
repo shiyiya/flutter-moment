@@ -11,7 +11,7 @@ class SQL {
 
   static Future<int> queryAllMomentWordCount() async {
     final List<Map<String, dynamic>> text =
-    await (await DBHelper.db).rawQuery('SELECT text FROM moment_content');
+        await (await DBHelper.db).rawQuery('SELECT text FROM moment_content');
 
     int count = 0;
     text.forEach((t) {
@@ -23,9 +23,14 @@ class SQL {
 
   static Future<int> queryAllMomentImgCount() async {
     final List<Map<String, dynamic>> res =
-    await (await DBHelper.db).rawQuery('SELECT alum FROM moment_content');
+        await (await DBHelper.db).rawQuery('SELECT alum FROM moment_content');
 
-    //todo
+    String alumList = '';
+    res.map((r) {
+      alumList += r['alum'];
+    });
+
+    return alumList.split('|').length;
   }
 
   static Future<MomentInfo> queryAllMomentInfo() async {
@@ -47,8 +52,8 @@ class SQL {
     return res.map((r) => Moment.fromJson(r)).toList();
   }
 
-  static Future<List<Moment>> queryMomentByPageWithFilter(int page,
-      String whereColumns, List whereArgs) async {
+  static Future<List<Moment>> queryMomentByPageWithFilter(
+      int page, String whereColumns, List whereArgs) async {
     final res = await (await DBHelper.db).query(
       'moment_content',
       columns: ['*'],
