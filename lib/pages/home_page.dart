@@ -66,7 +66,6 @@ class _HomePageState extends State<HomePage> {
     int len = _moments?.length ?? 0;
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 248, 248, 248),
       floatingActionButton: ModalRoute.of(context).isFirst
           ? FloatingActionButton(
               onPressed: () => Navigator.pushNamed(context, "/edit"),

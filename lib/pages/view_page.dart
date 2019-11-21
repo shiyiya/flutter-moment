@@ -205,12 +205,12 @@ class _ViewPageState extends State<ViewPage> {
         title: Text(
           moment.title,
           style: TextStyle(
-            color: Theme.of(context).primaryColor,
+            // color: Theme.of(context).primaryColor,
             shadows: <Shadow>[
               Shadow(
                 color: Theme.of(context).accentColor,
                 offset: Offset(2, 2),
-                blurRadius: 2,
+                blurRadius: 3,
               )
             ],
           ),

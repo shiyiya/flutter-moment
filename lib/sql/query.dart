@@ -29,7 +29,7 @@ class SQL {
     res.removeWhere((r) => r['alum'].length < 1);
 
     String alumList = '';
-    res.map((r) {
+    res.forEach((r) {
       alumList += r['alum'];
     });
 
