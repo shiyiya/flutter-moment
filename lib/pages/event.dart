@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:moment/constants/app.dart';
 import 'package:moment/service/sqlite.dart';
-import 'package:moment/pages/home.dart';
+import 'package:moment/pages/home_page.dart';
 
 class EventPage extends StatefulWidget {
   @override
@@ -71,7 +71,7 @@ class _EventPageState extends State<EventPage> {
             onPressed: () {
               Navigator.pushAndRemoveUntil(context,
                   MaterialPageRoute(builder: (BuildContext context) {
-                return Home(event: e['event']);
+                return HomePage(event: e['event']);
               }), (Route<dynamic> route) => true);
             }))
         .toList();

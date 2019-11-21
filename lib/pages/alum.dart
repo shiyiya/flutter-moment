@@ -55,7 +55,6 @@ class _AlumPage extends State<AlumPage> {
                   _alum.length,
                   (i) => GestureDetector(
                     onTap: () {
-                      print(_alum[i].alum);
                       _showImgView(_alum[i].alum.split('|'));
                     },
                     child: Image.file(

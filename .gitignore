@@ -75,3 +75,4 @@ android/key.properties
 android/app/key.jks
 android/app/CoolApkDevVerify_signed.apk
 android/app/CoolApkDevVerify_no_sign.apk
+.vscode/launch.json

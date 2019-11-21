@@ -12,7 +12,7 @@ import 'package:moment/service/sqlite.dart';
 import 'package:moment/constants/app.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
-import 'package:moment/pages/view.dart';
+import 'package:moment/pages/view_page.dart';
 
 class Edit extends StatefulWidget {
   final int id;
@@ -215,9 +215,7 @@ class _EditState extends State<Edit> {
                         onSaved: (val) => {},
                         validator: (val) {
                           print(val);
-                          return val.trim().length <= 0
-                              ? "好像什么都没写呢 ,,ԾㅂԾ,,"
-                              : null;
+                          return val.trim().isEmpty ? "好像什么都没写呢 ,,ԾㅂԾ,," : null;
                         },
                       ),
                       GestureDetector(
@@ -241,9 +239,7 @@ class _EditState extends State<Edit> {
                               });
                             },
                             validator: (val) {
-                              return val.length <= 0
-                                  ? "好像什么都没写呢 ,,ԾㅂԾ,,"
-                                  : null;
+                              return val.isEmpty ? "好像什么都没写呢 ,,ԾㅂԾ,," : null;
                             },
                           ),
                         ),
@@ -453,7 +449,7 @@ class _EditState extends State<Edit> {
           Navigator.pop(context);
           Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) {
-            return View(id: moment.cid);
+            return ViewPage(id: moment.cid);
           }));
         });
       }
@@ -483,7 +479,7 @@ class _EditState extends State<Edit> {
         Navigator.pop(context);
         Navigator.push(context,
             MaterialPageRoute(builder: (BuildContext context) {
-          return View(id: moment.cid);
+          return ViewPage(id: moment.cid);
         }));
       });
     }

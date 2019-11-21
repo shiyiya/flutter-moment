@@ -26,7 +26,8 @@ class Constants {
       "icon": Icon(Icons.share),
       "text": Text("分享"),
       'f': () {
-        Share.share('让我们记录这美好的瞬间~ (≧∇≦)ﾉ');
+        Share.share(
+            '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/249316');
       }
     },
 //    {"icon": Icon(Icons.info), "text": Text("关于"), "path": ""},

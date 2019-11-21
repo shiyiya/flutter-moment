@@ -10,7 +10,7 @@ BaseOptions baseOptions = BaseOptions(
   responseType: ResponseType.plain,
 );
 
-Dio dio = Dio(baseOptions);
+final Dio dio = Dio(baseOptions);
 
 class Http {
   Future<Response> get(url, {query, options, cancelToken}) async {

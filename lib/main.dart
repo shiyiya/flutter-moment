@@ -1,10 +1,13 @@
+import 'dart:io';
+import 'package:flutter/services.dart';
 import "package:flutter/material.dart";
-import "package:moment/pages/home.dart";
+import "package:moment/pages/home_page.dart";
 import "package:moment/pages/edit.dart";
-import 'package:moment/pages/view.dart';
+import 'package:moment/pages/view_page.dart';
 import 'package:moment/pages/event.dart';
 import 'package:moment/pages/setting.dart';
 import 'package:moment/pages/alum.dart';
+import 'package:moment/pages/search_page.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provide/provide.dart';
@@ -30,10 +33,24 @@ void main() async {
     child: MyApp(theme),
   ));
 
-  ErrorWidget.builder = (FlutterErrorDetails flutterErrorDetails) {
-    debugPrint(flutterErrorDetails.toString());
-    return Center(child: Text('哎呀 被抓到啦（BUG）'));
-  };
+  if (bool.fromEnvironment('dart.vm.product')) {
+    ErrorWidget.builder = (FlutterErrorDetails flutterErrorDetails) {
+      debugPrint(flutterErrorDetails.toString());
+      return SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[Center(child: Text('哎呀 被抓到啦（BUG）'))],
+        ),
+      );
+    };
+  }
+
+  if (Platform.isAndroid) {
+    SystemUiOverlayStyle systemUiOverlayStyle =
+        SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -47,12 +64,16 @@ class MyApp extends StatelessWidget {
 
     return Provide<ThemeProvide>(builder: (context, child, _theme) {
       return MaterialApp(
+        title: Constants.appName,
+        debugShowCheckedModeBanner: false,
         theme: Constants.theme[_theme.value != null ? _theme.value : theme],
-        home: Home(),
+        home: HomePage(),
+//        initialRoute: '/home',
         routes: {
-          "/home": (_) => Home(),
+          "/home": (_) => HomePage(),
+          "/search": (_) => SearchPage(),
           "/edit": (_) => Edit(),
-          "/view": (context) => View(),
+          "/view": (context) => ViewPage(),
           "/event": (context) => EventPage(),
           "/alum": (context) => AlumPage(),
           "/setting": (context) => Setting()
@@ -65,9 +86,6 @@ class MyApp extends StatelessWidget {
 //todo 开屏页  https://www.cnblogs.com/hupo376787/p/10261424.html
 
 /*
-  flutter build apk --target-platform android-arm,android-arm64 --split-per-abi
-
-
  // template
 
 
@@ -85,7 +103,6 @@ class _CCCState extends State<CCC> {
   }
 }
 
-
  */
 
 /*
@@ -97,5 +114,46 @@ cool eg: : jarsigner -verbose -keystore demo.keystore -signedjar signed.apk Cool
 
 最终：
 jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore key.jks CoolApkDevVerify_no_sign.apk -signedjar  CoolApkDevVerify_signed.apk key
+
+
+ flutter build apk --target-platform android-arm,android-arm64 --split-per-abi
+
+ flutter build apk
+
+ flutter build aot --release --extra-gen-snapshot-options=--print-snapshot-sizes
+ Building AOT snapshot in release mode (android-arm-release)...
+VMIsolate(CodeSize): 4660
+Isolate(CodeSize): 2585632
+ReadOnlyData(CodeSize): 2693576
+Instructions(CodeSize): 8064816
+Total(CodeSize): 13348684
+Built to build/aot/.
+Instructions：代表AOT编译后生成的二进制代码大小
+
+ReadOnlyData：代表生成二进制代码的元数据（例如PcDescriptor， StackMap，CodeSourceMap等）和字符串大小
+
+VMIsolate/Isolate：代表剩下的对象的大小总和（例如代码中定义的常量和虚拟机特定元数据）
+
+
+执行如下命令编译出一个arm64架构的App.framework,并将它的包组成结构放到指定目录build/aot.json文件中
+flutter --suppress-analytics build aot --output-dir=build/aot --target-platform=ios --target=lib/main.dart --release --ios-arch=arm64 --extra-gen-snapshot-options="--dwarf_stack_traces,--print-snapshot-sizes,--print_instructions_sizes_to=build/aot.json"
+dart ./bin/run_binary_size_analysis.dart  build/aot.json path_to_webpage_dir
+
+
+//编译release包并打印size
+flutter build aot --release --extra-gen-snapshot-options=--print-snapshot-sizes
+
+//--dwarf_stack_traces， -->减少6.2%大小
+flutter build aot --release --extra-gen-snapshot-options="--dwarf_stack_traces,--print-snapshot-sizes"
+
+//--obsfuscation， -->减少2.5%大小
+flutter build aot --release --extra-gen-snapshot-options="--dwarf_stack_traces,--print-snapshot-sizes,--obfuscate"
+
+//总大小减少8.7%
+
+https://github.com/flutter/flutter
+https://github.com/flutter/engine
+https://github.com/flutter/flutter/issues/21813
+https://github.com/flutter/flutter/issues/20671
 
  */
