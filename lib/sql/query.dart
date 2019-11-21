@@ -33,7 +33,7 @@ class SQL {
       alumList += r['alum'];
     });
 
-    return alumList.split('|').length;
+    return alumList.isEmpty ? 0 : alumList.split('|').length;
   }
 
   static Future<MomentInfo> queryAllMomentInfo() async {

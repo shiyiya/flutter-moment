@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:moment/components/gallery_photo_view.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -208,7 +207,11 @@ class _ViewPageState extends State<ViewPage> {
           style: TextStyle(
             color: Theme.of(context).primaryColor,
             shadows: <Shadow>[
-              Shadow(color: Colors.pink, offset: Offset(2, 2), blurRadius: 2)
+              Shadow(
+                color: Theme.of(context).accentColor,
+                offset: Offset(2, 2),
+                blurRadius: 2,
+              )
             ],
           ),
         ),

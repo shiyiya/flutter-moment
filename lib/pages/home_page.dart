@@ -155,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                     Text(
                       _momentInfo?.count.toString() ?? '0',
                       style: TextStyle(
-                          fontSize: 24, color: Theme.of(context).primaryColor),
+                          fontSize: 24, color: Theme.of(context).accentColor),
                     ),
                     Text(' 条',
                         style: TextStyle(
@@ -171,7 +171,7 @@ class _HomePageState extends State<HomePage> {
                     Text(
                       _momentInfo?.wordCount.toString() ?? '0',
                       style: TextStyle(
-                          fontSize: 24, color: Theme.of(context).primaryColor),
+                          fontSize: 24, color: Theme.of(context).accentColor),
                     ),
                     Text(' 字',
                         style: TextStyle(
@@ -187,7 +187,7 @@ class _HomePageState extends State<HomePage> {
                     Text(
                       _momentInfo?.imgCount.toString() ?? '0',
                       style: TextStyle(
-                          fontSize: 24, color: Theme.of(context).primaryColor),
+                          fontSize: 24, color: Theme.of(context).accentColor),
                     ),
                     Text(' 张',
                         style: TextStyle(
