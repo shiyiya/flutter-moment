@@ -30,7 +30,17 @@ class _SettingState extends State<Setting> {
           ListTile(
             title: Text('选择主题'),
             leading: Icon(Icons.format_color_fill),
+            trailing:
+                Icon(Icons.chevron_right, color: Theme.of(context).accentColor),
             onTap: _buildThemeSwitchDialog,
+          ),
+          Divider(height: 0),
+          ListTile(
+            title: Text('关于'),
+            leading: Icon(Icons.info),
+            trailing:
+                Icon(Icons.chevron_right, color: Theme.of(context).accentColor),
+            onTap: () => Navigator.of(context).pushNamed('/about'),
           ),
           Divider(height: 0),
           // ListTile(
