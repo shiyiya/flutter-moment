@@ -35,6 +35,7 @@ class _AppState extends State<App> {
         .toList();
   }
 
+  // 不使用 page view，避免重载
   _getPageWidget(int index) {
     return Offstage(
       offstage: currentPageIndex != index,
@@ -56,35 +57,18 @@ class _AppState extends State<App> {
           _getPageWidget(1),
         ],
       ),
-
-      /*PageView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          return switchPages[index];
-        },
-        controller: pageController,
-        itemCount: switchPages.length,
-        physics: Platform.isAndroid
-            ? new ClampingScrollPhysics()
-            : new NeverScrollableScrollPhysics(),
-        onPageChanged: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
-      ),*/
       bottomNavigationBar: BottomNavigationBar(
         items: bottomBarList,
         iconSize: 20,
         currentIndex: currentPageIndex,
         type: BottomNavigationBarType.fixed,
+        unselectedFontSize: 10.0,
+        selectedFontSize: 10.0,
         onTap: (int index) {
           setState(() {
             currentPageIndex = index;
-//          pageController.jumpToPage((currentPageIndex));
           });
         },
-        unselectedFontSize: 10.0,
-        selectedFontSize: 10.0,
 //        elevation: 0,
       ),
     );
