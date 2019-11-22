@@ -72,16 +72,32 @@ class _ViewPageState extends State<ViewPage> {
 
   @override
   Widget build(BuildContext context) {
-    List img = [];
+    List<String> img = [];
     if (moment.alum != null) {
       img = moment.alum.split('|');
-      img.removeWhere((e) => e.length < 1);
+      img.removeWhere((e) => e.isEmpty);
     }
+
+    /**
+     * markdown
+        ListView(
+        children: <Widget>[
+        img.length > 0 ? Alum(img: img) : Container(),
+        buildMetaCard(),
+        buildContent()
+        ],
+        )
+
+     */
 
     return Scaffold(
       appBar: img.length > 0
           ? null
-          : AppBar(title: Text(moment.title), actions: buildMenu()),
+          : AppBar(
+              title: Text(moment.title),
+              actions: buildMenu(),
+              elevation: 0.0,
+            ),
       body: hasLoaded
           ? status
               ? img.length > 0
@@ -97,8 +113,7 @@ class _ViewPageState extends State<ViewPage> {
                         )
                       ],
                     )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  : ListView(
                       children: <Widget>[buildMetaCard(), buildContent()],
                     )
               : Center(child: Text('美好事物如昙花一现似流星一瞬而过，似烟花一而灭。'))
