@@ -60,9 +60,6 @@ class _EditState extends State<Edit> {
         _titleController.text = moment.title;
         _textController.text = moment.text;
       });
-
-      print(moment.cid);
-      print(res);
     } else {
       showDialog(
           context: context,
@@ -122,7 +119,6 @@ class _EditState extends State<Edit> {
                   ),
                 ),
                 onTap: (int index) {
-                  print('tap $index');
                   //_removeImageByIndex(index);
                 },
               ),
@@ -140,11 +136,8 @@ class _EditState extends State<Edit> {
                         ),
                         Text(
                           moment.cid == null
-                              ? '  ' + Date.getDateFormatYMD()
-                              : Date.getDateFormatYMD(
-                                  ms: DateTime.fromMicrosecondsSinceEpoch(
-                                          moment.modified)
-                                      .millisecondsSinceEpoch),
+                              ? '  ${Date.getDateFormatYMD()}'
+                              : '  ${Date.getDateFormatYMD(ms: moment.created)}',
                           style: TextStyle(fontSize: 14),
                         )
                       ],
@@ -214,7 +207,6 @@ class _EditState extends State<Edit> {
                         },
                         onSaved: (val) => {},
                         validator: (val) {
-                          print(val);
                           return val.trim().isEmpty ? "好像什么都没写呢 ,,ԾㅂԾ,," : null;
                         },
                       ),
@@ -226,7 +218,7 @@ class _EditState extends State<Edit> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.normal,
                                 height: 1.8),
-                            maxLines: 15,
+                            maxLines: 13,
                             maxLength: 10000,
                             decoration: InputDecoration(
                               border: InputBorder.none,
