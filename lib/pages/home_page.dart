@@ -74,6 +74,7 @@ class _HomePageState extends State<HomePage> {
           : null,
       drawer: ModalRoute.of(context).isFirst ? DrawerWidget() : null,
       appBar: AppBar(
+        elevation: 2.0,
         title: Text('瞬间'),
         actions: <Widget>[
           IconButton(
