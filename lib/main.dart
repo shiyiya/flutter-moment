@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
 import "package:flutter/material.dart";
+import 'package:moment/pages/about_page.dart';
 import "package:moment/pages/home_page.dart";
 import "package:moment/pages/edit.dart";
 import 'package:moment/pages/view_page.dart';
@@ -8,6 +9,7 @@ import 'package:moment/pages/event.dart';
 import 'package:moment/pages/setting.dart';
 import 'package:moment/pages/alum.dart';
 import 'package:moment/pages/search_page.dart';
+import 'package:moment/utils/route.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provide/provide.dart';
@@ -23,34 +25,41 @@ Future<int> getTheme() async {
 void main() async {
   var themeProvide = ThemeProvide();
   var providers = Providers();
-
   providers..provide(Provider.function((context) => themeProvide));
 
   int theme = await getTheme();
-
-  runApp(ProviderNode(
-    providers: providers,
-    child: MyApp(theme),
-  ));
+  if (Platform.isAndroid) {
+    SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Constants.theme[theme].backgroundColor);
+    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+  }
 
   if (bool.fromEnvironment('dart.vm.product')) {
     ErrorWidget.builder = (FlutterErrorDetails flutterErrorDetails) {
       debugPrint(flutterErrorDetails.toString());
       return SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[Center(child: Text('哎呀 被抓到啦（BUG）'))],
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.bug_report),
+                tooltip: '哎呀 被抓到啦（BUG）',
+                onPressed: () {}, //todo
+              )
+            ], // todo restart app
+          ),
         ),
       );
     };
   }
 
-  if (Platform.isAndroid) {
-    SystemUiOverlayStyle systemUiOverlayStyle =
-        SystemUiOverlayStyle(statusBarColor: Colors.transparent);
-    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-  }
+  runApp(ProviderNode(
+    providers: providers,
+    child: MyApp(theme),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -64,21 +73,24 @@ class MyApp extends StatelessWidget {
 
     return Provide<ThemeProvide>(builder: (context, child, _theme) {
       return MaterialApp(
-        title: Constants.appName,
-        debugShowCheckedModeBanner: false,
-        theme: Constants.theme[_theme.value != null ? _theme.value : theme],
-        home: HomePage(),
+          title: Constants.appName,
+          debugShowCheckedModeBanner: false,
+          theme: Constants.theme[_theme.value != null ? _theme.value : theme],
+          home: HomePage(),
 //        initialRoute: '/home',
-        routes: {
-          "/home": (_) => HomePage(),
-          "/search": (_) => SearchPage(),
-          "/edit": (_) => Edit(),
-          "/view": (context) => ViewPage(),
-          "/event": (context) => EventPage(),
-          "/alum": (context) => AlumPage(),
-          "/setting": (context) => Setting()
-        },
-      );
+          routes: {
+            "/home": (_) => HomePage(),
+            "/search": (_) => SearchPage(),
+            "/edit": (_) => Edit(),
+            "/view": (context) => ViewPage(),
+            "/event": (context) => EventPage(),
+            "/alum": (context) => AlumPage(),
+            "/setting": (context) => Setting(),
+            "/about": (_) => AboutPage()
+          },
+          onGenerateRoute: (setting) {
+            return MRouter.fadeIn(HomePage());
+          });
     });
   }
 }

@@ -64,13 +64,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.2"
-  date_utils:
-    dependency: transitive
-    description:
-      name: date_utils
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.1.0+2"
   dio:
     dependency: "direct main"
     description:
@@ -90,13 +83,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_calendar:
-    dependency: "direct main"
-    description:
-      name: flutter_calendar
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.0.8"
   flutter_easyrefresh:
     dependency: "direct main"
     description:
@@ -104,13 +90,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.4"
-  flutter_markdown:
-    dependency: "direct main"
-    description:
-      name: flutter_markdown
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.3.0"
   flutter_page_indicator:
     dependency: transitive
     description:
@@ -151,20 +130,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.6.1+11"
-  intl:
-    dependency: transitive
-    description:
-      name: intl
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.15.8"
-  markdown:
-    dependency: transitive
-    description:
-      name: markdown
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.1.2"
   matcher:
     dependency: transitive
     description:
@@ -317,13 +282,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.6"
-  tuple:
-    dependency: transitive
-    description:
-      name: tuple
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.0.3"
   typed_data:
     dependency: transitive
     description:
