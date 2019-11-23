@@ -1,8 +1,35 @@
 import "package:flutter/material.dart";
 import 'package:share/share.dart';
 import 'package:moment/utils/launcher.dart';
+import 'package:package_info/package_info.dart';
 
-class AboutPage extends StatelessWidget {
+class AboutPage extends StatefulWidget {
+  @override
+  _AboutPageState createState() => _AboutPageState();
+}
+
+class _AboutPageState extends State<AboutPage> {
+  String appName = '';
+  String packageName = '';
+  String version = '';
+  String buildNumber = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getPackageInfo();
+  }
+
+  getPackageInfo() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    setState(() {
+      appName = packageInfo.appName;
+      version = packageInfo.version;
+      buildNumber = packageInfo.buildNumber;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,20 +43,13 @@ class AboutPage extends StatelessWidget {
                   children: <Widget>[
                     ListTile(
                       leading: Icon(Icons.bug_report),
-                      title: Text('Moment - 瞬记'),
+                      title: Text(appName),
                       subtitle: Text('@ 2019 CY'),
                     ),
                     ListTile(
                       leading: Icon(Icons.info),
                       title: Text('版本'),
-                      subtitle: Text('1.0.0 (2)'),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.email),
-                      title: Text('邮件'),
-                      subtitle: Text('shiyiya.11@gmail.com'),
-                      onTap: () =>
-                          launchURL('mailto:shiyiya.11@gmail.com?subject=News'),
+                      subtitle: Text('$version ($buildNumber)'),
                     ),
                   ],
                 ),
@@ -53,7 +73,9 @@ class AboutPage extends StatelessWidget {
                     ListTile(
                       leading: Icon(Icons.star),
                       title: Text('在应用市场评分或者评论'),
-                      onTap: () {}, //todo
+                      onTap: () {
+                        launchURL('market://details?id=$packageName');
+                      }, //todo
                     )
                   ],
                 ),
