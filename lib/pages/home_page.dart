@@ -14,6 +14,8 @@ import 'package:moment/components/drawer.dart';
 import 'package:moment/pages/view_page.dart';
 import 'package:moment/utils/img.dart';
 
+import 'package:moment/service/event_bus.dart';
+
 class Filter {
   String k;
   dynamic v;
@@ -35,7 +37,7 @@ class _HomePageState extends State<HomePage> {
 
   int _page = 0;
   List<Moment> _moments = [];
-  MomentInfo _momentInfo;
+  MomentInfo _momentInfo = MomentInfo();
 
   // 筛选条件
   bool byFilter = false;
@@ -59,6 +61,13 @@ class _HomePageState extends State<HomePage> {
     }
     _loadMomentByPage(0);
     _queryAllMomentInfo();
+
+    eventBus.on<HomeRefreshEvent>().listen((event) {
+      if (event.needRefresh) {
+        _loadMomentByPage(-1);
+        _queryAllMomentInfo();
+      }
+    });
   }
 
   @override
@@ -77,14 +86,6 @@ class _HomePageState extends State<HomePage> {
         elevation: 2.0,
         title: Text('瞬间'),
         actions: <Widget>[
-          IconButton(
-            tooltip: '刷新',
-            icon: Icon(Icons.refresh),
-            onPressed: () {
-              _loadMomentByPage(-1);
-              _queryAllMomentInfo();
-            },
-          ),
           IconButton(
             tooltip: '寻觅',
             icon: Icon(Icons.sort),
@@ -153,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      _momentInfo?.count.toString() ?? '0',
+                      _momentInfo.count.toString(),
                       style: TextStyle(
                           fontSize: 24, color: Theme.of(context).accentColor),
                     ),
@@ -169,7 +170,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      _momentInfo?.wordCount.toString() ?? '0',
+                      _momentInfo.wordCount.toString(),
                       style: TextStyle(
                           fontSize: 24, color: Theme.of(context).accentColor),
                     ),
@@ -185,7 +186,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      _momentInfo?.imgCount.toString() ?? '0',
+                      _momentInfo.imgCount.toString(),
                       style: TextStyle(
                           fontSize: 24, color: Theme.of(context).accentColor),
                     ),

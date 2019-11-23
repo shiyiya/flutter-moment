@@ -10,10 +10,10 @@ import 'package:moment/pages/setting.dart';
 import 'package:moment/pages/alum.dart';
 import 'package:moment/pages/search_page.dart';
 import 'package:moment/utils/route.dart';
+import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:provide/provide.dart';
-import 'package:moment/service/theme.dart';
+import 'package:moment/provides/theme.dart';
 import 'package:moment/constants/app.dart';
 
 Future<int> getTheme() async {
@@ -23,11 +23,11 @@ Future<int> getTheme() async {
 }
 
 void main() async {
-  var themeProvide = ThemeProvide();
-  var providers = Providers();
-  providers..provide(Provider.function((context) => themeProvide));
+  Provider.debugCheckInvalidValueType = null;
 
   int theme = await getTheme();
+  var themeProvide = ThemeProvider(theme);
+
   if (Platform.isAndroid) {
     SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -56,10 +56,9 @@ void main() async {
     };
   }
 
-  runApp(ProviderNode(
-    providers: providers,
-    child: MyApp(theme),
-  ));
+  runApp(MultiProvider(
+      providers: [Provider<ThemeProvider>.value(value: themeProvide)],
+      child: MyApp(theme)));
 }
 
 class MyApp extends StatelessWidget {
@@ -69,31 +68,31 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provide.value<ThemeProvide>(context).setTheme(theme);
-
-    return Provide<ThemeProvide>(builder: (context, child, _theme) {
-      return MaterialApp(
-          title: Constants.appName,
-          debugShowCheckedModeBanner: false,
-          theme: Constants.theme[_theme.value != null ? _theme.value : theme],
-          home: HomePage(),
+    final _theme = Provider.of<ThemeProvider>(context);
+    return MaterialApp(
+        title: Constants.appName,
+        debugShowCheckedModeBanner: false,
+        theme: Constants.theme[_theme.value != null ? _theme.value : theme],
+        home: HomePage(),
 //        initialRoute: '/home',
-          routes: {
-            "/home": (_) => HomePage(),
-            "/search": (_) => SearchPage(),
-            "/edit": (_) => Edit(),
-            "/view": (context) => ViewPage(),
-            "/event": (context) => EventPage(),
-            "/alum": (context) => AlumPage(),
-            "/setting": (context) => Setting(),
-            "/about": (_) => AboutPage()
-          },
-          onGenerateRoute: (setting) {
-            return MRouter.fadeIn(HomePage());
-          });
-    });
+        routes: {
+          "/home": (_) => HomePage(),
+          "/search": (_) => SearchPage(),
+          "/edit": (_) => Edit(),
+          "/view": (context) => ViewPage(),
+          "/event": (context) => EventPage(),
+          "/alum": (context) => AlumPage(),
+          "/setting": (context) => Setting(),
+          "/about": (_) => AboutPage()
+        },
+        onGenerateRoute: (setting) {
+          return MRouter.fadeIn(HomePage());
+        });
   }
 }
+
+//todo image_picker 2 file_picker
+// export db
 
 //todo 开屏页  https://www.cnblogs.com/hupo376787/p/10261424.html
 

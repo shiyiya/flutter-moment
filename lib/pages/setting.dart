@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provide/provide.dart';
-import 'package:moment/service/theme.dart';
+import 'package:provider/provider.dart';
+import 'package:moment/provides/theme.dart';
 import 'package:moment/service/sqlite.dart';
 import 'package:moment/utils/path.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -57,28 +57,27 @@ class _SettingState extends State<Setting> {
   _buildThemeSwitchDialog() {
     showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            children: <Widget>[
-              RadioListTile(
-                groupValue: Provide.value<ThemeProvide>(context).value,
-                value: 0,
-                title: Text('light'),
-                onChanged: setTheme,
-              ),
-              RadioListTile(
-                groupValue: Provide.value<ThemeProvide>(context).value,
-                value: 1,
-                title: Text('dark'),
-                onChanged: setTheme,
-              )
-            ],
-          );
-        });
+        builder: (BuildContext context) => Consumer(
+              builder: (_context, ThemeProvider theme, Widget child) =>
+                  SimpleDialog(children: <Widget>[
+                RadioListTile(
+                  groupValue: theme.value,
+                  value: 0,
+                  title: Text('light'),
+                  onChanged: (i) => setTheme(theme, i),
+                ),
+                RadioListTile(
+                  groupValue: theme.value,
+                  value: 1,
+                  title: Text('dark'),
+                  onChanged: (i) => setTheme(theme, i),
+                )
+              ]),
+            ));
   }
 
-  setTheme(int i) async {
-    await Provide.value<ThemeProvide>(context).setTheme(i);
+  setTheme(ThemeProvider theme, int i) async {
+    theme.setTheme(i);
     Navigator.of(context).pop();
   }
 

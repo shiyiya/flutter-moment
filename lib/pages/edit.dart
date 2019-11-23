@@ -14,6 +14,8 @@ import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
 import 'package:moment/pages/view_page.dart';
 
+import 'package:moment/service/event_bus.dart';
+
 class Edit extends StatefulWidget {
   final int id;
 
@@ -446,6 +448,7 @@ class _EditState extends State<Edit> {
         });
       }
 
+      eventBus.fire(HomeRefreshEvent(true));
       return;
     }
 
@@ -466,7 +469,7 @@ class _EditState extends State<Edit> {
         moment.cid = res;
       });
       Fluttertoast.showToast(msg: '成功记录瞬间！');
-
+      eventBus.fire(HomeRefreshEvent(true));
       Future.delayed(Duration(microseconds: 700), () {
         Navigator.pop(context);
         Navigator.push(context,

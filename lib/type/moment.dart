@@ -71,13 +71,12 @@ class Moment {
   }
 }
 
-
 class MomentInfo {
   int count;
   int wordCount;
   int imgCount;
 
-  MomentInfo({this.count, this.wordCount,this.imgCount});
+  MomentInfo({this.count = 0, this.wordCount = 0, this.imgCount = 0});
 
   MomentInfo.fromJson(Map<String, dynamic> json) {
     count = json['count'];
