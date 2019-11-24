@@ -1,4 +1,5 @@
 import 'dart:io';
+// import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:moment/utils/date.dart';
@@ -270,6 +271,9 @@ class _EditState extends State<Edit> {
 
   Future<void> _getImageFromGallery() async {
     File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+//    await FilePicker.getMultiFile(type: FileType.IMAGE); //todo copy file to app data direct
+
+    print('-----${image.path}----');
 
     if (image != null) {
       setState(() {

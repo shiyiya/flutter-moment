@@ -31,11 +31,16 @@ class _AlumState extends State<Alum> {
     final emptyPlaceholder = widget.emptyPlaceholder != null
         ? widget.emptyPlaceholder
         : widget.defaultEmptyPlaceholder;
+    final List imgFile = img
+        .map((i) => Img.isLocal(i)
+            ? Image.file(File(i), fit: BoxFit.cover)
+            : Image.network(i))
+        .toList();
 
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height / 3,
-      color: img.length > 0
+      color: imgFile.length > 0
           ? Colors.transparent
           : Theme.of(context).backgroundColor,
       child: img.length < 1
@@ -52,9 +57,7 @@ class _AlumState extends State<Alum> {
               controller: _swiperController,
               itemBuilder: (BuildContext ctx, int index) {
                 return Container(
-                  child: Img.isLocal(img[index])
-                      ? Image.file(File(img[index]), fit: BoxFit.cover)
-                      : Image.network(img[index]),
+                  child: imgFile[index],
                 );
                 //          mainAxisAlignment: MainAxisAlignment.center,
 //          children: <Widget>[

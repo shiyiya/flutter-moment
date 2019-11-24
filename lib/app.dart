@@ -30,7 +30,13 @@ class _AppState extends State<App> {
     bottomBarList = bottomBarListItem
         .map((item) => BottomNavigationBarItem(
             icon: item.normalIcon,
-            title: Text(item.name, style: TextStyle(fontSize: 12)),
+
+            // https://github.com/flutter/flutter/issues/17099
+            // https://github.com/flutter/flutter/pull/22804
+            // https://github.com/flutter/flutter/issues/22882
+
+            title: SizedBox.shrink(),
+            /* title: Text(item.name, style: TextStyle(fontSize: 12))*/
             activeIcon: item.activeIcon))
         .toList();
   }
@@ -58,12 +64,14 @@ class _AppState extends State<App> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+//        showSelectedLabels: false, // 导致上下不居中
+//        showUnselectedLabels: false,
         items: bottomBarList,
-        iconSize: 20,
+        iconSize: 25,
         currentIndex: currentPageIndex,
         type: BottomNavigationBarType.fixed,
-        unselectedFontSize: 10.0,
-        selectedFontSize: 10.0,
+//        unselectedFontSize: 10.0,
+//        selectedFontSize: 10.0,
         onTap: (int index) {
           setState(() {
             currentPageIndex = index;

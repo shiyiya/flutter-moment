@@ -9,28 +9,25 @@ class Constants {
   static String appSrc = "https://github.com/shiyiya/flutter-moment";
 
   static List<ThemeData> theme = [
+    ThemeData(
+      primaryColor: Colors.teal,
+      accentColor: Colors.teal,
+      backgroundColor: Color.fromRGBO(38, 166, 154, 0.7),
+    ),
     ThemeData.light(),
     ThemeData.dark(),
   ];
 
-  static List<Map> sidebarTab = [
-//    {"icon": Icon(Icons.calendar_today), "text": Text("日历"), "path": ""},
-    {"icon": Icon(Icons.home), "text": Text("首页"), "path": "/home"},
-//    {"icon": Icon(Icons.event), "text": Text("记事本")},
-
-    {"icon": Icon(Icons.event), "text": Text("事件"), 'path': '/event'},
-    {"icon": Icon(Icons.photo), "text": Text("印相"), 'path': '/alum'},
-//    {"icon": Icon(Icons.), "text": Text("遇见"), 'path': '/event'},
-    {"icon": Icon(Icons.settings), "text": Text("设置"), "path": "/setting"},
-    {
-      "icon": Icon(Icons.share),
-      "text": Text("分享"),
-      'f': () {
-        Share.share(
-            '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/com.cy.moment');
-      }
-    },
-//    {"icon": Icon(Icons.info), "text": Text("关于"), "path": ""},
+  static List<DrawTabItem> sidebarTab = [
+    DrawTabItem(icon: Icon(Icons.home), text: Text("首页"), path: "/home"),
+    DrawTabItem(icon: Icon(Icons.event), text: Text("事件"), path: "/event"),
+    DrawTabItem(icon: Icon(Icons.photo), text: Text("印相"), path: "/alum"),
+    DrawTabItem(icon: Icon(Icons.settings), text: Text("设置"), path: "/setting"),
+    DrawTabItem(
+        icon: Icon(Icons.share),
+        text: Text("分享"),
+        f: () => Share.share(
+            '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/com.cy.moment')),
   ];
 
   static String weatherApi =
@@ -85,4 +82,13 @@ class Constants {
   static String randomNilTip() {
     return nilTips[Random().nextInt(nilTips.length)];
   }
+}
+
+class DrawTabItem {
+  Icon icon;
+  Text text;
+  Function f;
+  String path;
+
+  DrawTabItem({this.icon, this.text, this.f, this.path});
 }
