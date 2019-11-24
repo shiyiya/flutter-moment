@@ -7,7 +7,7 @@ import "package:moment/pages/edit.dart";
 import 'package:moment/pages/view_page.dart';
 import 'package:moment/pages/event.dart';
 import 'package:moment/pages/setting.dart';
-import 'package:moment/pages/alum.dart';
+import 'package:moment/pages/alum_page.dart';
 import 'package:moment/pages/search_page.dart';
 import 'package:moment/utils/route.dart';
 import 'package:provider/provider.dart';
@@ -56,9 +56,17 @@ void main() async {
     };
   }
 
-  runApp(MultiProvider(
-      providers: [Provider<ThemeProvider>.value(value: themeProvide)],
-      child: MyApp(theme)));
+  runApp(
+    MultiProvider(
+      providers: [
+//        Provider<ThemeProvider>.value(value: themeProvide),
+        ChangeNotifierProvider.value(
+          value: themeProvide,
+        ),
+      ],
+      child: MyApp(theme),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -91,10 +99,15 @@ class MyApp extends StatelessWidget {
   }
 }
 
-//todo image_picker 2 file_picker
-// export db
-
-//todo 开屏页  https://www.cnblogs.com/hupo376787/p/10261424.html
+/**
+ * - 主题强调色
+ * - 扫描识字
+ * - 剪切板工具
+ * - 开屏页 https://www.cnblogs.com/hupo376787/p/10261424.html
+ * - logo
+ * - 抽屉修改
+ * - button bar
+ */
 
 /*
  // template
