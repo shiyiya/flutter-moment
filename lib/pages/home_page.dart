@@ -250,16 +250,21 @@ class _HomePageState extends State<HomePage> {
                       color: Theme.of(context).accentColor,
                     ),
                   ),
-                  subtitle: Text(text),
+                  subtitle: Text(text.trim()),
                   trailing: firstImg != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
+                      ? Container(
+                          width: 80,
+//                          height: 300,
+                          color: Colors.amber,
                           child: Img.isLocal(firstImg)
                               ? Image.file(
                                   File(firstImg),
                                   fit: BoxFit.cover,
                                 )
-                              : Image.network(firstImg),
+                              : Image.network(
+                                  firstImg,
+                                  fit: BoxFit.cover,
+                                ),
                         )
                       : null),
               ButtonTheme.bar(
