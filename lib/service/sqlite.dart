@@ -104,7 +104,7 @@ CREATE TABLE moment_content (
       await db.insert('moment_content', {
         'title': '随机标题 $i',
         'text': text[i],
-        'face': Random().nextInt(4),
+        'face': Random().nextInt(100),
         'event': event[Random().nextInt(event.length - 1)],
         'created': DateTime.parse(time[i]).millisecondsSinceEpoch,
         'alum': ''
@@ -120,7 +120,7 @@ CREATE TABLE moment_content (
 
       如你所见，它很简单；也许，你可以用它来写日记。
       ''',
-      'face': 2,
+      'face': 80,
       'event': '相识',
       'created': DateTime.now().millisecondsSinceEpoch,
       'alum': '' //https://i.loli.net/2019/11/20/6wI8eTmkbYQ5Zy9.gif

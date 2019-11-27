@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
 import "package:flutter/material.dart";
+import 'package:moment/app.dart';
 import 'package:moment/pages/about_page.dart';
 import "package:moment/pages/home_page.dart";
 import "package:moment/pages/edit.dart";
+import 'package:moment/pages/statistics_page.dart';
 import 'package:moment/pages/view_page.dart';
 import 'package:moment/pages/event.dart';
 import 'package:moment/pages/setting.dart';
@@ -44,9 +46,10 @@ void main() async {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Text('哎呀 被抓到啦（长按按钮试试）'),
               IconButton(
                 icon: Icon(Icons.bug_report),
-                tooltip: '哎呀 被抓到啦（BUG）',
+                tooltip: '我是 Future<Feature> !',
                 onPressed: () {}, //todo
               )
             ], // todo restart app
@@ -64,34 +67,31 @@ void main() async {
           value: themeProvide,
         ),
       ],
-      child: MyApp(theme),
+      child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final int theme;
-
-  MyApp(this.theme);
-
   @override
   Widget build(BuildContext context) {
     final _theme = Provider.of<ThemeProvider>(context);
     return MaterialApp(
         title: Constants.appName,
         debugShowCheckedModeBanner: false,
-        theme: Constants.theme[_theme.value != null ? _theme.value : theme],
-        home: HomePage(),
+        theme: Constants.theme[_theme.isNightTheme ? 2 : _theme.theme],
+        home: App(),
 //        initialRoute: '/home',
         routes: {
           "/home": (_) => HomePage(),
           "/search": (_) => SearchPage(),
           "/edit": (_) => Edit(),
-          "/view": (context) => ViewPage(),
-          "/event": (context) => EventPage(),
-          "/alum": (context) => AlumPage(),
-          "/setting": (context) => Setting(),
-          "/about": (_) => AboutPage()
+          "/view": (_) => ViewPage(),
+          "/event": (_) => EventPage(),
+          "/alum": (_) => AlumPage(),
+          "/setting": (_) => Setting(),
+          "/about": (_) => AboutPage(),
+          "/statistics": (_) => StatisticsPage()
         },
         onGenerateRoute: (setting) {
           return MRouter.fadeIn(HomePage());
@@ -104,9 +104,7 @@ class MyApp extends StatelessWidget {
  * - 扫描识字
  * - 剪切板工具
  * - 开屏页 https://www.cnblogs.com/hupo376787/p/10261424.html
- * - logo
  * - 抽屉修改
- * - button bar
  */
 
 /*

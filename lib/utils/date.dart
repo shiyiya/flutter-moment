@@ -1,3 +1,8 @@
+const int DAY_MS = 1000 * 60 * 60 * 24;
+const int WEEK_MS = DAY_MS * 7;
+const int MONTH_MS = DAY_MS * 30;
+const int YEAY_MS = DAY_MS * 365;
+
 class Date {
   static List weekMap = [
     '周一',

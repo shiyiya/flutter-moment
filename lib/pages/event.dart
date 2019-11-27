@@ -63,7 +63,7 @@ class _EventPageState extends State<EventPage> {
               avatar: CircleAvatar(
                   backgroundColor: Colors.transparent,
                   child: Icon(
-                    Constants.face[e['face']],
+                    Constants.face[e['face'] < 20 ? 0 : (e['face'] ~/ 20) - 1],
                     color: Theme.of(context).primaryColor,
                   )),
               label: Text(e['event']),

@@ -39,7 +39,6 @@ class DrawerWidget extends StatelessWidget {
           ),
         ),
       ),
-      Divider(height: 1),
     ];
 
     List<Widget> _buildTab() {
@@ -48,6 +47,7 @@ class DrawerWidget extends StatelessWidget {
         tabWidget.add(ListTile(
             leading: tab.icon,
             title: tab.text,
+            trailing: Icon(Icons.chevron_right),
             onTap: () {
               if (tab.f != null) {
                 Navigator.pop(context);
@@ -60,7 +60,6 @@ class DrawerWidget extends StatelessWidget {
                 Navigator.popAndPushNamed(context, tab.path);
               }
             }));
-        tabWidget.add(Divider(height: 1));
       }
       return tabWidget;
     }

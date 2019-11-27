@@ -1,4 +1,5 @@
 import 'dart:io';
+
 // import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,6 +30,7 @@ class Edit extends StatefulWidget {
 class _EditState extends State<Edit> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _textController = TextEditingController();
+  TextEditingController _faceController = TextEditingController();
 
   GlobalKey<FormState> momentKey = new GlobalKey<FormState>();
 
@@ -62,6 +64,7 @@ class _EditState extends State<Edit> {
         alum = _alum;
         _titleController.text = moment.title;
         _textController.text = moment.text;
+        _faceController.text = moment.face.toString();
       });
     } else {
       showDialog(
@@ -249,24 +252,27 @@ class _EditState extends State<Edit> {
   }
 
   Future<bool> _onWillPop() {
-    return showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('提示'),
-            content: new Text('确定返回么？可能有未保存的内容哦'),
-            actions: <Widget>[
-              new FlatButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: new Text('取消'),
-              ),
-              new FlatButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: new Text('确定'),
-              ),
-            ],
-          ),
-        ) ??
-        false;
+    if (moment.text.length > 0) {
+      return showDialog(
+            context: context,
+            builder: (context) => new AlertDialog(
+              title: new Text('提示'),
+              content: new Text('确定返回么？可能有未保存的内容哦'),
+              actions: <Widget>[
+                new FlatButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: new Text('取消'),
+                ),
+                new FlatButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: new Text('确定'),
+                ),
+              ],
+            ),
+          ) ??
+          false;
+    }
+    return Future.value(true);
   }
 
   Future<void> _getImageFromGallery() async {
@@ -297,18 +303,46 @@ class _EditState extends State<Edit> {
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('此刻的心情'),
-          content: RowIconRadio(
-              selected: moment.face,
-              icon: iconList,
-              onTap: (int index) {
-                setState(() {
-                  moment.face = index;
-                  Navigator.of(context).pop();
-                });
-              }),
-        );
+        return SimpleDialog(
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+            title: Text('此刻的心情'),
+            children: [
+              RowIconRadio(
+                  selected: moment.face.round() < 20
+                      ? 0
+                      : (moment.face.round() ~/ 20) - 1,
+                  icon: iconList,
+                  onTap: (int index) {
+                    setState(() {
+                      moment.face = (index + 1) * 20;
+                      _faceController.text = ((index + 1) * 20).toString();
+                      Navigator.of(context).pop();
+                    });
+                  }),
+              TextField(
+                controller: _faceController,
+                maxLength: 3,
+                inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                textAlignVertical: TextAlignVertical.center,
+                decoration: InputDecoration(hintText: '或者填入一百以内的数字'),
+                onChanged: (t) {
+                  setState(() {
+                    moment.face = int.parse(t);
+                  });
+                },
+              ),
+              Align(
+                child: MaterialButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    '确定',
+                    style: TextStyle(color: Theme.of(context).accentColor),
+                  ),
+                ),
+              )
+            ]);
       },
     );
   }
@@ -377,7 +411,7 @@ class _EditState extends State<Edit> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('关键词：'),
-          content: new TextField(
+          content: TextField(
             controller: TextEditingController.fromValue(
                 TextEditingValue(text: moment.event)),
             textAlignVertical: TextAlignVertical.center,

@@ -85,11 +85,25 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.4.3+1"
+  fl_chart:
+    dependency: "direct main"
+    description:
+      name: fl_chart
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.4.2"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_cupertino_date_picker:
+    dependency: "direct main"
+    description:
+      name: flutter_cupertino_date_picker
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.12"
   flutter_easyrefresh:
     dependency: "direct main"
     description:

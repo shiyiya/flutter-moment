@@ -37,7 +37,6 @@ class _HomePageState extends State<HomePage> {
 
   int _page = 0;
   List<Moment> _moments = [];
-  MomentInfo _momentInfo = MomentInfo();
 
   // 筛选条件
   bool byFilter = false;
@@ -60,12 +59,10 @@ class _HomePageState extends State<HomePage> {
       });
     }
     _loadMomentByPage(0);
-    _queryAllMomentInfo();
 
     eventBus.on<HomeRefreshEvent>().listen((event) {
       if (event.needRefresh) {
         _loadMomentByPage(-1);
-        _queryAllMomentInfo();
       }
     });
   }
@@ -75,20 +72,21 @@ class _HomePageState extends State<HomePage> {
     int len = _moments?.length ?? 0;
 
     return Scaffold(
-      floatingActionButton: ModalRoute.of(context).isFirst
-          ? FloatingActionButton(
-              onPressed: () => Navigator.pushNamed(context, "/edit"),
-              tooltip: "记录瞬间",
-              child: Icon(Icons.add))
-          : null,
+//      floatingActionButton: ModalRoute.of(context).isFirst
+//          ? FloatingActionButton(
+//              onPressed: () => Navigator.pushNamed(context, "/edit"),
+//              tooltip: "记录瞬间",
+//              child: Icon(Icons.add))
+//          : null,
       drawer: ModalRoute.of(context).isFirst ? DrawerWidget() : null,
       appBar: AppBar(
-        elevation: 2.0,
+        elevation: 1.0,
+        titleSpacing: 0.0,
         title: Text('瞬间'),
         actions: <Widget>[
           IconButton(
             tooltip: '寻觅',
-            icon: Icon(Icons.sort),
+            icon: Icon(Icons.filter_list),
             onPressed: _showFilterDialog,
           ),
         ],
@@ -99,7 +97,6 @@ class _HomePageState extends State<HomePage> {
         footer: MaterialFooter(enableInfiniteLoad: false),
         onRefresh: () async {
           _loadMomentByPage(0);
-          _queryAllMomentInfo();
         },
         onLoad: () => _loadMoreMoment(),
         slivers: <Widget>[
@@ -128,13 +125,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _queryAllMomentInfo() async {
-    final MomentInfo res = await SQL.queryAllMomentInfo();
-    setState(() {
-      _momentInfo = res;
-    });
-  }
-
   Widget buildWeather() {
     return Container(
       padding: EdgeInsets.all(10),
@@ -149,74 +139,18 @@ class _HomePageState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      _momentInfo.count.toString(),
-                      style: TextStyle(
-                          fontSize: 24, color: Theme.of(context).accentColor),
-                    ),
-                    Text(' 条',
-                        style: TextStyle(
-                            fontSize: 10,
-                            color: Theme.of(context).textTheme.display3.color)),
-                  ],
-                ),
+              Icon(
+                Icons.wb_sunny,
+                color: Theme.of(context).textTheme.display3.color,
               ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      _momentInfo.wordCount.toString(),
-                      style: TextStyle(
-                          fontSize: 24, color: Theme.of(context).accentColor),
-                    ),
-                    Text(' 字',
-                        style: TextStyle(
-                            fontSize: 10,
-                            color: Theme.of(context).textTheme.display3.color)),
-                  ],
-                ),
+              Text(
+                '  你在的地方一定是晴天吧',
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).textTheme.display3.color),
               ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      _momentInfo.imgCount.toString(),
-                      style: TextStyle(
-                          fontSize: 24, color: Theme.of(context).accentColor),
-                    ),
-                    Text(' 张',
-                        style: TextStyle(
-                            fontSize: 10,
-                            color: Theme.of(context).textTheme.display3.color)),
-                  ],
-                ),
-              )
             ],
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  Icons.wb_sunny,
-                  color: Theme.of(context).textTheme.display3.color,
-                ),
-                Text(
-                  '  你在的地方一定是晴天吧',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).textTheme.display3.color),
-                ),
-              ],
-            ),
-          )
         ],
       )),
     );
@@ -240,7 +174,8 @@ class _HomePageState extends State<HomePage> {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   leading: Icon(
-                    Constants.face[face],
+                    Constants
+                        .face[face.round() < 20 ? 0 : (face.round() ~/ 20) - 1],
                     size: 40,
                     color: Theme.of(context).accentColor,
                   ),
@@ -282,12 +217,14 @@ class _HomePageState extends State<HomePage> {
                       Row(
                         children: <Widget>[
                           Icon(
-                            Icons.date_range,
+                            Icons.query_builder,
                             color: Theme.of(context).textTheme.display3.color,
                             size: 12,
                           ),
                           Text(
-                            Date.getDateFormatMDHM(ms: _moments[index].created),
+                            '  ' +
+                                Date.getDateFormatYMD(
+                                    ms: _moments[index].created),
                             style: TextStyle(
                                 fontSize: 10,
                                 color:
