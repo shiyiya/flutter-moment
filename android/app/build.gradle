@@ -64,7 +64,18 @@ android {
    buildTypes {
        release {
            signingConfig signingConfigs.release
+        //    minifyEnabled true
+        //    shrinkResources true
+            // ndk {
+            //      abiFilters  'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            //      abiFilters.clear()
+            // }
        }
+    //    debug {
+    //        ndk {
+    //            abiFilters 'x86'
+    //        }
+    //    }
    }
 }
 
@@ -77,4 +88,21 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+
+rootProject.allprojects {
+    project.configurations.all {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'androidx.core') {
+                details.useVersion "1.0.1"
+            }
+            if (details.requested.group == 'androidx.lifecycle') {
+                details.useVersion "2.0.0"
+            }
+            if (details.requested.group == 'androidx.versionedparcelable') {
+                details.useVersion "1.0.0"
+            }
+        }
+    }
 }
