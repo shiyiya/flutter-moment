@@ -1,5 +1,11 @@
+import 'dart:io';
+import 'dart:typed_data';
+import "package:path/path.dart" as p;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:moment/components/gallery_photo_view.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 //import 'package:flutter_markdown/flutter_markdown.dart';
@@ -10,7 +16,12 @@ import 'package:moment/sql/query.dart';
 import 'package:moment/utils/date.dart';
 import 'package:moment/pages/edit.dart';
 import 'package:moment/type/moment.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
+
+import 'dart:ui' as ui show ImageByteFormat, Image;
+
+import 'package:share_extend/share_extend.dart';
 
 class ViewPage extends StatefulWidget {
   final int id;
@@ -24,6 +35,7 @@ class ViewPage extends StatefulWidget {
 class _ViewPageState extends State<ViewPage> {
   ScrollController _scrollController;
   SwiperController _swiperController;
+  GlobalKey _repaintKey = GlobalKey();
 
   Moment moment = Moment(); // todo type
   bool hasLoaded = false;
@@ -79,7 +91,8 @@ class _ViewPageState extends State<ViewPage> {
     }
 
     /**
-     * markdown
+     *
+     * markdown 示例不被支持
         ListView(
         children: <Widget>[
         img.length > 0 ? Alum(img: img) : Container(),
@@ -101,7 +114,10 @@ class _ViewPageState extends State<ViewPage> {
       body: hasLoaded
           ? status
               ? img.length > 0
-                  ? CustomScrollView(
+                  ? /*RepaintBoundary(
+                      key: _repaintKey,
+                      child:*/
+                  CustomScrollView(
                       slivers: <Widget>[
                         buildWithAlumBar(img),
                         SliverList(
@@ -112,11 +128,18 @@ class _ViewPageState extends State<ViewPage> {
                           })),
                         )
                       ],
+//                      ),
                     )
-                  : ListView(
+                  :
+                  // RepaintBoundary(
+                  //     key: _repaintKey,
+                  //     child:
+                  ListView(
+//                        color: Theme.of(context).scaffoldBackgroundColor,
                       children: <Widget>[buildMetaCard(), buildContent()],
                     )
-              : Center(child: Text('美好事物如昙花一现似流星一瞬而过，似烟花一而灭。'))
+              // )
+              : Center(child: Text(Constants.randomErrorTip()))
           : Center(child: CircularProgressIndicator()),
     );
   }
@@ -133,7 +156,7 @@ class _ViewPageState extends State<ViewPage> {
             children: <Widget>[
               Row(children: <Widget>[
                 Icon(
-                  Constants.face[moment.face],
+                  Constants.face[moment.face.round() ~/ 100],
                   size: 45,
                   color: Theme.of(context).accentColor,
                 ),
@@ -243,6 +266,7 @@ class _ViewPageState extends State<ViewPage> {
     return [
       IconButton(
         icon: Icon(Icons.edit),
+        tooltip: 'edit',
         onPressed: () {
           Navigator.of(context).pop();
           Navigator.push(context,
@@ -259,9 +283,13 @@ class _ViewPageState extends State<ViewPage> {
             value: "1",
             child: Text('分享为纯文本'),
           ),
+//          const PopupMenuItem<String>(
+//            value: "2",
+//            child: Text('分享为图片'),
+//          ),
           const PopupMenuItem<String>(
             value: "2",
-            child: Text('删除本瞬间'),
+            child: Text('删除该条瞬间'),
           ),
         ],
         tooltip: "more",
@@ -270,7 +298,10 @@ class _ViewPageState extends State<ViewPage> {
             case "1":
               shareText();
               break;
-            case "2":
+//            case "2":
+//              share2Image();
+              break;
+            case "3":
               _delMoment();
               break;
           }
@@ -321,5 +352,19 @@ class _ViewPageState extends State<ViewPage> {
   shareText() {
     Share.share(
         '${moment.title} \r\n ${Date.getDateFormatMDHM(ms: moment.created)} \r\n ${moment.text}');
+  }
+
+  share2Image() async {
+    RenderRepaintBoundary boundary =
+        _repaintKey.currentContext.findRenderObject();
+    ui.Image image = await boundary.toImage();
+    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List finalPngBytes = byteData.buffer.asUint8List();
+    String temp = (await getTemporaryDirectory()).path;
+    final imageFile = File(p.join(
+        temp, DateTime.now().millisecondsSinceEpoch.toString() + '.png'));
+    await imageFile.writeAsBytes(finalPngBytes);
+
+    ShareExtend.share(imageFile.path, 'image');
   }
 }
