@@ -175,12 +175,12 @@ class _HomePageState extends State<HomePage> {
                       EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   leading: Icon(
                     Constants
-                        .face[face.round() < 20 ? 0 : (face.round() ~/ 20) - 1],
+                        .face[face.round() < 20 ? 0 : (face.round() ~/ 20) ],
                     size: 40,
                     color: Theme.of(context).accentColor,
                   ),
                   title: Text(
-                    item.title,
+                  item.title,
                     style: TextStyle(
                       color: Theme.of(context).accentColor,
                     ),
@@ -295,13 +295,13 @@ class _HomePageState extends State<HomePage> {
             children: [
               RowIconRadio(
                 icon: Constants.face,
-                selected: face,
+                selected: face == null ? null : face ~/ 20 - 1,
                 onTap: (i) {
                   setState(() {
                     if (i == face) {
                       face = null;
                     } else {
-                      face = i;
+                      face = (i + 1) * 20;
                     }
                   });
                 },
@@ -444,16 +444,16 @@ class _HomePageState extends State<HomePage> {
 
   _loadMomentByFilterWithPage(int page) async {
     List<Filter> where = [
-      Filter('face', face),
-      Filter('weather', weather),
+      Filter('face > ?', face??20 - 20),
+      Filter('face <= ?', face),
+      Filter('weather = ?', weather),
     ];
     where.retainWhere((f) => f.v != null);
 
     String whereColumns = '';
-    where.forEach((w) => whereColumns += '${w.k} = ? AND ');
+    where.forEach((w) => whereColumns += '${w.k} AND ');
 
-    print(whereColumns.length);
-
+    //从事件列进入
     if (widget.event != null && widget.event.length > 0) {
       if (whereColumns.length > 0) {
         whereColumns += 'event LIKE "%${widget.event}%"';

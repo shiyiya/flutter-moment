@@ -156,7 +156,7 @@ class _ViewPageState extends State<ViewPage> {
             children: <Widget>[
               Row(children: <Widget>[
                 Icon(
-                  Constants.face[moment.face.round() ~/ 100],
+                  Constants.face[moment.face.round() ~/ 20],
                   size: 45,
                   color: Theme.of(context).accentColor,
                 ),
