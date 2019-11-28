@@ -22,7 +22,7 @@ class Moment {
       this.created = 0,
       this.modified = 0,
       this.event = '',
-      this.face = 2,
+      this.face = 80,
       this.weather = 3,
       this.alum = '',
       this.authorId = 0,

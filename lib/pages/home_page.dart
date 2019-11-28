@@ -162,7 +162,13 @@ class _HomePageState extends State<HomePage> {
         item.text.length > 50 ? item.text.substring(0, 20) : item.text;
     final String firstImg =
         item.alum.length < 1 ? null : item.alum?.split('|')[0];
-    final int face = item.face ?? 2;
+    int face = item.face ?? 2;
+
+    if (face % 20 > 0) {
+      face = face ~/ 20;
+    } else {
+      face = (face ~/ 20) - 1;
+    }
 
     return GestureDetector(
       child: Container(
@@ -174,13 +180,12 @@ class _HomePageState extends State<HomePage> {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   leading: Icon(
-                    Constants
-                        .face[face.round() < 20 ? 0 : (face.round() ~/ 20) ],
+                    Constants.face[face],
                     size: 40,
                     color: Theme.of(context).accentColor,
                   ),
                   title: Text(
-                  item.title,
+                    item.title,
                     style: TextStyle(
                       color: Theme.of(context).accentColor,
                     ),
@@ -444,7 +449,7 @@ class _HomePageState extends State<HomePage> {
 
   _loadMomentByFilterWithPage(int page) async {
     List<Filter> where = [
-      Filter('face > ?', face??20 - 20),
+      Filter('face > ?', (face ?? 20) - 20),
       Filter('face <= ?', face),
       Filter('weather = ?', weather),
     ];

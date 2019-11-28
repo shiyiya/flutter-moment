@@ -298,6 +298,12 @@ class _EditState extends State<Edit> {
 
   void buildEmojioDialog() async {
     final List iconList = Constants.face;
+    int face;
+    if (moment.face % 20 > 0) {
+      face = moment.face ~/ 20;
+    } else {
+      face = (moment.face ~/ 20) - 1;
+    }
 
     showDialog(
       context: context,
@@ -308,9 +314,7 @@ class _EditState extends State<Edit> {
             title: Text('此刻的心情'),
             children: [
               RowIconRadio(
-                  selected: moment.face.round() < 20
-                      ? 0
-                      : (moment.face.round() ~/ 20) - 1,
+                  selected: face,
                   icon: iconList,
                   onTap: (int index) {
                     setState(() {
@@ -326,6 +330,21 @@ class _EditState extends State<Edit> {
                 textAlignVertical: TextAlignVertical.center,
                 decoration: InputDecoration(hintText: '或者填入一百以内的数字'),
                 onChanged: (t) {
+                  if (int.parse(t) < 0) {
+                    _faceController.text = '0';
+                    Fluttertoast.showToast(msg: '心情数值异常(⊙ˍ⊙), 已自动修正');
+                    setState(() {
+                      moment.face = 0;
+                    });
+                    return;
+                  } else if (int.parse(t) > 100) {
+                    _faceController.text = '100';
+                    Fluttertoast.showToast(msg: '心情数值异常(⊙ˍ⊙), 已自动修正');
+                    setState(() {
+                      moment.face = 100;
+                    });
+                    return;
+                  }
                   setState(() {
                     moment.face = int.parse(t);
                   });
