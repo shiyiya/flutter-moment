@@ -103,7 +103,7 @@ class MyApp extends StatelessWidget {
  * - 主题强调色
  * - 扫描识字
  * - 剪切板工具
- * - 开屏页 https://www.cnblogs.com/hupo376787/p/10261424.html
+ * - 开屏页
  * - 抽屉修改
  */
 
