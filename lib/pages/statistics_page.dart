@@ -21,9 +21,11 @@ class _StatisticsPagePageState extends State<StatisticsPage>
   PieOpt pieOpt = PieOpt(DateTime.now().millisecondsSinceEpoch - YEAY_MS,
       DateTime.now().millisecondsSinceEpoch);
 
+  bool isYearView = true;
   int lineYear = 2019;
-   Map<int, dynamic> lineDate = Map();
-  final a =Map();
+  int lineMonth = 11;
+  Map<double, dynamic> lineDate = Map();
+  Map<double, dynamic> mothDate = Map();
 
 //  @override
 //  bool get wantKeepAlive => true;
@@ -44,7 +46,7 @@ class _StatisticsPagePageState extends State<StatisticsPage>
 
   fetchData() {
     fetchByEventData();
-    fetchByFace();
+    fetchFaceByYear();
   }
 
   fetchByEventData({int start, int end}) async {
@@ -54,9 +56,9 @@ class _StatisticsPagePageState extends State<StatisticsPage>
         Fluttertoast.showToast(msg: '开始时间需大于结束时间 ~');
         return;
       }
-      res = await ChartSQL.queryTagByTimeRange(start: start, end: end);
+      res = await ChartSQL.queryEventByTimeRange(start: start, end: end);
     } else {
-      res = await ChartSQL.queryTagByTimeRange();
+      res = await ChartSQL.queryEventByTimeRange();
     }
 
     setState(() {
@@ -64,8 +66,17 @@ class _StatisticsPagePageState extends State<StatisticsPage>
     });
   }
 
-  fetchByFace() async {
+  fetchFaceByYear() async {
     final res = await ChartSQL.queryFaceByYearCaWithMonth(lineYear.toString());
+    setState(() {
+      lineDate = res;
+    });
+  }
+
+  fetchFaceByMonth() async {
+    final res = await ChartSQL.queryFaceByMonth(
+        '$lineYear${lineMonth > 9 ? lineMonth : "0$lineMonth"}');
+
     setState(() {
       lineDate = res;
     });
@@ -94,15 +105,19 @@ class _StatisticsPagePageState extends State<StatisticsPage>
         children: <Widget>[
           MLine(
             lineDate,
+            isYearView: isYearView,
             title: '情感线',
             actions: <Widget>[
-              Text(lineYear.toString()),
               PopupMenuButton(
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text(lineYear.toString()),
+                ),
                 onSelected: (i) {
                   setState(() {
                     lineYear = i;
                   });
-                  fetchByFace();
+                  fetchFaceByYear();
                 },
                 initialValue: lineYear,
                 itemBuilder: (_) {
@@ -114,54 +129,89 @@ class _StatisticsPagePageState extends State<StatisticsPage>
                     );
                   });
                 },
+              ),
+              if (!isYearView) Text('—'),
+              if (!isYearView)
+                PopupMenuButton(
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(lineMonth.toString()),
+                  ),
+                  onSelected: (i) {
+                    setState(() {
+                      lineMonth = i;
+                    });
+                    fetchFaceByMonth();
+                  },
+                  initialValue: lineMonth,
+                  itemBuilder: (_) {
+                    return List.generate(12, (i) {
+                      return PopupMenuItem(
+                        child: Text('${i + 1}月'),
+                        value: i + 1,
+                      );
+                    });
+                  },
+                ),
+              IconButton(
+                tooltip: '切换年/月视图',
+                icon: Icon(Icons.swap_horiz),
+                onPressed: () {
+                  setState(() {
+                    isYearView = !isYearView;
+                  });
+                  if(isYearView){
+                    fetchFaceByYear();
+                  }else{
+                    fetchFaceByMonth();
+                  }
+                },
               )
             ],
           ),
-          Container(
-            child: MPieChart(
-              pie,
-              pie.keys.toList(),
-              pie.values.toList(),
-              title: '事件 TOP 8',
-              actions: <Widget>[
-                MaterialButton(
-                  minWidth: 14,
-                  onPressed: () {
-                    _showDatePicker(pieOpt.start, (t) {
-                      setState(() {
-                        pieOpt.start = t;
-                      });
-                      fetchByEventData(start: pieOpt.start, end: pieOpt.end);
+          MPieChart(
+            pie,
+            pie.keys.toList(),
+            pie.values.toList(),
+            title: '事件 TOP 8',
+            actions: <Widget>[
+              MaterialButton(
+                minWidth: 14,
+                onPressed: () {
+                  _showDatePicker(pieOpt.start, (t) {
+                    setState(() {
+                      pieOpt.start = t;
                     });
-                  },
-                  child: Text(
-                    pieOpt.start.toString() != null
-                        ? Date.getDateFormatYMD(ms: pieOpt.start)
-                        : '',
-                    style: TextStyle(fontSize: 12),
-                  ),
+                    fetchByEventData(start: pieOpt.start, end: pieOpt.end);
+                  });
+                },
+                child: Text(
+                  pieOpt.start.toString() != null
+                      ? Date.getDateFormatYMD(ms: pieOpt.start)
+                      : '',
+                  style: TextStyle(fontSize: 12),
                 ),
-                Text('—'),
-                MaterialButton(
-                  minWidth: 14,
-                  onPressed: () {
-                    _showDatePicker(pieOpt.end, (t) {
-                      setState(() {
-                        pieOpt.end = t;
-                      });
-                      fetchByEventData(start: pieOpt.start, end: pieOpt.end);
+              ),
+              Text('—'),
+              MaterialButton(
+                minWidth: 14,
+                onPressed: () {
+                  _showDatePicker(pieOpt.end, (t) {
+                    setState(() {
+                      pieOpt.end = t;
                     });
-                  },
-                  child: Text(
-                    pieOpt.end != null
-                        ? Date.getDateFormatYMD(ms: pieOpt.end)
-                        : '',
-                    style: TextStyle(fontSize: 12),
-                  ),
+                    fetchByEventData(start: pieOpt.start, end: pieOpt.end);
+                  });
+                },
+                child: Text(
+                  pieOpt.end != null
+                      ? Date.getDateFormatYMD(ms: pieOpt.end)
+                      : '',
+                  style: TextStyle(fontSize: 12),
                 ),
-              ],
-            ),
-          ),
+              ),
+            ],
+          )
         ],
       ),
     );
@@ -169,7 +219,7 @@ class _StatisticsPagePageState extends State<StatisticsPage>
 
   _showDatePicker(int defaultT, Cb cb) {
     const String MIN_DATETIME = '2018-12-15';
-    const String MAX_DATETIME = '2050-12-25';
+    const String MAX_DATETIME = '2029-12-25';
 
     DatePicker.showDatePicker(
       context,

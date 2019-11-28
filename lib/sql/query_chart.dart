@@ -2,7 +2,7 @@ import 'package:moment/service/sqlite.dart';
 import 'package:moment/utils/date.dart';
 
 class ChartSQL {
-  static Future<Map<int, dynamic>> queryFaceByYearCaWithMonth(
+  static Future<Map<double, dynamic>> queryFaceByYearCaWithMonth(
       String year) async {
     final _year = DateTime.parse('${year}0101');
     final start = _year.millisecondsSinceEpoch;
@@ -11,14 +11,15 @@ class ChartSQL {
     final List yearData = await (await DBHelper.db).rawQuery(
         'select created, face from moment_content where created>=$start AND created<$end');
 
-    final Map<int, dynamic> monthDate = Map();
+    final Map<double, dynamic> monthDate = Map();
     yearData.forEach((data) {
-      final int month = ((data['created'] - start) / MONTH_MS).floor();
+      final double month =
+          (((data['created'] - start) / MONTH_MS).floor()).toDouble();
 
       if (monthDate[month] == null) {
-        monthDate[month] = [data['face'] / 10];
+        monthDate[month] = [data['face']];
       } else {
-        monthDate[month].add(data['face'] / 10);
+        monthDate[month].add(data['face']);
       }
     });
 
@@ -26,35 +27,41 @@ class ChartSQL {
       final total = v.reduce((l, r) => l + r);
       monthDate[k] = total / v.length;
     });
-
-    print(monthDate);
     return monthDate;
   }
 
-  static Future<List> queryByMonth(String time) async {
-    final _year = DateTime.parse("${time}01");
+  static Future<Map> queryFaceByMonth(String time /* eg: 201901 */) async {
+    final _month = DateTime.parse('${time}01');
+    final start = _month.millisecondsSinceEpoch;
+    final end = _month.millisecondsSinceEpoch + MONTH_MS;
 
-    final timeStartMS = _year.millisecondsSinceEpoch;
-    final timeEndMS = _year.millisecondsSinceEpoch + MONTH_MS;
-    return await queryByTimeRang(timeStartMS, timeEndMS);
+    final List monthData = await (await DBHelper.db).rawQuery(
+        'select created, face from moment_content where created>=$start AND created<$end');
+
+    print(monthData);
+
+    final Map<double, dynamic> dayData = Map();
+    monthData.forEach((data) {
+      final double day =
+          ((data['created'] - start) / DAY_MS).round() / 2; //图标显示刻度为15天
+
+      if (dayData[day] == null) {
+        dayData[day] = [data['face']];
+      } else {
+        dayData[day].add(data['face']);
+      }
+    });
+
+    dayData.forEach((k, v) {
+      final total = v.reduce((l, r) => l + r);
+      dayData[k] = total / v.length;
+    });
+    print(dayData);
+
+    return dayData;
   }
 
-  // 前七天
-  static queryByPreWeek(String time) async {
-    final timeEndMS = DateTime.now().millisecondsSinceEpoch;
-    final timeStartMS = timeEndMS - WEEK_MS;
-
-    queryByTimeRang(timeStartMS, timeEndMS);
-  }
-
-  static queryByTimeRang(int start, int end) async {
-    final r = await (await DBHelper.db).rawQuery(
-        'select face from moment_content where created>=$start AND created<$end');
-
-    return r;
-  }
-
-  static Future<Map<String, int>> queryTagByTimeRange(
+  static Future<Map<String, int>> queryEventByTimeRange(
       {int start, int end}) async {
     List r;
     Map<String, int> tagMap = {};
@@ -79,6 +86,31 @@ class ChartSQL {
     print(tagMap.keys.toList());
     print(tagMap.values.toList());
     return tagMap;
+  }
+
+  // ----
+
+  static Future<List> queryByMonth(String time) async {
+    final _year = DateTime.parse("${time}01");
+
+    final timeStartMS = _year.millisecondsSinceEpoch;
+    final timeEndMS = _year.millisecondsSinceEpoch + MONTH_MS;
+    return await queryByTimeRang(timeStartMS, timeEndMS);
+  }
+
+  // 前七天
+  static queryByPreWeek(String time) async {
+    final timeEndMS = DateTime.now().millisecondsSinceEpoch;
+    final timeStartMS = timeEndMS - WEEK_MS;
+
+    queryByTimeRang(timeStartMS, timeEndMS);
+  }
+
+  static queryByTimeRang(int start, int end) async {
+    final r = await (await DBHelper.db).rawQuery(
+        'select face from moment_content where created>=$start AND created<$end');
+
+    return r;
   }
 
   static Future<Map<String, int>> queryFaceByTimeRange(

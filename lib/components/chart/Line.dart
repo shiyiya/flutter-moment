@@ -14,13 +14,11 @@ class MLine extends StatelessWidget {
   ];
   final String title;
   final List<Widget> actions;
-  final Map<int, dynamic> data;
+  final Map<double, dynamic> data;
 
-  MLine(
-    this.data, {
-    this.title,
-    this.actions,
-  });
+  final bool isYearView;
+
+  MLine(this.data, {this.title, this.actions, this.isYearView = true});
 
   @override
   Widget build(BuildContext context) {
@@ -83,9 +81,7 @@ class MLine extends StatelessWidget {
         },
         handleBuiltInTouches: true,
       ),
-      gridData: const FlGridData(
-        show: true, //横轴基线
-      ),
+      gridData: const FlGridData(show: true, horizontalInterval: 20),
       titlesData: FlTitlesData(
         bottomTitles: SideTitles(
           showTitles: true,
@@ -96,23 +92,7 @@ class MLine extends StatelessWidget {
             fontSize: 12,
           ),
           margin: 10,
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 2:
-                return 'Feb';
-              case 4:
-                return 'Apr';
-              case 6:
-                return 'June';
-              case 8:
-                return 'Aug';
-              case 10:
-                return 'Oct';
-              case 12:
-                return 'Dec';
-            }
-            return '';
-          },
+          getTitles: getTitle,
         ),
         leftTitles: SideTitles(
           showTitles: true,
@@ -125,15 +105,15 @@ class MLine extends StatelessWidget {
             switch (value.toInt()) {
               case 0:
                 return '0';
-              case 1:
+              case 20:
                 return '20';
-              case 2:
+              case 40:
                 return '40';
-              case 3:
+              case 60:
                 return '60';
-              case 4:
+              case 80:
                 return '80';
-              case 5:
+              case 100:
                 return '100';
             }
             return '';
@@ -147,7 +127,7 @@ class MLine extends StatelessWidget {
           border: Border(
             bottom: BorderSide(
               color: const Color(0xff4e4965),
-              width: 4,
+              width: 2,
             ),
             left: BorderSide(
               color: Colors.transparent,
@@ -160,18 +140,12 @@ class MLine extends StatelessWidget {
             ),
           )),
       minX: 0,
-      maxX: 14,
-      maxY: 5,
+      maxX: isYearView ? 13 : 15,
+      maxY: 100,
       minY: 0,
       lineBarsData: linesBarData1(),
     );
   }
-
-  /*
-  (i) {
-        return FlSpot(keys[i], values[i]);
-      }
-   */
 
   List<LineChartBarData> linesBarData1() {
     final keys = data?.keys?.toList() ?? [];
@@ -202,7 +176,30 @@ class MLine extends StatelessWidget {
     ];
   }
 
-  getYearTitles() {}
+  String getTitle(double value) {
+    if (isYearView) {
+      return getYearTitles(value);
+    }
 
-  getMonthTItles() {}
+    if (value.toInt() == 0 || value.toInt() == 15) return '';
+    return (value.toInt() * 2).toString();
+  }
+
+  String getYearTitles(value) {
+    switch (value.toInt()) {
+      case 2:
+        return 'Feb';
+      case 4:
+        return 'Apr';
+      case 6:
+        return 'June';
+      case 8:
+        return 'Aug';
+      case 10:
+        return 'Oct';
+      case 12:
+        return 'Dec';
+    }
+    return '';
+  }
 }
