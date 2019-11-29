@@ -27,6 +27,7 @@ class _AboutPageState extends State<AboutPage> {
     setState(() {
       appName = packageInfo.appName;
       version = packageInfo.version;
+      packageName = packageInfo.packageName;
       buildNumber = packageInfo.buildNumber;
     });
   }
@@ -64,14 +65,14 @@ class _AboutPageState extends State<AboutPage> {
                 leading: Icon(Icons.share),
                 title: Text('分享'),
                 onTap: () => Share.share(
-                    '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/com.cy.moment'),
+                    '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/$packageName'),
               ),
               ListTile(
                 leading: Icon(Icons.star),
-                title: Text('在应用市场评分或者评论'),
+                title: Text('在应用市场(酷安)评分或者评论'),
                 onTap: () {
                   launchURL('market://details?id=$packageName');
-                }, //todo
+                },
               )
             ],
           ),
