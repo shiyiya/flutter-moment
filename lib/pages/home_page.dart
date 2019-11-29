@@ -139,15 +139,10 @@ class _HomePageState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(
-                Icons.wb_sunny,
-                color: Theme.of(context).textTheme.display3.color,
-              ),
+              Icon(Icons.wb_sunny),
               Text(
                 '  你在的地方一定是晴天吧',
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).textTheme.display3.color),
+                style: Theme.of(context).textTheme.subtitle,
               ),
             ],
           ),
