@@ -3,12 +3,12 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:moment/components/chart/indicator.dart';
 
 class MPieChart extends StatefulWidget {
-  Map<String, int> pieData = Map();
-  List<String> pieKey = List();
-  List<int> pieVal = List();
+  final Map<String, int> pieData;
+  final List<String> pieKey;
+  final List<int> pieVal;
 
-  String title;
-  List<Widget> actions;
+  final String title;
+  final List<Widget> actions;
 
   MPieChart(this.pieData, this.pieKey, this.pieVal, {this.title, this.actions});
 
