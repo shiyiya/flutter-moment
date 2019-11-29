@@ -7,6 +7,7 @@ import 'package:flutter_easyrefresh/material_footer.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/components/row-icon-radio.dart';
 import 'package:moment/constants/app.dart';
+import 'package:moment/service/face.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
@@ -157,13 +158,7 @@ class _HomePageState extends State<HomePage> {
         item.text.length > 50 ? item.text.substring(0, 20) : item.text;
     final String firstImg =
         item.alum.length < 1 ? null : item.alum?.split('|')[0];
-    int face = item.face ?? 2;
-
-    if (face % 20 > 0) {
-      face = face ~/ 20;
-    } else {
-      face = (face ~/ 20) - 1;
-    }
+    int face = Face.getIndexByNum(item.face);
 
     return GestureDetector(
       child: Container(

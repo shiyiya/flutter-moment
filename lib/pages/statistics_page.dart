@@ -17,15 +17,18 @@ class _StatisticsPagePageState extends State<StatisticsPage>
   TabController tabController;
   final _tabs = const ['情绪管理', '事件管理'];
 
+//事件
   Map<String, int> pie = Map();
   PieOpt pieOpt = PieOpt(DateTime.now().millisecondsSinceEpoch - YEAY_MS,
       DateTime.now().millisecondsSinceEpoch);
 
+// 情绪
   bool isYearView = true;
   int lineYear = 2019;
   int lineMonth = 11;
   Map<double, dynamic> lineDate = Map();
   Map<double, dynamic> mothDate = Map();
+  Map<String, int> facePie = Map();
 
 //  @override
 //  bool get wantKeepAlive => true;
@@ -68,17 +71,23 @@ class _StatisticsPagePageState extends State<StatisticsPage>
 
   fetchFaceByYear() async {
     final res = await ChartSQL.queryFaceByYearCaWithMonth(lineYear.toString());
+    final res2 = await ChartSQL.queryEventByYear(lineYear.toString());
+
     setState(() {
       lineDate = res;
+      facePie = res2;
     });
   }
 
   fetchFaceByMonth() async {
-    final res = await ChartSQL.queryFaceByMonth(
-        '$lineYear${lineMonth > 9 ? lineMonth : "0$lineMonth"}');
+    final String time = '$lineYear${lineMonth > 9 ? lineMonth : "0$lineMonth"}';
+
+    final res = await ChartSQL.queryFaceByMonth(time);
+    final res2 = await ChartSQL.queryEventByMonth(time);
 
     setState(() {
       lineDate = res;
+      facePie = res2;
     });
   }
 
@@ -103,70 +112,80 @@ class _StatisticsPagePageState extends State<StatisticsPage>
       body: TabBarView(
         controller: tabController,
         children: <Widget>[
-          MLine(
-            lineDate,
-            isYearView: isYearView,
-            title: '情感线',
-            actions: <Widget>[
-              PopupMenuButton(
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(lineYear.toString()),
-                ),
-                onSelected: (i) {
-                  setState(() {
-                    lineYear = i;
-                  });
-                  fetchFaceByYear();
-                },
-                initialValue: lineYear,
-                itemBuilder: (_) {
-                  const year = 2018;
-                  return List.generate(7, (i) {
-                    return PopupMenuItem(
-                      child: Text((year + i).toString()),
-                      value: year + i,
-                    );
-                  });
-                },
-              ),
-              if (!isYearView) Text('—'),
-              if (!isYearView)
-                PopupMenuButton(
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(lineMonth.toString()),
+          ListView(
+            children: <Widget>[
+              MLine(
+                lineDate,
+                isYearView: isYearView,
+                title: '情感线',
+                actions: <Widget>[
+                  PopupMenuButton(
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Text(lineYear.toString()),
+                    ),
+                    onSelected: (i) {
+                      setState(() {
+                        lineYear = i;
+                      });
+                      fetchFaceByYear();
+                    },
+                    initialValue: lineYear,
+                    itemBuilder: (_) {
+                      const year = 2018;
+                      return List.generate(7, (i) {
+                        return PopupMenuItem(
+                          child: Text((year + i).toString()),
+                          value: year + i,
+                        );
+                      });
+                    },
                   ),
-                  onSelected: (i) {
-                    setState(() {
-                      lineMonth = i;
-                    });
-                    fetchFaceByMonth();
-                  },
-                  initialValue: lineMonth,
-                  itemBuilder: (_) {
-                    return List.generate(12, (i) {
-                      return PopupMenuItem(
-                        child: Text('${i + 1}月'),
-                        value: i + 1,
-                      );
-                    });
-                  },
-                ),
-              IconButton(
-                tooltip: '切换年/月视图',
-                icon: Icon(Icons.swap_horiz),
-                onPressed: () {
-                  setState(() {
-                    isYearView = !isYearView;
-                  });
-                  if(isYearView){
-                    fetchFaceByYear();
-                  }else{
-                    fetchFaceByMonth();
-                  }
-                },
-              )
+                  if (!isYearView) Text('—'),
+                  if (!isYearView)
+                    PopupMenuButton(
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Text(lineMonth.toString()),
+                      ),
+                      onSelected: (i) {
+                        setState(() {
+                          lineMonth = i;
+                        });
+                        fetchFaceByMonth();
+                      },
+                      initialValue: lineMonth,
+                      itemBuilder: (_) {
+                        return List.generate(12, (i) {
+                          return PopupMenuItem(
+                            child: Text('${i + 1}月'),
+                            value: i + 1,
+                          );
+                        });
+                      },
+                    ),
+                  IconButton(
+                    tooltip: '切换年/月视图',
+                    icon: Icon(Icons.swap_horiz),
+                    onPressed: () {
+                      setState(() {
+                        isYearView = !isYearView;
+                      });
+                      if (isYearView) {
+                        fetchFaceByYear();
+                      } else {
+                        fetchFaceByMonth();
+                      }
+                    },
+                  )
+                ],
+              ),
+              MPieChart(
+                facePie,
+                facePie.keys.toList(),
+                facePie.values.toList(),
+                title: '情感 TOP 8',
+              ),
             ],
           ),
           MPieChart(
@@ -238,9 +257,6 @@ class _StatisticsPagePageState extends State<StatisticsPage>
       locale: DateTimePickerLocale.zh_cn,
       onConfirm: (DateTime dateTime, List<int> index) {
         cb(dateTime.millisecondsSinceEpoch);
-//        fetchData(start: pieOpt.start, end: pieOpt.end);
-        print(
-            'fetch ${DateTime.fromMicrosecondsSinceEpoch(pieOpt.start * 1000)} - ${DateTime.fromMicrosecondsSinceEpoch(pieOpt.end * 1000)}');
       },
     );
   }

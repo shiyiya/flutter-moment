@@ -1,7 +1,9 @@
+import 'package:moment/service/face.dart';
 import 'package:moment/service/sqlite.dart';
 import 'package:moment/utils/date.dart';
 
 class ChartSQL {
+  // 情绪折线图 年
   static Future<Map<double, dynamic>> queryFaceByYearCaWithMonth(
       String year) async {
     final _year = DateTime.parse('${year}0101');
@@ -30,6 +32,7 @@ class ChartSQL {
     return monthDate;
   }
 
+  // 情绪折线图 月
   static Future<Map> queryFaceByMonth(String time /* eg: 201901 */) async {
     final _month = DateTime.parse('${time}01');
     final start = _month.millisecondsSinceEpoch;
@@ -37,8 +40,6 @@ class ChartSQL {
 
     final List monthData = await (await DBHelper.db).rawQuery(
         'select created, face from moment_content where created>=$start AND created<$end');
-
-    print(monthData);
 
     final Map<double, dynamic> dayData = Map();
     monthData.forEach((data) {
@@ -56,11 +57,30 @@ class ChartSQL {
       final total = v.reduce((l, r) => l + r);
       dayData[k] = total / v.length;
     });
-    print(dayData);
 
     return dayData;
   }
 
+  // 情绪饼图 年
+  static Future<Map<String, int>> queryEventByYear(String year
+      /* eg: 201901 */) async {
+    final _year = DateTime.parse('${year}0101');
+    final start = _year.millisecondsSinceEpoch;
+    final end = _year.millisecondsSinceEpoch + YEAY_MS;
+
+    return await queryFaceByTimeRange(start: start, end: end);
+  }
+
+  // 情绪饼图 月
+  static Future<Map<String, int>> queryEventByMonth(String time
+      /* eg: 201901 */) async {
+    final _month = DateTime.parse('${time}01');
+    final start = _month.millisecondsSinceEpoch;
+    final end = _month.millisecondsSinceEpoch + MONTH_MS;
+    return await queryFaceByTimeRange(start: start, end: end);
+  }
+
+  // 事件 ByTimeRange
   static Future<Map<String, int>> queryEventByTimeRange(
       {int start, int end}) async {
     List r;
@@ -83,40 +103,13 @@ class ChartSQL {
       }
     });
 
-    print(tagMap.keys.toList());
-    print(tagMap.values.toList());
     return tagMap;
   }
 
-  // ----
-
-  static Future<List> queryByMonth(String time) async {
-    final _year = DateTime.parse("${time}01");
-
-    final timeStartMS = _year.millisecondsSinceEpoch;
-    final timeEndMS = _year.millisecondsSinceEpoch + MONTH_MS;
-    return await queryByTimeRang(timeStartMS, timeEndMS);
-  }
-
-  // 前七天
-  static queryByPreWeek(String time) async {
-    final timeEndMS = DateTime.now().millisecondsSinceEpoch;
-    final timeStartMS = timeEndMS - WEEK_MS;
-
-    queryByTimeRang(timeStartMS, timeEndMS);
-  }
-
-  static queryByTimeRang(int start, int end) async {
-    final r = await (await DBHelper.db).rawQuery(
-        'select face from moment_content where created>=$start AND created<$end');
-
-    return r;
-  }
-
+  // 情绪 ByTimeRange
   static Future<Map<String, int>> queryFaceByTimeRange(
       {int start, int end}) async {
     List r;
-    Map<String, int> tagMap = {};
 
     if (start == null || end == null) {
       r = await (await DBHelper.db).query('moment_content', columns: ['face']);
@@ -125,34 +118,16 @@ class ChartSQL {
           'select face from moment_content where created>=$start AND created<$end');
     }
 
-    r.forEach((tag) {
-      if (tag['event'].length > 0) {
-        if (tagMap[tag['event']] != null) {
-          tagMap[tag['event']] += 1;
-        } else {
-          tagMap[tag['event']] = 1;
-        }
+    Map<String, int> faceMap = {};
+    r.forEach((item) {
+      final String key = Face.getStatusByNum(item['face']);
+      if (faceMap[key] != null) {
+        faceMap[key] += 1;
+      } else {
+        faceMap[key] = 1;
       }
     });
 
-    print(tagMap.keys.toList());
-    print(tagMap.values.toList());
-    return tagMap;
+    return faceMap;
   }
-}
-
-class Face {
-  int face;
-
-  Face(this.face);
-}
-
-class Tag {
-  int event;
-
-  Tag(this.event);
-}
-
-class CreateWithFace {
-  int face, created;
 }

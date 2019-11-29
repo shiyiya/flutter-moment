@@ -3,6 +3,7 @@ import 'dart:io';
 // import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:moment/service/face.dart';
 import 'package:moment/utils/date.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -298,13 +299,6 @@ class _EditState extends State<Edit> {
 
   void buildEmojioDialog() async {
     final List iconList = Constants.face;
-    int face;
-    if (moment.face % 20 > 0) {
-      face = moment.face ~/ 20;
-    } else {
-      face = (moment.face ~/ 20) - 1;
-    }
-
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -314,7 +308,7 @@ class _EditState extends State<Edit> {
             title: Text('此刻的心情'),
             children: [
               RowIconRadio(
-                  selected: face,
+                  selected: Face.getIndexByNum(moment.face),
                   icon: iconList,
                   onTap: (int index) {
                     setState(() {

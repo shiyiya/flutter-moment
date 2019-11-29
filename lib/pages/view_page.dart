@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:moment/service/face.dart';
 import "package:path/path.dart" as p;
 
 import 'package:flutter/cupertino.dart';
@@ -145,13 +146,6 @@ class _ViewPageState extends State<ViewPage> {
   }
 
   Widget buildMetaCard() {
-    int face;
-    if (moment.face % 20 > 0) {
-      face = moment.face ~/ 20;
-    } else {
-      face = (moment.face ~/ 20) - 1;
-    }
-
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         width: MediaQuery.of(context).size.width,
@@ -163,7 +157,7 @@ class _ViewPageState extends State<ViewPage> {
             children: <Widget>[
               Row(children: <Widget>[
                 Icon(
-                  Constants.face[face],
+                  Constants.face[Face.getIndexByNum(moment.face)],
                   size: 45,
                   color: Theme.of(context).accentColor,
                 ),
