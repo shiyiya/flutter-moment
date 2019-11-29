@@ -68,9 +68,12 @@ class _MPieChartState extends State<MPieChart> {
               ),
               len < 1
                   ? Center(
-                      child: Text(
-                        '暂无数据',
-                        textAlign: TextAlign.center,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          '暂无数据',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     )
                   : AspectRatio(
