@@ -15,7 +15,7 @@ CREATE TABLE moment_content (
 "password" varchar(32) default NULL ,
 "event" varchar(32) default '',
 "location" varchar(16) default '',
-"face" int(10) default '4',
+"face" int(10) default '80',
 "weather" int (10) default '4',
 "alum" varchar(200) default '',
 "commentsNum" int(10) default '0' ,
