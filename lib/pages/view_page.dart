@@ -185,8 +185,16 @@ class _ViewPageState extends State<ViewPage> {
               Row(
                 children: <Widget>[
                   Text(
-                    moment.event,
-                    style: Theme.of(context).textTheme.caption,
+                    ' ${moment.event} ',
+                    style: Theme.of(context).textTheme.caption.copyWith(
+                      shadows: <Shadow>[
+                        Shadow(
+                          color: Theme.of(context).accentColor,
+                          offset: Offset(0, 0),
+                          blurRadius: 8,
+                        )
+                      ],
+                    ),
                   ),
                   Text(
                     moment.text.length.toString() + ' 字',
