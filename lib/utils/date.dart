@@ -52,7 +52,7 @@ class Date {
     DateTime now = getDateTimeByMS(ms: ms);
     int y = now.year;
 
-    return "$y$prefix${getDateFormatMD(ms: ms)}";
+    return "$y$prefix${getDateFormatMD(ms: ms,prefix: prefix)}";
   }
 
   String getBeforeTimeByMS({int ms}) {

@@ -3,6 +3,8 @@ import 'dart:io';
 // import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+//import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:moment/service/face.dart';
 import 'package:moment/utils/date.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,7 +30,7 @@ class Edit extends StatefulWidget {
   _EditState createState() => _EditState();
 }
 
-class _EditState extends State<Edit> {
+class _EditState extends State<Edit> with WidgetsBindingObserver {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _textController = TextEditingController();
   TextEditingController _faceController = TextEditingController();
@@ -37,6 +39,8 @@ class _EditState extends State<Edit> {
 
   Moment moment = Moment();
   List<String> alum = [];
+
+  bool showToolBar = false;
 
   @override
   void initState() {
@@ -50,6 +54,13 @@ class _EditState extends State<Edit> {
       // 编辑
       fetchMoment();
     }
+
+    /*KeyboardVisibilityNotification().addNewListener(onChange: (bool value) {
+      print(value);
+      setState(() {
+        showToolBar = value;
+      });
+    });*/
   }
 
   void fetchMoment() async {
@@ -99,132 +110,136 @@ class _EditState extends State<Edit> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: _onWillPop,
-        child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(moment.cid == null ? "记录瞬间" : "编辑瞬间"),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.check),
-                onPressed: publishMoment,
-              ),
-            ],
-          ),
-          body: ListView(
-            children: <Widget>[
-              Alum(
-                img: alum,
-                emptyPlaceholder: Center(
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.photo_camera,
-                      size: 40,
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(moment.cid == null ? "记录瞬间" : "编辑瞬间"),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.check),
+              onPressed: publishMoment,
+            ),
+          ],
+        ),
+        body: Stack(
+          children: <Widget>[
+            ListView(
+              children: <Widget>[
+                Alum(
+                  img: alum,
+                  emptyPlaceholder: Center(
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.photo_camera,
+                        size: 40,
+                      ),
+                      color: Theme.of(context).buttonColor,
+                      onPressed: showSelectImageMethod,
                     ),
-                    color: Theme.of(context).buttonColor,
-                    onPressed: _getImageFromGallery,
                   ),
                 ),
-                onTap: (int index) {
-                  //_removeImageByIndex(index);
-                },
-              ),
-              Container(
-                margin: EdgeInsets.all(20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.calendar_today,
-                          size: 20,
-//                      color: Theme.of(context).textTheme.display3.color,
-                        ),
-                        Text(
-                          moment.cid == null
-                              ? '  ${Date.getDateFormatYMD()}'
-                              : '  ${Date.getDateFormatYMD(ms: moment.created)}',
-                          style: TextStyle(fontSize: 14),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.tag_faces),
-                          color: moment.face != null
-                              ? Theme.of(context).accentColor
-                              : Colors.grey,
-                          onPressed: buildEmojioDialog,
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.brightness_high),
-                          color: moment.weather != null
-                              ? Theme.of(context).accentColor
-                              : Colors.grey,
-                          onPressed: buildWeatherDialog,
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.loyalty),
-                          color: moment.event.length > 0
-                              ? Theme.of(context).accentColor
-                              : Colors.grey,
-                          onPressed: buildMomentEventDialog,
-                        ),
-                        new IconButton(
-                          icon: Icon(Icons.photo),
-                          color: alum.length > 0
-                              ? Theme.of(context).accentColor
-                              : Colors.grey,
-                          onPressed: _getImageFromGallery,
-                        ),
+                Container(
+                  margin: EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.calendar_today,
+                            size: 20,
+                            color: Theme.of(context).textTheme.display3.color,
+                          ),
+                          Text(
+                            moment.cid == null
+                                ? '  ${Date.getDateFormatYMD()}'
+                                : '  ${Date.getDateFormatYMD(ms: moment.created)}',
+                            style: TextStyle(
+                                fontSize: 14,
+                                color:
+                                    Theme.of(context).textTheme.display3.color),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.tag_faces),
+                            color: moment.face != null
+                                ? Theme.of(context).accentColor
+                                : Colors.grey,
+                            onPressed: buildEmojioDialog,
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.brightness_high),
+                            color: moment.weather != null
+                                ? Theme.of(context).accentColor
+                                : Colors.grey,
+                            onPressed: buildWeatherDialog,
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.loyalty),
+                            color: moment.event.length > 0
+                                ? Theme.of(context).accentColor
+                                : Colors.grey,
+                            onPressed: buildMomentEventDialog,
+                          ),
+                          new IconButton(
+                            icon: Icon(Icons.photo),
+                            color: alum.length > 0
+                                ? Theme.of(context).accentColor
+                                : Colors.grey,
+                            onPressed: showSelectImageMethod,
+                          ),
 //                    IconButton(
 //                      icon: Icon(Icons.movie),
 //                      color: Theme.of(context).accentColor,
 //                      onPressed: () {},
 //                    ),
-                      ],
-                    )
-                  ],
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Form(
-                key: momentKey,
-                autovalidate: true,
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  child: Column(
-                    children: <Widget>[
-                      new TextFormField(
-                        style: Theme.of(context)
-                            .textTheme
-                            .title
-                            .copyWith(fontWeight: FontWeight.normal),
-                        controller: _titleController,
-                        textInputAction: TextInputAction.done,
-                        decoration: InputDecoration(
-                          hintText: '标题',
-                          suffixText: '标题',
+                Form(
+                  key: momentKey,
+                  autovalidate: true,
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    child: Column(
+                      children: <Widget>[
+                        new TextFormField(
+                          style: Theme.of(context)
+                              .textTheme
+                              .title
+                              .copyWith(fontWeight: FontWeight.normal),
+                          controller: _titleController,
+                          textInputAction: TextInputAction.done,
+                          decoration: InputDecoration(
+                            hintText: '标题',
+                            suffixText: '标题',
+                          ),
+                          onChanged: (text) {
+                            setState(() {
+                              moment.title = text;
+                            });
+                          },
+                          onSaved: (val) => {},
+                          validator: (val) {
+                            return val.trim().isEmpty
+                                ? "好像什么都没写呢 ,,ԾㅂԾ,,"
+                                : null;
+                          },
                         ),
-                        onChanged: (text) {
-                          setState(() {
-                            moment.title = text;
-                          });
-                        },
-                        onSaved: (val) => {},
-                        validator: (val) {
-                          return val.trim().isEmpty ? "好像什么都没写呢 ,,ԾㅂԾ,," : null;
-                        },
-                      ),
-                      GestureDetector(
-                        child: Container(
+                        Container(
                           child: new TextFormField(
                             controller: _textController,
                             style: Theme.of(context).textTheme.body2.copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
-                                height: 1.8),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                  height: 1.8,
+                                ),
                             maxLines: 13,
                             maxLength: 10000,
                             decoration: InputDecoration(
@@ -242,14 +257,51 @@ class _EditState extends State<Edit> {
                             },
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              )
-            ],
-          ),
-        ));
+              ],
+            ),
+            /*if (showToolBar) //todo
+                  Positioned(
+                    bottom: 0.0,
+                    child: Container(
+                      color: Theme.of(context).backgroundColor,
+                      width: MediaQuery.of(context).size.width,
+                      height: 30,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: <Widget>[
+                          SizedBox(
+                            width: 45,
+                            child: FlatButton(
+                              padding: EdgeInsets.all(0),
+                              child: Text(
+                                '缩进',
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).textTheme.caption.color,
+                                ),
+                              ),
+                              onPressed: () {
+                                _textController.text += '    ';
+                                _textController.selection =
+                                    TextSelection.fromPosition(TextPosition(
+                                  affinity: TextAffinity.downstream,
+                                  offset: _textController.text.length,
+                                ));
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )*/
+          ],
+        ),
+      ),
+    );
   }
 
   Future<bool> _onWillPop() {
@@ -276,8 +328,39 @@ class _EditState extends State<Edit> {
     return Future.value(true);
   }
 
-  Future<void> _getImageFromGallery() async {
-    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+  showSelectImageMethod() {
+    showDialog(
+        context: context,
+        builder: (_) {
+          return SimpleDialog(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  IconButton(
+                      icon: Icon(Icons.camera_alt),
+                      tooltip: '拍照',
+                      onPressed: () {
+                        _getImageFrom(ImageSource.camera);
+                        Navigator.of(context).pop();
+                      }),
+                  IconButton(
+                    icon: Icon(Icons.photo_library),
+                    tooltip: '相册选取',
+                    onPressed: () {
+                      _getImageFrom(ImageSource.gallery);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              )
+            ],
+          );
+        });
+  }
+
+  Future<void> _getImageFrom(ImageSource source) async {
+    File image = await ImagePicker.pickImage(source: source);
 //    await FilePicker.getMultiFile(type: FileType.IMAGE); //todo copy file to app data direct
 
     print('-----${image.path}----');
@@ -289,13 +372,15 @@ class _EditState extends State<Edit> {
     }
   }
 
-  /* todo
-  Future<void> _removeImageByIndex(int index) async {
+/*  Future<void> _removeImageByIndex(int index) async {
+    final filePath = alum[index];
+    File(filePath).delete();
+
     setState(() {
-      _img.removeRange(index, index + 1);
+      alum.removeRange(index, index + 1);
     });
   }
-  */
+ */
 
   void buildEmojioDialog() async {
     final List iconList = Constants.face;
@@ -381,43 +466,6 @@ class _EditState extends State<Edit> {
   }
 
   void buildMomentEventDialog() {
-    //todo 新增对应表
-    /*showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          contentPadding: EdgeInsets.symmetric(horizontal: 15),
-          title: Text('关键词：'),
-          children: <Widget>[
-            new TextField(
-              controller: TextEditingController.fromValue(
-                  TextEditingValue(text: moment.event)),
-              textAlignVertical: TextAlignVertical.center,
-              decoration: InputDecoration(hintText: '如：图书馆/玩新游,
-              onChanged: (t) {
-                setState(() {
-                  moment.event = t;
-                });
-              },
-            ),
-            Row(
-              children: <Widget>[],
-            ),
-            FlatButton(
-              child: Text(
-                '确定',
-                style: TextStyle(color: Theme.of(context).primaryColor),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );*/
-
     showDialog(
       context: context,
       barrierDismissible: true,

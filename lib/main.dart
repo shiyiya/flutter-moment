@@ -52,7 +52,7 @@ void main() async {
                 tooltip: '我是 Future<Feature> !',
                 onPressed: () {}, //todo
               )
-            ], // todo restart app
+            ],
           ),
         ),
       );
@@ -99,14 +99,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/**
- * - 主题强调色
- * - 扫描识字
- * - 剪切板工具
- * - 开屏页
- * - 抽屉修改
- */
-
 /*
  // template
 
@@ -128,6 +120,9 @@ class _CCCState extends State<CCC> {
  */
 
 /*
+
+name:CY
+pwd:CY1215
 
 生成密钥：
 keytool -genkey -v -keystore key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias key

@@ -147,74 +147,67 @@ class _ViewPageState extends State<ViewPage> {
 
   Widget buildMetaCard() {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height / 10,
-        color: Theme.of(context).backgroundColor,
-        child: Flex(
-            direction: Axis.horizontal,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      color: Theme.of(context).cardColor,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Row(children: <Widget>[
-                Icon(
-                  Constants.face[Face.getIndexByNum(moment.face)],
-                  size: 45,
-                  color: Theme.of(context).accentColor,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          "${Date.getWeekByMS(ms: moment.created)} | ",
-                          style: Theme.of(context)
-                              .textTheme
-                              .title
-                              .copyWith(fontWeight: FontWeight.normal),
-                        ),
-                        Icon(
-                          Constants.weather[moment.weather],
-                          size: 20,
-                        )
-                      ],
-                    ),
-                    Text(
-                      Date.getDateFormatMDHM(ms: moment.created),
-                      style: Theme.of(context).textTheme.body1,
-                    ),
-                  ],
-                )
-              ]),
-              Padding(
-                padding: EdgeInsets.only(right: 15, top: 15, bottom: 15),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Text(
-                      moment.event,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    Text(
-                      moment.text.length.toString() + ' 字',
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context).textTheme.display3.color),
-                    ),
-                  ],
-                ),
+              Text(
+                '捕捉于${Date.getWeekByMS(ms: moment.created)}',
+                style: Theme.of(context).textTheme.caption,
               ),
-            ]));
+              SizedBox(height: 5),
+              Text(
+                '${Date.getDateFormatYMD(ms: moment.created, prefix: '-')} ${Date.getDateFormatHMByMS(ms: moment.created)}',
+                style: Theme.of(context).textTheme.caption,
+              ),
+            ],
+          ),
+          Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Icon(
+                    Constants.face[Face.getIndexByNum(moment.face)],
+                    color: Theme.of(context).textTheme.caption.color,
+                    size: 20,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Icon(
+                    Constants.weather[moment.weather],
+                    color: Theme.of(context).textTheme.caption.color,
+                    size: 20,
+                  )
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    moment.event,
+                  ),
+                  Text(
+                    moment.text.length.toString() + ' 字',
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                ],
+              )
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buildContent() {
     return Container(
+//      color: Theme.of(context).backgroundColor,
       padding: EdgeInsets.all(10),
-      margin: EdgeInsets.only(top: 10),
+      margin: EdgeInsets.only(bottom: 100),
       child: Text(
         moment.text,
         style: Theme.of(context)
@@ -248,8 +241,8 @@ class _ViewPageState extends State<ViewPage> {
             shadows: <Shadow>[
               Shadow(
                 color: Theme.of(context).accentColor,
-                offset: Offset(2, 2),
-                blurRadius: 3,
+                offset: Offset(0, 0),
+                blurRadius: 10,
               )
             ],
           ),
