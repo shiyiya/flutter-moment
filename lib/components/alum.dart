@@ -59,35 +59,6 @@ class _AlumState extends State<Alum> {
                 return Container(
                   child: imgFile[index],
                 );
-                //          mainAxisAlignment: MainAxisAlignment.center,
-//          children: <Widget>[
-//            Image.file(_img[index]),
-//            Align(
-//              child: IconButton(
-//                icon: Icon(Icons.cancel),
-//                onPressed: () {
-//                  _removeImageByIndex(index);
-//                },
-//              ),
-//              alignment: Alignment.topRight,
-//            )
-//          ],
-
-//        Container(child: Align(
-//          child: IconButton(
-//            icon: Icon(Icons.cancel),
-//            onPressed: () {
-//              _removeImageByIndex(index);
-//            },
-//          ),
-//          alignment: Alignment.topRight,
-//        ),
-//          decoration: BoxDecoration(
-//            image: DecorationImage(
-//              image: ExactAssetImage(_img[index].path),
-//              fit: BoxFit.fill,
-//            ),
-//          ));
               },
               pagination: SwiperPagination(
                   builder: DotSwiperPaginationBuilder(size: 6, activeSize: 6)),

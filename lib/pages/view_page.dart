@@ -109,16 +109,14 @@ class _ViewPageState extends State<ViewPage> {
           ? null
           : AppBar(
               title: Text(moment.title),
+              titleSpacing: -5,
               actions: buildMenu(),
               elevation: 0.0,
             ),
       body: hasLoaded
           ? status
               ? img.length > 0
-                  ? /*RepaintBoundary(
-                      key: _repaintKey,
-                      child:*/
-                  CustomScrollView(
+                  ? CustomScrollView(
                       slivers: <Widget>[
                         buildWithAlumBar(img),
                         SliverList(
@@ -136,7 +134,6 @@ class _ViewPageState extends State<ViewPage> {
                   //     key: _repaintKey,
                   //     child:
                   ListView(
-//                        color: Theme.of(context).scaffoldBackgroundColor,
                       children: <Widget>[buildMetaCard(), buildContent()],
                     )
               // )
@@ -189,6 +186,7 @@ class _ViewPageState extends State<ViewPage> {
                 children: <Widget>[
                   Text(
                     moment.event,
+                    style: Theme.of(context).textTheme.caption,
                   ),
                   Text(
                     moment.text.length.toString() + ' 字',
