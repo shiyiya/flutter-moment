@@ -18,7 +18,6 @@ import 'package:moment/utils/date.dart';
 import 'package:moment/pages/edit.dart';
 import 'package:moment/type/moment.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:share/share.dart';
 
 import 'dart:ui' as ui show ImageByteFormat, Image;
 
@@ -358,8 +357,9 @@ class _ViewPageState extends State<ViewPage> {
   }
 
   share2Text() {
-    Share.share(
-        '${moment.title} \r\n ${Date.getDateFormatMDHM(ms: moment.created)} \r\n ${moment.text}');
+    ShareExtend.share(
+        '${moment.title} \r\n ${Date.getDateFormatMDHM(ms: moment.created)} \r\n ${moment.text}',
+        'text');
   }
 
   share2Image() async {

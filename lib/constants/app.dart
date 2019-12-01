@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:share/share.dart';
+import 'package:share_extend/share_extend.dart';
 import 'dart:math';
 
 class Constants {
@@ -24,10 +24,12 @@ class Constants {
     DrawTabItem(icon: Icon(Icons.photo), text: Text("印相"), path: "/alum"),
     DrawTabItem(icon: Icon(Icons.settings), text: Text("设置"), path: "/setting"),
     DrawTabItem(
-        icon: Icon(Icons.share),
-        text: Text("分享"),
-        f: () => Share.share(
-            '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/com.cy.moment')),
+      icon: Icon(Icons.share),
+      text: Text("分享"),
+      f: () => ShareExtend.share(
+          '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/com.cy.moment',
+          'text'),
+    ),
   ];
 
   static String weatherApi =

@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
 import 'package:moment/components/card_with_title.dart';
-import 'package:share/share.dart';
 import 'package:moment/utils/launcher.dart';
 import 'package:package_info/package_info.dart';
+import 'package:share_extend/share_extend.dart';
 
 class AboutPage extends StatefulWidget {
   @override
@@ -64,8 +64,9 @@ class _AboutPageState extends State<AboutPage> {
               ListTile(
                 leading: Icon(Icons.share),
                 title: Text('分享'),
-                onTap: () => Share.share(
-                    '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/$packageName'),
+                onTap: () => ShareExtend.share(
+                    '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/$packageName',
+                    'text'),
               ),
               ListTile(
                 leading: Icon(Icons.star),

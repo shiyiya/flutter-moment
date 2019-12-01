@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:moment/provides/theme.dart';
 import 'package:moment/type/moment.dart';
 import 'package:provider/provider.dart';
-import 'package:share/share.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/service/event_bus.dart';
 import 'package:moment/utils/launcher.dart';
+import 'package:share_extend/share_extend.dart';
 
 class MePage extends StatefulWidget {
   @override
@@ -213,8 +213,11 @@ class _MePageState extends State<MePage> {
                   title: Text('分享'),
                   leading: Icon(Icons.share),
                   trailing: Icon(Icons.chevron_right),
-                  onTap: () => Share.share(
-                      '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/com.cy.moment')),
+                  onTap: () {
+                    ShareExtend.share(
+                        '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/com.cy.moment',
+                        'text');
+                  }),
             )
           ],
         ),
