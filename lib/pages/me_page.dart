@@ -199,7 +199,7 @@ class _MePageState extends State<MePage> {
               child: ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: 30),
                 leading: Icon(Icons.mode_comment),
-                title: Text('反馈'),
+                title: Text('反馈 - 酷安'),
                 trailing: Icon(Icons.chevron_right),
                 onTap: () {
                   launchURL('market://details?id=com.cy.moment');
