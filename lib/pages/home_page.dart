@@ -217,8 +217,8 @@ class _HomePageState extends State<HomePage> {
                             size: 12,
                           ),
                           Text(
-                            '  ' +
-                                Date.getDateFormatYMD(
+                            ' ' +
+                                Date.getDateFormatMD(
                                     ms: _moments[index].created),
                             style: TextStyle(
                                 fontSize: 10,
@@ -293,7 +293,7 @@ class _HomePageState extends State<HomePage> {
                 selected: face == null ? null : face ~/ 20 - 1,
                 onTap: (i) {
                   setState(() {
-                    if (i == face) {
+                    if ((i + 1) * 20 == face) {
                       face = null;
                     } else {
                       face = (i + 1) * 20;
@@ -439,11 +439,13 @@ class _HomePageState extends State<HomePage> {
 
   _loadMomentByFilterWithPage(int page) async {
     List<Filter> where = [
-      Filter('face > ?', (face ?? 20) - 20),
+      Filter('face > ?', face == null ? null : (face ?? 20) - 20),
       Filter('face <= ?', face),
       Filter('weather = ?', weather),
     ];
+
     where.retainWhere((f) => f.v != null);
+    if (where.length < 1 && widget.event == null) return;
 
     String whereColumns = '';
     where.forEach((w) => whereColumns += '${w.k} AND ');

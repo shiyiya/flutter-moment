@@ -522,13 +522,14 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
     //编辑
     if (moment.cid != null) {
       final u = await currDB.rawUpdate(
-          'UPDATE moment_content SET created = ?, title = ?, text = ?,  face = ?, event = ?, alum = ?  WHERE cid = ?',
+          'UPDATE moment_content SET created = ?, title = ?, text = ?,  face = ?, event = ?, weather = ?, alum = ?  WHERE cid = ?',
           [
             moment.created,
             moment.title,
             moment.text,
             moment.face,
             moment.event,
+            moment.weather,
             _alum,
             moment.cid,
           ]);
@@ -556,6 +557,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
       'title': moment.title,
       'text': moment.text,
       'face': moment.face,
+      'weather': moment.weather,
       'event': moment.event,
       'created': moment.created,
       'alum': _alum

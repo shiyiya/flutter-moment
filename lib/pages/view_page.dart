@@ -231,10 +231,6 @@ class _ViewPageState extends State<ViewPage> {
         background: Container(
           child: Alum(
             img: img,
-            emptyPlaceholder: Image.asset(
-              'lib/asserts/images/alum_placeholder.jpg',
-              fit: BoxFit.cover,
-            ),
             onTap: (int index) {
               _showImgView(img, index);
             },
@@ -276,7 +272,7 @@ class _ViewPageState extends State<ViewPage> {
         },
       ),
       PopupMenuButton(
-        icon: Icon(Icons.more_horiz),
+        icon: Icon(Icons.share),
         offset: Offset(100, 100),
         itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
           const PopupMenuItem<String>(
@@ -287,21 +283,33 @@ class _ViewPageState extends State<ViewPage> {
 //            value: "2",
 //            child: Text('分享为图片'),
 //          ),
+        ],
+        tooltip: "share",
+        onSelected: (String result) {
+          switch (result) {
+            case "1":
+              share2Text();
+              break;
+//            case "2":
+//              share2Image();
+              break;
+          }
+        },
+      ),
+      PopupMenuButton(
+        //todo 格式化内容
+        icon: Icon(Icons.more_horiz),
+        offset: Offset(100, 100),
+        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
           const PopupMenuItem<String>(
-            value: "2",
+            value: "0",
             child: Text('删除该条瞬间'),
           ),
         ],
         tooltip: "more",
         onSelected: (String result) {
           switch (result) {
-            case "1":
-              shareText();
-              break;
-//            case "2":
-//              share2Image();
-              break;
-            case "3":
+            case "0":
               _delMoment();
               break;
           }
@@ -349,7 +357,7 @@ class _ViewPageState extends State<ViewPage> {
         });
   }
 
-  shareText() {
+  share2Text() {
     Share.share(
         '${moment.title} \r\n ${Date.getDateFormatMDHM(ms: moment.created)} \r\n ${moment.text}');
   }

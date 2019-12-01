@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/service/event_bus.dart';
+import 'package:moment/utils/launcher.dart';
 
 class MePage extends StatefulWidget {
   @override
@@ -21,7 +22,6 @@ class _MePageState extends State<MePage> {
     _queryAllMomentInfo();
 
     eventBus.on<HomeRefreshEvent>().listen((event) {
-
       if (event.needRefresh) {
         _queryAllMomentInfo();
       }
@@ -192,6 +192,18 @@ class _MePageState extends State<MePage> {
                 leading: Icon(Icons.settings),
                 trailing: Icon(Icons.chevron_right),
                 onTap: () => _to('/setting'),
+              ),
+            ),
+            Card(
+              elevation: 0,
+              child: ListTile(
+                contentPadding: EdgeInsets.symmetric(horizontal: 30),
+                leading: Icon(Icons.mode_comment),
+                title: Text('反馈'),
+                trailing: Icon(Icons.chevron_right),
+                onTap: () {
+                  launchURL('market://details?id=com.cy.moment');
+                },
               ),
             ),
             Card(
