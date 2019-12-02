@@ -1,3 +1,4 @@
+import 'package:cuberto_bottom_bar/cuberto_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:moment/pages/home_page.dart';
 import 'package:moment/pages/me_page.dart';
@@ -12,40 +13,28 @@ class _AppState extends State<App> {
   int currentPageIndex = 0;
   PageController pageController;
 
-  final List<Widget> switchPages = [HomePage(), Container(), MePage()];
+  final List<Widget> switchPages = [HomePage(), MePage()];
 
-  final bottomBarListItem = [
-    _TabBarItem('首页', Icon(Icons.shutter_speed), Icon(Icons.shutter_speed)),
+  final tabItems = [
     _TabBarItem(
-      '新建',
-      Icon(Icons.control_point, size: 35),
-      Icon(Icons.control_point, size: 35),
+      '首页',
+      Icons.home,
     ),
     _TabBarItem(
       '管理',
-      Icon(Icons.bubble_chart, size: 30), //避免图标差异导致大小不协调
-      Icon(Icons.bubble_chart, size: 30),
+      Icons.person_pin,
     )
   ];
 
-  List<BottomNavigationBarItem> bottomBarList;
+  List<TabData> tabs = List();
 
   @override
   void initState() {
     super.initState();
     pageController = PageController(initialPage: currentPageIndex);
 
-    bottomBarList = bottomBarListItem
-        .map((item) => BottomNavigationBarItem(
-            icon: item.normalIcon,
-
-            // https://github.com/flutter/flutter/issues/17099
-            // https://github.com/flutter/flutter/pull/22804
-            // https://github.com/flutter/flutter/issues/22882
-
-            title: SizedBox.shrink(),
-            /* title: Text(item.name, style: TextStyle(fontSize: 12))*/
-            activeIcon: item.activeIcon))
+    tabs = tabItems
+        .map((tab) => TabData(iconData: tab.iconData, title: tab.title))
         .toList();
   }
 
@@ -69,52 +58,47 @@ class _AppState extends State<App> {
         children: <Widget>[
           _getPageWidget(0),
           _getPageWidget(1),
-          _getPageWidget(2),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: bottomBarList,
-        iconSize: 25,
-        currentIndex: currentPageIndex,
-        type: BottomNavigationBarType.fixed,
-        onTap: (int index) {
+      bottomNavigationBar: CubertoBottomBar(
+        tabStyle: CubertoTabStyle.STYLE_FADED_BACKGROUND,
+        initialSelection: 0,
+        tabs: tabs,
+        onTabChangedListener: (position, title, color) {
           setState(() {
-            if (index == 1) {
-              Navigator.pushNamed(context, "/edit");
-              return;
-            }
-            currentPageIndex = index;
+            currentPageIndex = position;
           });
         },
       ),
     );
   }
 
-  Widget _buildAppBar() {
-    return new AppBar(
-      title: new Text(
-        bottomBarListItem[currentPageIndex].name,
-        style: new TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500),
-      ),
-//      elevation: 0.0,
-      brightness: Brightness.light,
-      centerTitle: false,
-      actions: [
-        new InkWell(
-          child: new Container(
-            width: 60.0,
-            child: Icon(Icons.search),
-          ),
-          onTap: () => Navigator.of(context).pushNamed('/search'),
-        ),
-      ],
-    );
-  }
+//  Widget _buildAppBar() {
+//    return new AppBar(
+//      title: new Text(
+//        bottomBarListItem[currentPageIndex].name,
+//        style: new TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500),
+//      ),
+////      elevation: 0.0,
+//      brightness: Brightness.light,
+//      centerTitle: false,
+//      actions: [
+//        new InkWell(
+//          child: new Container(
+//            width: 60.0,
+//            child: Icon(Icons.search),
+//          ),
+//          onTap: () => Navigator.of(context).pushNamed('/search'),
+//        ),
+//      ],
+//    );
+//  }
 }
 
 class _TabBarItem {
-  String name;
-  Widget activeIcon, normalIcon;
+  String title;
+  IconData iconData;
+  Color tabColor;
 
-  _TabBarItem(this.name, this.activeIcon, this.normalIcon);
+  _TabBarItem(this.title, this.iconData, {this.tabColor});
 }

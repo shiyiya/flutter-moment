@@ -73,12 +73,12 @@ class _HomePageState extends State<HomePage> {
     int len = _moments?.length ?? 0;
 
     return Scaffold(
-//      floatingActionButton: ModalRoute.of(context).isFirst
-//          ? FloatingActionButton(
-//              onPressed: () => Navigator.pushNamed(context, "/edit"),
-//              tooltip: "记录瞬间",
-//              child: Icon(Icons.add))
-//          : null,
+      floatingActionButton: ModalRoute.of(context).isFirst
+          ? FloatingActionButton(
+              onPressed: () => Navigator.pushNamed(context, "/edit"),
+              tooltip: "记录瞬间",
+              child: Icon(Icons.add))
+          : null,
       drawer: ModalRoute.of(context).isFirst ? DrawerWidget() : null,
       appBar: AppBar(
         elevation: 1.0,
