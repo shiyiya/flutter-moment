@@ -205,7 +205,7 @@ class _HomePageState extends State<HomePage> {
                         width: 1, color: Color.fromRGBO(128, 128, 128, 0.1)),
                   ),
                 ),
-                padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -226,37 +226,27 @@ class _HomePageState extends State<HomePage> {
                                     Theme.of(context).textTheme.display3.color,
                                 textBaseline: TextBaseline.alphabetic),
                           ),
-//                          Icon(
-//                            Icons.location_on,
-//                            color: Theme.of(context).textTheme.display3.color,
-//                            size: 18,
-//                          ),
-//                          Text(
-//                            ' 自己的世界',
-//                            style: TextStyle(
-//                              fontSize: 10,
-//                              letterSpacing: 1,
-//                              color: Theme.of(context).textTheme.display3.color,
-//                            ),
-//                          ),
                         ],
                       ),
                       Row(
-                        children: _moments[index].event.length > 0
-                            ? [
-                                Text(
-                                  ' ${_moments[index].event}',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    letterSpacing: 1,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .display3
-                                        .color,
-                                  ),
-                                ),
-                              ]
-                            : [],
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Icon(
+                            Constants.weather[_moments[index].weather],
+                            color: Theme.of(context).textTheme.display3.color,
+                            size: 12,
+                          ),
+                          if (_moments[index].event.length > 0)
+                            Text(
+                              ' ${_moments[index].event}',
+                              style: TextStyle(
+                                fontSize: 10,
+                                letterSpacing: 1,
+                                color:
+                                    Theme.of(context).textTheme.display3.color,
+                              ),
+                            ),
+                        ],
                       ),
                     ]),
               ))
