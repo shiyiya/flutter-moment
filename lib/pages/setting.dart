@@ -14,6 +14,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
 import "package:sqflite/sqflite.dart";
+import 'package:flutter_colorpicker/material_picker.dart';
 
 class Setting extends StatefulWidget {
   @override
@@ -39,6 +40,24 @@ class _SettingState extends State<Setting> {
                     color: Theme.of(context).accentColor),
                 onTap: _buildThemeSwitchDialog,
               ),
+              ListTile(
+                title: Text('选择主色调'),
+                leading: Icon(Icons.color_lens),
+                trailing: Icon(Icons.chevron_right,
+                    color: Theme.of(context).accentColor),
+                onTap: _showColorPicker,
+              ),
+//              ListTile(
+//                title: Text('自动切换夜间模式'),
+//                leading: Icon(Icons.brightness_2),
+//                trailing: Switch(
+//                  value: Provider.of<ThemeProvider>(context).isNightTheme,
+//                  onChanged: (bool val) {
+//                    Provider.of<ThemeProvider>(context).switchNightTheme(val);
+//                  },
+//                ),
+//                onTap: _buildThemeSwitchDialog,
+//              ),
             ],
           ),
           CardWithTitle(
@@ -90,18 +109,12 @@ class _SettingState extends State<Setting> {
                 RadioListTile(
                   groupValue: theme.value,
                   value: 0,
-                  title: Text('Teal'),
-                  onChanged: (i) => setTheme(theme, i),
-                ),
-                RadioListTile(
-                  groupValue: theme.value,
-                  value: 1,
                   title: Text('Light'),
                   onChanged: (i) => setTheme(theme, i),
                 ),
                 RadioListTile(
                   groupValue: theme.value,
-                  value: 2,
+                  value: 1,
                   title: Text('Dark'),
                   onChanged: (i) => setTheme(theme, i),
                 )
@@ -109,9 +122,60 @@ class _SettingState extends State<Setting> {
             ));
   }
 
-  setTheme(ThemeProvider theme, int i) async {
+  setTheme(ThemeProvider theme, int i) {
     theme.setTheme(i);
     Navigator.of(context).pop();
+  }
+
+  void _showColorPicker() {
+    showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            elevation: 0.0,
+            title: Text('选择'),
+            content: SingleChildScrollView(
+              child: MaterialPicker(
+                pickerColor: Theme.of(context).primaryColor,
+                onColorChanged: (color) {
+                  Provider.of<ThemeProvider>(context)
+                      .setThemePrimaryColor(color);
+                },
+                enableLabel: true,
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  '取消',
+                  style: TextStyle(color: Colors.redAccent),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text(
+                  '默认',
+                  style: TextStyle(color: Colors.redAccent),
+                ),
+                onPressed: () {
+                  Provider.of<ThemeProvider>(context)
+                      .setThemePrimaryColor(Colors.teal);
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('确认'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   _import() async {

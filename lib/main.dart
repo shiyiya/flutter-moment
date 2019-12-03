@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import "package:flutter/material.dart";
 import 'package:moment/app.dart';
 import 'package:moment/pages/about_page.dart';
+import 'package:moment/pages/edit_flage_page.dart';
 import "package:moment/pages/home_page.dart";
 import "package:moment/pages/edit.dart";
 import 'package:moment/pages/statistics_page.dart';
@@ -14,26 +15,21 @@ import 'package:moment/pages/search_page.dart';
 import 'package:moment/utils/route.dart';
 import 'package:provider/provider.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:moment/provides/theme.dart';
 import 'package:moment/constants/app.dart';
-
-Future<int> getTheme() async {
-  SharedPreferences sp = await SharedPreferences.getInstance();
-  int theme = sp.getInt("theme");
-  return null == theme ? 0 : theme;
-}
 
 void main() async {
   Provider.debugCheckInvalidValueType = null;
 
   int theme = await getTheme();
-  var themeProvide = ThemeProvider(theme);
+  Color primaryColor = await getThemePrimaryColor();
+  var themeProvide = ThemeProvider(theme, primaryColor);
 
   if (Platform.isAndroid) {
     SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Constants.theme[theme].backgroundColor);
+        systemNavigationBarColor:
+            Constants.theme[theme](color: primaryColor).backgroundColor);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
 
@@ -75,11 +71,14 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final _theme = Provider.of<ThemeProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
+    final themeFn theme =
+        Constants.theme[_themeProvider.isNightTheme ? 1 : _themeProvider.theme];
+
     return MaterialApp(
         title: Constants.appName,
         debugShowCheckedModeBanner: false,
-        theme: Constants.theme[_theme.isNightTheme ? 2 : _theme.theme],
+        theme: theme(color: _themeProvider.primaryColor),
         home: App(),
 //        initialRoute: '/home',
         routes: {
@@ -91,33 +90,14 @@ class MyApp extends StatelessWidget {
           "/alum": (_) => AlumPage(),
           "/setting": (_) => Setting(),
           "/about": (_) => AboutPage(),
-          "/statistics": (_) => StatisticsPage()
+          "/statistics": (_) => StatisticsPage(),
+          "/new_flag": (_) => EditFlagPage()
         },
         onGenerateRoute: (setting) {
           return MRouter.fadeIn(HomePage());
         });
   }
 }
-
-/*
- // template
-
-
-import "package:flutter/material.dart";
-
-class CCC extends StatefulWidget {
-  @override
-  _CCCState createState() => _CCCState();
-}
-
-class _CCCState extends State<CCC> {
-  @override
-  Widget build(BuildContext context) {
-    return null;
-  }
-}
-
- */
 
 /*
 

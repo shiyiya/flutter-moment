@@ -1,3 +1,5 @@
+// import 'dart:io';
+// import 'package:android_intent/android_intent.dart';
 import 'package:cuberto_bottom_bar/cuberto_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:moment/pages/home_page.dart';
@@ -49,9 +51,25 @@ class _AppState extends State<App> {
     );
   }
 
+  // Future<bool> _runAppBackground() async {
+  //   if (Platform.isAndroid) {
+  //     AndroidIntent intent = AndroidIntent(
+  //       action: 'android.intent.action.MAIN',
+  //       category: "android.intent.category.HOME",
+  //     );
+  //     await intent.launch();
+  //   }
+
+  //   return Future.value(false);
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return
+        //WillPopScope(
+        //   onWillPop: _runAppBackground,
+        //   child:
+        new Scaffold(
 //      appBar: currentPageIndex == 0 ? null : _buildAppBar(),
 //      drawer: currentPageIndex == 0 ? null : DrawerWidget(),
       body: Stack(
@@ -69,6 +87,7 @@ class _AppState extends State<App> {
             currentPageIndex = position;
           });
         },
+        // ),
       ),
     );
   }
