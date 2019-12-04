@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final themeFn theme =
-        Constants.theme[_themeProvider.isNightTheme ? 1 : _themeProvider.theme];
+        Constants.theme[_themeProvider.isNightTheme ? 2 : _themeProvider.theme];
 
     return MaterialApp(
         title: Constants.appName,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/components/card_with_title.dart';
 import 'package:moment/service/event_bus.dart';
 import 'package:path_provider/path_provider.dart';
@@ -34,14 +35,14 @@ class _SettingState extends State<Setting> {
             title: '外观',
             children: <Widget>[
               ListTile(
-                title: Text('选择主题'),
+                title: Text('主题'),
                 leading: Icon(Icons.format_color_fill),
                 trailing: Icon(Icons.chevron_right,
                     color: Theme.of(context).accentColor),
                 onTap: _buildThemeSwitchDialog,
               ),
               ListTile(
-                title: Text('选择主色调'),
+                title: Text('主题强调色'),
                 leading: Icon(Icons.color_lens),
                 trailing: Icon(Icons.chevron_right,
                     color: Theme.of(context).accentColor),
@@ -117,6 +118,12 @@ class _SettingState extends State<Setting> {
                   value: 1,
                   title: Text('Dark'),
                   onChanged: (i) => setTheme(theme, i),
+                ),
+                RadioListTile(
+                  groupValue: theme.value,
+                  value: 2,
+                  title: Text('夜间模式'),
+                  onChanged: (i) => setTheme(theme, i),
                 )
               ]),
             ));
@@ -140,8 +147,15 @@ class _SettingState extends State<Setting> {
               child: MaterialPicker(
                 pickerColor: Theme.of(context).primaryColor,
                 onColorChanged: (color) {
-                  Provider.of<ThemeProvider>(context)
-                      .setThemePrimaryColor(color);
+                  final themeProvider = Provider.of<ThemeProvider>(context);
+
+                  if (themeProvider.theme > 1) {
+                    Fluttertoast.showToast(msg: '自带主题无法切换强调色~');
+                    Navigator.of(context).pop();
+                  } else {
+                    Provider.of<ThemeProvider>(context)
+                        .setThemePrimaryColor(color);
+                  }
                 },
                 enableLabel: true,
               ),
@@ -162,8 +176,6 @@ class _SettingState extends State<Setting> {
                   style: TextStyle(color: Colors.redAccent),
                 ),
                 onPressed: () {
-                  Provider.of<ThemeProvider>(context)
-                      .setThemePrimaryColor(Colors.teal);
                   Navigator.of(context).pop();
                 },
               ),

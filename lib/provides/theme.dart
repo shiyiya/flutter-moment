@@ -13,7 +13,7 @@ class ThemeProvider with ChangeNotifier {
   Future<void> setTheme(int index) async {
     theme = index;
 
-    if (index == 1) {
+    if (index == 2) {
       isNightTheme = true;
     } else {
       isNightTheme = false;

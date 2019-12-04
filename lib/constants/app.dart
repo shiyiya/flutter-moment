@@ -10,6 +10,7 @@ class Constants {
   static String appDes = "记录美好瞬间";
   static String appSrc = "https://github.com/shiyiya/flutter-moment";
 
+  // https://api.flutter.dev/flutter/material/ThemeData-class.html
   static List<themeFn> theme = [
     ({Color color}) {
       return ThemeData(
@@ -17,6 +18,8 @@ class Constants {
         primaryColor: color,
         accentColor: color,
         backgroundColor: color?.withOpacity(0.7),
+        textSelectionColor: color?.withOpacity(0.5),
+        textSelectionHandleColor: color?.withOpacity(0.5),
       );
     },
     ({Color color}) {
@@ -25,7 +28,12 @@ class Constants {
         primaryColor: color,
         accentColor: color,
         backgroundColor: color?.withOpacity(0.7),
+        textSelectionColor: color?.withOpacity(0.5),
+        textSelectionHandleColor: color?.withOpacity(0.5),
       );
+    },
+    ({Color color}) {
+      return ThemeData.dark();
     }
   ];
 
