@@ -1,3 +1,5 @@
+const int MINUTE_MS = 1000 * 60;
+const int HOUR_MS = 1000 * 60 * 60;
 const int DAY_MS = 1000 * 60 * 60 * 24;
 const int WEEK_MS = DAY_MS * 7;
 const int MONTH_MS = DAY_MS * 30;
@@ -52,7 +54,7 @@ class Date {
     DateTime now = getDateTimeByMS(ms: ms);
     int y = now.year;
 
-    return "$y$prefix${getDateFormatMD(ms: ms,prefix: prefix)}";
+    return "$y$prefix${getDateFormatMD(ms: ms, prefix: prefix)}";
   }
 
   String getBeforeTimeByMS({int ms}) {
