@@ -165,14 +165,19 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                       Row(
                         children: <Widget>[
                           IconButton(
-                            icon: Icon(Icons.tag_faces),
+                            icon: Icon(moment.face != null
+                                ? Constants
+                                    .face[Face.getIndexByNum(moment.face)]
+                                : Icons.tag_faces),
                             color: moment.face != null
                                 ? Theme.of(context).accentColor
                                 : Colors.grey,
                             onPressed: buildEmojioDialog,
                           ),
                           IconButton(
-                            icon: Icon(Icons.brightness_high),
+                            icon: Icon(moment.weather != null
+                                ? Constants.weather[moment.weather]
+                                : Icons.brightness_high),
                             color: moment.weather != null
                                 ? Theme.of(context).accentColor
                                 : Colors.grey,
@@ -217,19 +222,12 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                           controller: _titleController,
                           textInputAction: TextInputAction.done,
                           decoration: InputDecoration(
-                            hintText: '标题',
-                            suffixText: '标题',
+                            hintText: '标题 (选填)',
                           ),
                           onChanged: (text) {
                             setState(() {
                               moment.title = text;
                             });
-                          },
-                          onSaved: (val) => {},
-                          validator: (val) {
-                            return val.trim().isEmpty
-                                ? "好像什么都没写呢 ,,ԾㅂԾ,,"
-                                : null;
                           },
                         ),
                         Container(
@@ -253,7 +251,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                               });
                             },
                             validator: (val) {
-                              return val.isEmpty ? "好像什么都没写呢 ,,ԾㅂԾ,," : null;
+                              return val.isEmpty ? "写点什么吧~ ,,ԾㅂԾ,," : null;
                             },
                           ),
                         ),
@@ -262,8 +260,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                   ),
                 ),
               ],
-            ),
-            /*if (showToolBar) //todo
+            ), /*if (showToolBar) //todo
                   Positioned(
                     bottom: 0.0,
                     child: Container(

@@ -5,6 +5,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/delivery_header.dart';
 import 'package:flutter_easyrefresh/material_footer.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:moment/components/icon_button_with_text.dart';
 import 'package:moment/components/row-icon-radio.dart';
 import 'package:moment/constants/app.dart';
 import 'package:moment/service/face.dart';
@@ -36,6 +37,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   EasyRefreshController _controller = EasyRefreshController();
 
+  double opacity = 0;
   int _page = 0;
   List<Moment> _moments = [];
 
@@ -174,12 +176,14 @@ class _HomePageState extends State<HomePage> {
                     size: 40,
                     color: Theme.of(context).accentColor,
                   ),
-                  title: Text(
-                    item.title,
-                    style: TextStyle(
-                      color: Theme.of(context).accentColor,
-                    ),
-                  ),
+                  title: item.title.length > 0
+                      ? Text(
+                          item.title,
+                          style: TextStyle(
+                            color: Theme.of(context).accentColor,
+                          ),
+                        )
+                      : null,
                   subtitle: Text(text.trim()),
                   trailing: firstImg != null
                       ? Container(
@@ -342,6 +346,40 @@ class _HomePageState extends State<HomePage> {
             ],
           );
         });
+  }
+
+  void _showNewsSwitch() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => Container(
+          height: MediaQuery.of(context).size.height / 4,
+          child: Padding(
+            padding: EdgeInsets.all(15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TextIconButton(
+                  icon: Icon(
+                    Icons.plus_one,
+                    color: Theme.of(context).backgroundColor,
+                    size: 36,
+                  ),
+                  text: '瞬 间',
+                  onTap: () => Navigator.popAndPushNamed(context, "/edit"),
+                ),
+                TextIconButton(
+                  icon: Icon(
+                    Icons.flag,
+                    color: Theme.of(context).backgroundColor,
+                    size: 36,
+                  ),
+                  text: '预 测',
+                  onTap: () => Navigator.popAndPushNamed(context, '/new_flag'),
+                ),
+              ],
+            ),
+          )),
+    );
   }
 
   void buildMomentCardDialog(int index) {

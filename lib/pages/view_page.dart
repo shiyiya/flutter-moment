@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:moment/service/event_bus.dart';
 import 'package:moment/service/face.dart';
 import "package:path/path.dart" as p;
 
@@ -322,7 +323,7 @@ class _ViewPageState extends State<ViewPage> {
       context: context,
       builder: (context) => new AlertDialog(
         title: new Text('提示'),
-        content: new Text('确定返回么？可能有未保存的内容哦'),
+        content: new Text('确定本条删除么？'),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -332,11 +333,12 @@ class _ViewPageState extends State<ViewPage> {
             onPressed: () async {
               bool delRes = await SQL.delMomentById(_id);
               if (delRes) {
-                Future.delayed(Duration(microseconds: 700), () {
-                  Navigator.pop(context);
+                eventBus.fire(HomeRefreshEvent(true));
+                Future.delayed(Duration(milliseconds: 400), () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 });
               }
-              Navigator.of(context).pop(true);
             },
             child: new Text('确定'),
           ),
