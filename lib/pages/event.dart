@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:moment/constants/app.dart';
-import 'package:moment/service/sqlite.dart';
 import 'package:moment/pages/home_page.dart';
+import 'package:moment/service/sqlite.dart';
 
 class EventPage extends StatefulWidget {
   @override

@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'dart:io' as prefix0;
-import 'package:platform/platform.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:archive/archive_io.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:platform/platform.dart';
 
 Platform _platform = const LocalPlatform();
 
@@ -31,8 +32,7 @@ class MPath {
   static encodeDirFile2Download(dirPath, outName) async {
     var encoder = ZipFileEncoder();
 
-    encoder.zipDirectory(
-        Directory(dirPath),
+    encoder.zipDirectory(Directory(dirPath),
         filename: (await getLocalDownloadPath()) + '/$outName');
   }
 }

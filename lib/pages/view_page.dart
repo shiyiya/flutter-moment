@@ -1,27 +1,23 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:moment/service/event_bus.dart';
-import 'package:moment/service/face.dart';
-import "package:path/path.dart" as p;
+import 'dart:ui' as ui show ImageByteFormat, Image;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:moment/components/gallery_photo_view.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-//import 'package:flutter_markdown/flutter_markdown.dart';
-
 import 'package:moment/components/alum.dart';
+import 'package:moment/components/gallery_photo_view.dart';
 import 'package:moment/constants/app.dart';
-import 'package:moment/sql/query.dart';
-import 'package:moment/utils/date.dart';
 import 'package:moment/pages/edit.dart';
+import 'package:moment/service/event_bus.dart';
+import 'package:moment/service/face.dart';
+import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
+import 'package:moment/utils/date.dart';
+import "package:path/path.dart" as p;
 import 'package:path_provider/path_provider.dart';
-
-import 'dart:ui' as ui show ImageByteFormat, Image;
-
 import 'package:share_extend/share_extend.dart';
 
 class ViewPage extends StatefulWidget {

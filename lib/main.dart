@@ -1,22 +1,22 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
+
 import "package:flutter/material.dart";
+import 'package:flutter/services.dart';
 import 'package:moment/app.dart';
+import 'package:moment/constants/app.dart';
 import 'package:moment/pages/about_page.dart';
-import 'package:moment/pages/edit_flage_page.dart';
-import "package:moment/pages/home_page.dart";
+import 'package:moment/pages/alum_page.dart';
 import "package:moment/pages/edit.dart";
+import 'package:moment/pages/edit_flage_page.dart';
+import 'package:moment/pages/event.dart';
+import "package:moment/pages/home_page.dart";
+import 'package:moment/pages/search_page.dart';
+import 'package:moment/pages/setting.dart';
 import 'package:moment/pages/statistics_page.dart';
 import 'package:moment/pages/view_page.dart';
-import 'package:moment/pages/event.dart';
-import 'package:moment/pages/setting.dart';
-import 'package:moment/pages/alum_page.dart';
-import 'package:moment/pages/search_page.dart';
+import 'package:moment/provides/theme.dart';
 import 'package:moment/utils/route.dart';
 import 'package:provider/provider.dart';
-
-import 'package:moment/provides/theme.dart';
-import 'package:moment/constants/app.dart';
 
 void main() async {
   Provider.debugCheckInvalidValueType = null;

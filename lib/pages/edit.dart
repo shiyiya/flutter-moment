@@ -1,25 +1,19 @@
 import 'dart:io';
 
-// import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-//import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:moment/service/face.dart';
-import 'package:moment/utils/date.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:image_picker/image_picker.dart';
 import 'package:moment/components/alum.dart';
 import 'package:moment/components/row-icon-radio.dart';
-
-import 'package:moment/service/sqlite.dart';
 import 'package:moment/constants/app.dart';
+import 'package:moment/pages/view_page.dart';
+import 'package:moment/service/event_bus.dart';
+import 'package:moment/service/face.dart';
+import 'package:moment/service/sqlite.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
-import 'package:moment/pages/view_page.dart';
-
-import 'package:moment/service/event_bus.dart';
+import 'package:moment/utils/date.dart';
 
 class Edit extends StatefulWidget {
   final int id;

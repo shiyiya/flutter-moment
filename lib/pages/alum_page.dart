@@ -4,8 +4,6 @@ import "package:flutter/material.dart";
 import 'package:moment/components/gallery_photo_view.dart';
 import 'package:moment/constants/app.dart';
 import 'package:moment/service/sqlite.dart';
-
-//import 'package:moment/pages/home.dart';
 import 'package:moment/type/alum.dart';
 
 class AlumPage extends StatefulWidget {

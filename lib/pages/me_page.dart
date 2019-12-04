@@ -1,11 +1,12 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:moment/provides/theme.dart';
-import 'package:moment/type/moment.dart';
-import 'package:provider/provider.dart';
-import 'package:moment/sql/query.dart';
 import 'package:moment/service/event_bus.dart';
+import 'package:moment/sql/query.dart';
+import 'package:moment/type/moment.dart';
 import 'package:moment/utils/launcher.dart';
+import 'package:provider/provider.dart';
 import 'package:share_extend/share_extend.dart';
 
 class MePage extends StatefulWidget {

@@ -24,7 +24,6 @@ class Face {
     return index;
   }
 
-
   // 心情数值为 0 - 100
   static int checkFaceNum(int number) {
     if (number > 100) {

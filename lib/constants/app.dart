@@ -1,6 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:share_extend/share_extend.dart';
-import 'dart:math';
 
 typedef themeFn = ThemeData Function({Color color});
 

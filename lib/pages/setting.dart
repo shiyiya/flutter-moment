@@ -1,21 +1,21 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:moment/components/card_with_title.dart';
-import 'package:moment/service/event_bus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
-import 'package:moment/provides/theme.dart';
-import 'package:moment/service/sqlite.dart';
-import 'package:moment/utils/path.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:moment/utils/date.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
-import "package:sqflite/sqflite.dart";
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/material_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:moment/components/card_with_title.dart';
+import 'package:moment/provides/theme.dart';
+import 'package:moment/service/event_bus.dart';
+import 'package:moment/service/sqlite.dart';
+import 'package:moment/utils/date.dart';
+import 'package:moment/utils/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import "package:sqflite/sqflite.dart";
 
 class Setting extends StatefulWidget {
   @override
