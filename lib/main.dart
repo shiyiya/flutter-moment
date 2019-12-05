@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/app.dart';
 import 'package:moment/constants/app.dart';
 import 'package:moment/pages/about_page.dart';
@@ -18,7 +20,18 @@ import 'package:moment/provides/theme.dart';
 import 'package:moment/utils/route.dart';
 import 'package:provider/provider.dart';
 
+// 修复 photo_view 高分辨率图片不显示
+// https://github.com/flutter/flutter/issues/36191
+void zoomImageHotfix() {
+  WidgetsFlutterBinding.ensureInitialized();
+  const maxBytes = 512 * (1 << 20);
+  // Invoke both method names to ensure the correct one gets invoked.
+  SystemChannels.skia.invokeMethod('setResourceCacheMaxBytes', maxBytes);
+//  SystemChannels.skia.invokeMethod('Skia.setResourceCacheMaxBytes', maxBytes);
+}
+
 void main() async {
+  zoomImageHotfix();
   Provider.debugCheckInvalidValueType = null;
 
   int theme = await getTheme();
@@ -27,13 +40,15 @@ void main() async {
 
   if (Platform.isAndroid) {
     SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor:
-            Constants.theme[theme](color: primaryColor).backgroundColor);
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor:
+          Constants.theme[theme](color: primaryColor).backgroundColor,
+    );
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
 
   if (bool.fromEnvironment('dart.vm.product')) {
+    // 替换红屏
     ErrorWidget.builder = (FlutterErrorDetails flutterErrorDetails) {
       debugPrint(flutterErrorDetails.toString());
       return SafeArea(
@@ -53,7 +68,31 @@ void main() async {
         ),
       );
     };
+
+    // 错误捕获
+    FlutterError.onError = (FlutterErrorDetails flutterErrorDetails) {
+      // FlutterError.dumpErrorToConsole(details);
+      Zone.current.handleUncaughtError(
+          flutterErrorDetails.exception, flutterErrorDetails.stack);
+    };
   }
+
+  runZoned<Future<void>>(() async {
+    runApp(
+      MultiProvider(
+        providers: [
+//        Provider<ThemeProvider>.value(value: themeProvide),
+          ChangeNotifierProvider.value(
+            value: themeProvide,
+          ),
+        ],
+        child: MyApp(),
+      ),
+    );
+  }, onError: (error, stackTrace) async {
+    Fluttertoast.showToast(msg: error + stackTrace);
+    //todo
+  });
 
   runApp(
     MultiProvider(
