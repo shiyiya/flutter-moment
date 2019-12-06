@@ -3,6 +3,7 @@ import 'dart:io';
 
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/app.dart';
 import 'package:moment/constants/app.dart';
@@ -16,6 +17,7 @@ import 'package:moment/pages/search_page.dart';
 import 'package:moment/pages/setting.dart';
 import 'package:moment/pages/statistics_page.dart';
 import 'package:moment/pages/view_page.dart';
+import 'package:moment/provides/lang.dart';
 import 'package:moment/provides/theme.dart';
 import 'package:moment/utils/route.dart';
 import 'package:provider/provider.dart';
@@ -33,19 +35,6 @@ void zoomImageHotfix() {
 void main() async {
   zoomImageHotfix();
   Provider.debugCheckInvalidValueType = null;
-
-  int theme = await getTheme();
-  Color primaryColor = await getThemePrimaryColor();
-  var themeProvide = ThemeProvider(theme, primaryColor);
-
-  if (Platform.isAndroid) {
-    SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      systemNavigationBarColor:
-          Constants.theme[theme](color: primaryColor).backgroundColor,
-    );
-    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-  }
 
   if (bool.fromEnvironment('dart.vm.product')) {
     // 替换红屏
@@ -77,44 +66,70 @@ void main() async {
     };
   }
 
-  runZoned<Future<void>>(() async {
-    runApp(
-      MultiProvider(
-        providers: [
-//        Provider<ThemeProvider>.value(value: themeProvide),
-          ChangeNotifierProvider.value(
-            value: themeProvide,
-          ),
-        ],
-        child: MyApp(),
-      ),
+  int theme = await getTheme();
+  Color primaryColor = await getThemePrimaryColor();
+
+  if (Platform.isAndroid) {
+    SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor:
+          Constants.theme[theme](color: primaryColor).backgroundColor,
     );
+    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+  }
+
+  MultiProvider provider = MultiProvider(
+    providers: [
+//        Provider<ThemeProvider>.value(value: themeProvide),
+      ChangeNotifierProvider.value(value: ThemeProvider(theme, primaryColor)),
+      ChangeNotifierProvider.value(value: LangProvider(Locale('zh', 'CN')))
+    ],
+    child: MyApp(),
+  );
+
+  runZoned<Future<void>>(() async {
+    runApp(provider);
   }, onError: (error, stackTrace) async {
     Fluttertoast.showToast(msg: error + stackTrace);
     //todo
   });
 
-  runApp(
-    MultiProvider(
-      providers: [
-//        Provider<ThemeProvider>.value(value: themeProvide),
-        ChangeNotifierProvider.value(
-          value: themeProvide,
-        ),
-      ],
-      child: MyApp(),
-    ),
-  );
+  runApp(provider);
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
+    final _langProvider = Provider.of<LangProvider>(context);
     final themeFn theme =
         Constants.theme[_themeProvider.isNightTheme ? 2 : _themeProvider.theme];
 
     return MaterialApp(
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate
+        ],
+        supportedLocales: [
+          const Locale('en', 'US'),
+          const Locale('zh', 'CN'),
+        ],
+        localeResolutionCallback:
+            (Locale locale, Iterable<Locale> supportedLocales) {
+          debugPrint(
+              "localelang:$locale   supportedLocales:$supportedLocales  currentLocale:${_langProvider.currentLocale}");
+          // 系统语言等于当前设置语言
+          if (_langProvider.currentLocale == locale)
+            return _langProvider.currentLocale;
+          //遍历支持的语言
+          for (var supportedLocale in supportedLocales) {
+            if (supportedLocale == locale) {
+              _langProvider.changeLang(locale);
+              return _langProvider.currentLocale;
+            }
+          }
+          return _langProvider.currentLocale;
+        },
         title: Constants.appName,
         debugShowCheckedModeBanner: false,
         theme: theme(color: _themeProvider.primaryColor),

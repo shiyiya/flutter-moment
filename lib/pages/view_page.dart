@@ -32,7 +32,6 @@ class ViewPage extends StatefulWidget {
 class _ViewPageState extends State<ViewPage> {
   ScrollController _scrollController;
   SwiperController _swiperController;
-  GlobalKey _repaintKey = GlobalKey();
 
   Moment moment = Moment(); // todo type
   bool hasLoaded = false;
@@ -125,14 +124,19 @@ class _ViewPageState extends State<ViewPage> {
                       ],
 //                      ),
                     )
-                  :
-                  // RepaintBoundary(
-                  //     key: _repaintKey,
-                  //     child:
-                  ListView(
+                  : ListView(
                       children: <Widget>[buildMetaCard(), buildContent()],
                     )
-              // )
+//                  Container(
+//                    decoration: BoxDecoration(
+//                      image: DecorationImage(
+//                          image: AssetImage('lib/asserts/images/bg_1.jpg'),
+//                          fit: BoxFit.cover),
+//                    ),
+//                      child: ListView(
+//                        children: <Widget>[buildMetaCard(), buildContent()],
+//                      ),
+//                    )
               : Center(child: Text(Constants.randomErrorTip()))
           : Center(child: CircularProgressIndicator()),
     );
@@ -212,10 +216,11 @@ class _ViewPageState extends State<ViewPage> {
       margin: EdgeInsets.only(bottom: 100),
       child: Text(
         moment.text,
-        style: Theme.of(context)
-            .textTheme
-            .body2
-            .copyWith(fontSize: 16, fontWeight: FontWeight.normal, height: 1.8),
+        style: Theme.of(context).textTheme.body2.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+              height: 1.8,
+            ),
       ),
     );
   }
@@ -360,17 +365,17 @@ class _ViewPageState extends State<ViewPage> {
         'text');
   }
 
-  share2Image() async {
-    RenderRepaintBoundary boundary =
-        _repaintKey.currentContext.findRenderObject();
-    ui.Image image = await boundary.toImage();
-    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    Uint8List finalPngBytes = byteData.buffer.asUint8List();
-    String temp = (await getTemporaryDirectory()).path;
-    final imageFile = File(p.join(
-        temp, DateTime.now().millisecondsSinceEpoch.toString() + '.png'));
-    await imageFile.writeAsBytes(finalPngBytes);
-
-    ShareExtend.share(imageFile.path, 'image');
-  }
+//  share2Image() async {
+//    RenderRepaintBoundary boundary =
+//        _repaintKey.currentContext.findRenderObject();
+//    ui.Image image = await boundary.toImage();
+//    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+//    Uint8List finalPngBytes = byteData.buffer.asUint8List();
+//    String temp = (await getTemporaryDirectory()).path;
+//    final imageFile = File(p.join(
+//        temp, DateTime.now().millisecondsSinceEpoch.toString() + '.png'));
+//    await imageFile.writeAsBytes(finalPngBytes);
+//
+//    ShareExtend.share(imageFile.path, 'image');
+//  }
 }

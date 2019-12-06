@@ -37,7 +37,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   EasyRefreshController _controller = EasyRefreshController();
 
-  double opacity = 0;
   int _page = 0;
   List<Moment> _moments = [];
 
@@ -70,6 +69,51 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  List<Widget> _sliverBuilder(BuildContext context, bool innerBoxIsScrolled) {
+    return <Widget>[
+      SliverAppBar(
+        centerTitle: false,
+        expandedHeight: 200.0,
+        floating: false,
+        pinned: false,
+        titleSpacing: 0,
+        leading: SizedBox.shrink(),
+        flexibleSpace: FlexibleSpaceBarSettings(
+          toolbarOpacity: 0.5,
+          minExtent: 1,
+          maxExtent: 1,
+          currentExtent: 1,
+          child: Container(
+            height: double.infinity,
+//            decoration: BoxDecoration(
+//              image: DecorationImage(
+//                image: AssetImage('lib/asserts/images/bg_1.jpg'),
+//                fit: BoxFit.cover,
+//              ),
+//            ),
+            child: Text(
+              Date.getDateFormatYMD(
+                ms: DateTime.now().millisecondsSinceEpoch,
+              ),
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+        ),
+      ),
+    ];
+  }
+
+  /*
+  FlexibleSpaceBar(
+            centerTitle: false,
+            title: Container(child: Text('瞬即')),
+            background: Image.asset(
+              "lib/asserts/images/bg_1.jpg",
+              fit: BoxFit.cover,
+            ),
+          )
+   */
+
   @override
   Widget build(BuildContext context) {
     int len = _moments?.length ?? 0;
@@ -94,7 +138,11 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: EasyRefresh.custom(
+      body:
+          /*NestedScrollView(
+          headerSliverBuilder: _sliverBuilder,
+          body:*/
+          EasyRefresh.custom(
         controller: _controller,
         header: DeliveryHeader(),
         footer: MaterialFooter(enableInfiniteLoad: false),
@@ -105,7 +153,8 @@ class _HomePageState extends State<HomePage> {
         slivers: <Widget>[
           SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
-              if (index == 0) return buildWeather();
+              if (index == 0) return Container();
+
               if (index == 1 && len == 0) {
                 // 记录为空
                 return Container(
@@ -125,32 +174,7 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-    );
-  }
-
-  Widget buildWeather() {
-    return Container(
-      padding: EdgeInsets.all(10),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 8,
-      margin: EdgeInsets.only(bottom: 5),
-      color: Theme.of(context).backgroundColor,
-      child: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(Icons.wb_sunny),
-              Text(
-                '  你在的地方一定是晴天吧',
-                style: Theme.of(context).textTheme.subtitle,
-              ),
-            ],
-          ),
-        ],
-      )),
+//        ),
     );
   }
 
@@ -166,6 +190,7 @@ class _HomePageState extends State<HomePage> {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         child: Card(
+          elevation: 0.5,
           child: Column(
             children: <Widget>[
               ListTile(
@@ -473,7 +498,16 @@ class _HomePageState extends State<HomePage> {
     ];
 
     where.retainWhere((f) => f.v != null);
-    if (where.length < 1 && widget.event == null) return;
+    if (where.length < 1 && widget.event == null) {
+      setState(() {
+        // reset
+        byFilter = false;
+        face = null;
+        weather = null; // event 不可重置
+      });
+      _loadMomentByPage(0);
+      return;
+    }
 
     String whereColumns = '';
     where.forEach((w) => whereColumns += '${w.k} AND ');
