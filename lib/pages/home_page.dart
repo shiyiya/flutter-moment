@@ -8,6 +8,7 @@ import 'package:flutter_easyrefresh/material_footer.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/components/drawer.dart';
 import 'package:moment/components/icon_button_with_text.dart';
+import 'package:moment/components/menu_icon.dart';
 import 'package:moment/components/row-icon-radio.dart';
 import 'package:moment/constants/app.dart';
 import 'package:moment/pages/view_page.dart';
@@ -34,8 +35,23 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class TabItem {
+  const TabItem({this.title, this.position, this.icon});
+
+  final String title;
+  final int position;
+  final Icon icon;
+}
+
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   EasyRefreshController _controller = EasyRefreshController();
+
+  List<TabItem> tabs = [
+    TabItem(title: '瞬 间', position: 10),
+    TabItem(title: '', icon: Icon(Icons.add))
+  ];
+  TabController _tabController;
 
   int _page = 0;
   List<Moment> _moments = [];
@@ -48,7 +64,7 @@ class _HomePageState extends State<HomePage> {
   int timeStart;
   int timeEnd;
 
-  List<BottomNavigationBarItem> bottomBarList;
+  List<BottomNavigationBarItem> bottomBarList = [];
 
   @override
   void initState() {
@@ -67,18 +83,64 @@ class _HomePageState extends State<HomePage> {
         _loadMomentByPage(-1);
       }
     });
+    _tabController = new TabController(vsync: this, length: tabs.length);
   }
 
   List<Widget> _sliverBuilder(BuildContext context, bool innerBoxIsScrolled) {
     return <Widget>[
       SliverAppBar(
-        centerTitle: false,
-        expandedHeight: 200.0,
+//        centerTitle: false,
+        expandedHeight: 20.0,
         floating: false,
-        pinned: false,
-        titleSpacing: 0,
+        pinned: true,
+        titleSpacing: 10,
         leading: SizedBox.shrink(),
-        flexibleSpace: FlexibleSpaceBarSettings(
+//        flexibleSpace: SizedBox.shrink(),
+/*        flexibleSpace: CustomAppbar(
+          navigationBarBackgroundColor: Theme.of(context).appBarTheme.color,
+          leadingWidget: Builder(
+            builder: (_) => IconButton(
+              icon: MenuIcon(
+                Theme.of(_).appBarTheme.iconTheme?.color ?? Colors.white,
+              ),
+              onPressed: () {
+                Scaffold.of(_).openDrawer();
+              },
+            ),
+          ),
+          trailingWidget: IconButton(
+            tooltip: '寻觅',
+            icon: Icon(
+              Icons.filter_list,
+              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Colors.white,
+            ),
+            onPressed: _showFilterDialog,
+          ),
+        ),*/
+        flexibleSpace: PreferredSize(
+            child: Container(
+              alignment: Alignment.topLeft,
+              child: new TabBar(
+                indicatorWeight: 2,
+                indicatorPadding: EdgeInsets.only(left: 5, right: 5),
+//                labelPadding: EdgeInsets.symmetric(horizontal: 10),
+                indicatorSize: TabBarIndicatorSize.label,
+                isScrollable: true,
+                tabs: tabs.map((TabItem tabItem) {
+                  return new Tab(
+                    text: tabItem.title.isEmpty ? null : tabItem.title,
+                    icon: tabItem.icon,
+                  );
+                }).toList(),
+                controller: _tabController,
+              ),
+            ),
+            preferredSize: new Size(double.infinity, 18.0)),
+      ),
+    ];
+  }
+
+  /*flexibleSpace: FlexibleSpaceBarSettings(
           toolbarOpacity: 0.5,
           minExtent: 1,
           maxExtent: 1,
@@ -98,11 +160,7 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(fontSize: 16),
             ),
           ),
-        ),
-      ),
-    ];
-  }
-
+        ),*/
   /*
   FlexibleSpaceBar(
             centerTitle: false,
@@ -119,63 +177,73 @@ class _HomePageState extends State<HomePage> {
     int len = _moments?.length ?? 0;
 
     return Scaffold(
-      floatingActionButton: ModalRoute.of(context).isFirst
-          ? FloatingActionButton(
-              onPressed: () => Navigator.pushNamed(context, "/edit"),
-              tooltip: "记录瞬间",
-              child: Icon(Icons.add))
-          : null,
-      drawer: ModalRoute.of(context).isFirst ? DrawerWidget() : null,
-      appBar: AppBar(
-        elevation: 1.0,
-        titleSpacing: 0.0,
-        title: Text('瞬间'),
-        actions: <Widget>[
-          IconButton(
-            tooltip: '寻觅',
-            icon: Icon(Icons.filter_list),
-            onPressed: _showFilterDialog,
+        floatingActionButton: ModalRoute.of(context).isFirst
+            ? FloatingActionButton(
+                onPressed: () => Navigator.pushNamed(context, "/edit"),
+                tooltip: "记录瞬间",
+                child: Icon(Icons.add))
+            : null,
+        drawer: ModalRoute.of(context).isFirst ? DrawerWidget() : null,
+        appBar: AppBar(
+          elevation: 0.0,
+          titleSpacing: 0.0,
+          title: Text('瞬记'),
+          leading: Builder(
+            builder: (_) => IconButton(
+              icon: MenuIcon(
+                Theme.of(_).appBarTheme.iconTheme?.color ?? Colors.white,
+              ),
+              onPressed: () {
+                Scaffold.of(_).openDrawer();
+              },
+            ),
           ),
-        ],
-      ),
-      body:
-          /*NestedScrollView(
+          actions: <Widget>[
+            IconButton(
+              tooltip: '寻觅',
+              icon: Icon(Icons.filter_list),
+              onPressed: _showFilterDialog,
+            ),
+          ],
+        ),
+        body: NestedScrollView(
           headerSliverBuilder: _sliverBuilder,
-          body:*/
-          EasyRefresh.custom(
-        controller: _controller,
-        header: DeliveryHeader(),
-        footer: MaterialFooter(enableInfiniteLoad: false),
-        onRefresh: () async {
-          _loadMomentByPage(0);
-        },
-        onLoad: () => _loadMoreMoment(),
-        slivers: <Widget>[
-          SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              if (index == 0) return Container();
+          body: TabBarView(controller: _tabController, children: <Widget>[
+            EasyRefresh.custom(
+              controller: _controller,
+              header: DeliveryHeader(),
+              footer: MaterialFooter(enableInfiniteLoad: false),
+              onRefresh: () async {
+                _loadMomentByPage(0);
+              },
+              onLoad: () => _loadMoreMoment(),
+              slivers: <Widget>[
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    if (index == 0) return Container();
 
-              if (index == 1 && len == 0) {
-                // 记录为空
-                return Container(
-                  height: MediaQuery.of(context).size.height * 0.75,
-                  child: Center(
-                      child: Text(Constants.randomNilTip(),
-                          style: Theme.of(context).textTheme.body2)),
-                );
-              }
+                    if (index == 1 && len == 0) {
+                      // 记录为空
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.75,
+                        child: Center(
+                            child: Text(Constants.randomNilTip(),
+                                style: Theme.of(context).textTheme.body2)),
+                      );
+                    }
 
-              if (index <= len) {
-                final i = len == 0 ? index - 2 : index - 1;
-                return buildMomentCard(i);
-              }
-              return null;
-            }, childCount: len + 2),
-          )
-        ],
-      ),
-//        ),
-    );
+                    if (index <= len) {
+                      final i = len == 0 ? index - 2 : index - 1;
+                      return buildMomentCard(i);
+                    }
+                    return null;
+                  }, childCount: len + 2),
+                )
+              ],
+            ),
+            Center(child: Text('敬请期待')),
+          ]),
+        ));
   }
 
   Widget buildMomentCard(int index) {

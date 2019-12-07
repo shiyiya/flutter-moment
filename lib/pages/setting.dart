@@ -176,6 +176,8 @@ class _SettingState extends State<Setting> {
                   style: TextStyle(color: Colors.redAccent),
                 ),
                 onPressed: () {
+                  Provider.of<ThemeProvider>(context)
+                      .setThemePrimaryColor(Colors.teal);
                   Navigator.of(context).pop();
                 },
               ),
