@@ -203,7 +203,7 @@ class _SettingState extends State<Setting> {
     Archive archive = ZipDecoder().decodeBytes(bytes);
     String dbDir = await getDatabasesPath();
 
-    String picPath = (await getExternalStorageDirectory()).path + '/Pictures';
+    String picPath = (await getExternalStorageDirectory()).path + '/Pictures/';
 
     try {
       for (ArchiveFile file in archive) {
@@ -217,6 +217,7 @@ class _SettingState extends State<Setting> {
               ..createSync(recursive: true)
               ..writeAsBytesSync(data);
           } else {
+            print(picPath + filename);
             File(picPath + filename)
               ..createSync(recursive: true)
               ..writeAsBytesSync(data);

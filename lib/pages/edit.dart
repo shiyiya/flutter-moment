@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:moment/components/alum.dart';
 import 'package:moment/components/row-icon-radio.dart';
 import 'package:moment/constants/app.dart';
@@ -14,6 +13,8 @@ import 'package:moment/service/sqlite.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Edit extends StatefulWidget {
   final int id;
@@ -129,7 +130,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                         size: 40,
                       ),
                       color: Theme.of(context).buttonColor,
-                      onPressed: showSelectImageMethod,
+                      onPressed: _getImage,
                     ),
                   ),
                 ),
@@ -189,7 +190,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                             color: alum.length > 0
                                 ? Theme.of(context).accentColor
                                 : Colors.grey,
-                            onPressed: showSelectImageMethod,
+                            onPressed: _getImage,
                           ),
 //                    IconButton(
 //                      icon: Icon(Icons.movie),
@@ -211,7 +212,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                         new TextFormField(
                           style: Theme.of(context)
                               .textTheme
-                              .title
+                              .body2
                               .copyWith(fontWeight: FontWeight.normal),
                           controller: _titleController,
                           textInputAction: TextInputAction.done,
@@ -318,48 +319,41 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
     return Future.value(true);
   }
 
-  showSelectImageMethod() {
-    showDialog(
-        context: context,
-        builder: (_) {
-          return SimpleDialog(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
-                      icon: Icon(Icons.camera_alt),
-                      tooltip: '拍照',
-                      onPressed: () {
-                        _getImageFrom(ImageSource.camera);
-                        Navigator.of(context).pop();
-                      }),
-                  IconButton(
-                    icon: Icon(Icons.photo_library),
-                    tooltip: '相册选取',
-                    onPressed: () {
-                      _getImageFrom(ImageSource.gallery);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              )
-            ],
-          );
-        });
-  }
-
-  Future<void> _getImageFrom(ImageSource source) async {
-    File image = await ImagePicker.pickImage(source: source);
+  // -----/storage/emulated/0/Android/data/com.cy.moment/files/Pictures/image_picker6866769357194578119.jpg----
+  Future<void> _getImage() async {
+//    File image = await ImagePicker.pickImage(source: source);
 //    await FilePicker.getMultiFile(type: FileType.IMAGE); //todo copy file to app data direct
 
-    print('-----${image.path}----');
-
-    if (image != null) {
-      setState(() {
-        alum.add(image.path);
-      });
+    List<Asset> resultList;
+    try {
+      resultList =
+          await MultiImagePicker.pickImages(maxImages: 300, enableCamera: true);
+    } on Exception catch (e) {
+      print('===error $e===');
     }
+
+    if (!mounted) return;
+
+    if (resultList != null) {
+      final List<String> paths = [];
+      String picPath =
+          (await getExternalStorageDirectory()).path + '/Pictures/';
+
+      for (var i = 0; i < resultList.length; i++) {
+        final String path = await resultList[i].filePath;
+        final String name = resultList[i].name;
+        final file = await File(path).copy(picPath + name);
+        paths.add(file.path);
+      }
+      if (paths.length > 0) {
+        setState(() {
+          alum.addAll(paths);
+        });
+      }
+    }
+
+    //I don't plan to add support for this, however I can look into PR contributions enabling such functionality.
+    //You are welcome to implement it.
   }
 
 /*  Future<void> _removeImageByIndex(int index) async {
