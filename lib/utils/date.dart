@@ -16,6 +16,10 @@ class Date {
     '周日',
   ];
 
+  static String padZero(int number) {
+    return number >= 10 ? number.toString() : '0$number';
+  }
+
   static DateTime getDateTimeByMS({int ms}) {
     return ms != null
         ? DateTime.fromMicrosecondsSinceEpoch(ms * 1000)
@@ -31,8 +35,8 @@ class Date {
   static String getDateFormatHMByMS({String prefix = ':', int ms}) {
     DateTime now = getDateTimeByMS(ms: ms);
 
-    int h = now.hour;
-    int m = now.minute;
+    String h = padZero(now.hour);
+    String m = padZero(now.minute);
 
     return "$h$prefix$m";
   }
@@ -40,8 +44,8 @@ class Date {
   static String getDateFormatMD({String prefix = '-', int ms}) {
     DateTime now = getDateTimeByMS(ms: ms);
 
-    int m = now.month;
-    int d = now.day;
+    String m = padZero(now.month);
+    String d = padZero(now.day);
 
     return "$m$prefix$d";
   }
@@ -57,7 +61,7 @@ class Date {
     return "$y$prefix${getDateFormatMD(ms: ms, prefix: prefix)}";
   }
 
-  String getBeforeTimeByMS({int ms}) {
+  static String getBeforeTimeByMS({int ms}) {
     DateTime now = getDateTimeByMS();
     DateTime t = getDateTimeByMS(ms: ms);
 
@@ -67,17 +71,17 @@ class Date {
     } else if (d.inMilliseconds < 1000) {
       return "刚刚";
     } else if (d.inSeconds < 60) {
-      return d.inSeconds.toString() + "秒前";
+      return d.inSeconds.toString() + " 秒前";
     } else if (d.inMinutes < 60) {
-      return d.inMinutes.toString() + "分钟前";
+      return d.inMinutes.toString() + " 分钟前";
     } else if (d.inHours < 24) {
-      return d.inHours.toString() + "小时前";
+      return d.inHours.toString() + " 小时前";
     } else if (d.inDays < 7) {
-      return d.inDays.toString() + "天前";
+      return d.inDays.toString() + " 天前";
     } else if (d.inDays < 30) {
-      return (d.inDays ~/ 7).toString() + "周前";
+      return (d.inDays ~/ 7).toString() + " 周前";
     } else if (d.inDays < 180) {
-      return (d.inDays ~/ 30).toString() + "个月前";
+      return (d.inDays ~/ 30).toString() + " 个月前";
     } else {
       return t.day.toString() +
           "-" +
