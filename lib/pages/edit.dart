@@ -344,6 +344,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
       for (var i = 0; i < resultList.length; i++) {
         final String path = await resultList[i].filePath;
         final String name = resultList[i].name;
+        Directory(picPath).createSync();
         final file = await File(path).copy(picPath + name);
         paths.add(file.path);
       }
