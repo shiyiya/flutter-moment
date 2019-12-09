@@ -93,7 +93,7 @@ class MomentCard extends StatelessWidget {
                         ],
                       ),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Icon(
                             Constants.weather[moment.weather],
