@@ -52,7 +52,7 @@ class SQL {
       Fluttertoast.showToast(msg: '没有更多啦 ∑( 口 ||');
       return null;
     }
-    Fluttertoast.showToast(msg: '加载成功 (#`O′)');
+//    Fluttertoast.showToast(msg: '加载成功 (#`O′)');
     return res.map((r) => Moment.fromJson(r)).toList();
   }
 
@@ -73,7 +73,7 @@ class SQL {
       return null;
     }
 
-    Fluttertoast.showToast(msg: '加载成功 (#`O′)');
+//    Fluttertoast.showToast(msg: '加载成功 (#`O′)');
     return res.map((r) => Moment.fromJson(r)).toList();
   }
 
@@ -86,7 +86,7 @@ class SQL {
       return null;
     }
 
-    Fluttertoast.showToast(msg: '加载成功 (#`O′)');
+//    Fluttertoast.showToast(msg: '加载成功 (#`O′)');
     return Moment.fromJson(res[0]);
   }
 
