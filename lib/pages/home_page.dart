@@ -219,26 +219,21 @@ class _HomePageState extends State<HomePage>
               onLoad: () => _loadMoreMoment(),
               slivers: <Widget>[
                 SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    if (index == 0) return Container();
-
-                    if (index == 1 && len == 0) {
-                      // 记录为空
-                      return Container(
-                        height: MediaQuery.of(context).size.height * 0.75,
-                        child: Center(
-                            child: Text(Constants.randomNilTip(),
-                                style: Theme.of(context).textTheme.body2)),
-                      );
-                    }
-
-                    if (index <= len) {
-                      final i = len == 0 ? index - 2 : index - 1;
-                      return buildMomentCard(i);
-                    }
-                    return null;
-                  }, childCount: len + 2),
-                )
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                  if (index == 0 && len == 0) {
+                    // 记录为空
+                    return Container(
+                      height: MediaQuery.of(context).size.height * 0.75,
+                      child: Center(
+                          child: Text(Constants.randomNilTip(),
+                              style: Theme.of(context).textTheme.body2)),
+                    );
+                  }
+                  if (index < len) {
+                    return buildMomentCard(index);
+                  }
+                  return null;
+                }, childCount: len + 1))
               ],
             ),
             Center(child: Text('敬请期待')),
@@ -307,6 +302,7 @@ class _HomePageState extends State<HomePage>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           Icon(
                             Icons.query_builder,
@@ -316,7 +312,7 @@ class _HomePageState extends State<HomePage>
                           Text(
                             ' ' +
                                 Date.getDateFormatMD(
-                                    ms: _moments[index].created),
+                                    ms: _moments[index].created, prefix: '.'),
                             style: TextStyle(
                                 fontSize: 10,
                                 color:
@@ -475,7 +471,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  void buildMomentCardDialog(int index) {
+  void buildMomentCardDialog(int cid) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -495,10 +491,10 @@ class _HomePageState extends State<HomePage>
                     FlatButton(
                       child: const Text('确定'),
                       onPressed: () async {
-                        final bool d = await SQL.delMomentById(index);
+                        final bool d = await SQL.delMomentById(cid);
                         if (d) {
                           setState(() {
-                            _moments.removeWhere((m) => m.cid == index);
+                            _moments.removeWhere((m) => m.cid == cid);
                           });
                         }
                         Navigator.pop(context);
