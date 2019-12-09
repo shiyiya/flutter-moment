@@ -321,8 +321,9 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
 
   // -----/storage/emulated/0/Android/data/com.cy.moment/files/Pictures/image_picker6866769357194578119.jpg----
   Future<void> _getImage() async {
-//    File image = await ImagePicker.pickImage(source: source);
-//    await FilePicker.getMultiFile(type: FileType.IMAGE); //todo copy file to app data direct
+//    final List<File> files = await FilePicker.getMultiFile(
+//        type: FileType.IMAGE); //todo copy file to app data direct
+//    print(files[0].path);
 
     List<Asset> resultList;
     try {
@@ -339,6 +340,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
       String picPath =
           (await getExternalStorageDirectory()).path + '/Pictures/';
 
+      // todo 此流程应后置到 publishMoment
       for (var i = 0; i < resultList.length; i++) {
         final String path = await resultList[i].filePath;
         final String name = resultList[i].name;
