@@ -327,7 +327,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
     List<Asset> resultList;
     try {
       resultList =
-          await MultiImagePicker.pickImages(maxImages: 300, enableCamera: true);
+          await MultiImagePicker.pickImages(maxImages: 5, enableCamera: true);
     } on Exception catch (e) {
       print('===error $e===');
     }

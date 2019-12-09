@@ -455,7 +455,6 @@ class _HomePageState extends State<HomePage>
     setState(() {
       if (page == 0) {
         _moments = momentList;
-        Fluttertoast.showToast(msg: '刷新成功 (#`O′)');
       } else {
         _moments.addAll(momentList);
       }
