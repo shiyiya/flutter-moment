@@ -193,9 +193,6 @@ class _SettingState extends State<Setting> {
   }
 
   _import() async {
-//    Map<PermissionGroup, PermissionStatus> permissions =
-    await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-
     String filePath = await FilePicker.getFilePath(type: FileType.ANY);
     if (!filePath.endsWith('zip') || !filePath.contains('moment-backup')) {
       _showDialog(context, '错误', '格式错误，请选择正确的 ZIP 备份包');
@@ -234,7 +231,6 @@ class _SettingState extends State<Setting> {
   }
 
   _export() async {
-//    Map<PermissionGroup, PermissionStatus> permissions =
     await PermissionHandler().requestPermissions([PermissionGroup.storage]);
 
     try {
