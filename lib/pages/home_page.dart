@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/delivery_header.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -9,15 +6,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/components/drawer.dart';
 import 'package:moment/components/icon_button_with_text.dart';
 import 'package:moment/components/menu_icon.dart';
+import 'package:moment/components/moment_card.dart';
 import 'package:moment/components/row-icon-radio.dart';
 import 'package:moment/constants/app.dart';
-import 'package:moment/pages/view_page.dart';
 import 'package:moment/service/event_bus.dart';
-import 'package:moment/service/face.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
-import 'package:moment/utils/date.dart';
-import 'package:moment/utils/img.dart';
 
 class Filter {
   String k;
@@ -95,28 +89,6 @@ class _HomePageState extends State<HomePage>
         pinned: true,
         titleSpacing: 10,
         leading: SizedBox.shrink(),
-//        flexibleSpace: SizedBox.shrink(),
-/*        flexibleSpace: CustomAppbar(
-          navigationBarBackgroundColor: Theme.of(context).appBarTheme.color,
-          leadingWidget: Builder(
-            builder: (_) => IconButton(
-              icon: MenuIcon(
-                Theme.of(_).appBarTheme.iconTheme?.color ?? Colors.white,
-              ),
-              onPressed: () {
-                Scaffold.of(_).openDrawer();
-              },
-            ),
-          ),
-          trailingWidget: IconButton(
-            tooltip: '寻觅',
-            icon: Icon(
-              Icons.filter_list,
-              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Colors.white,
-            ),
-            onPressed: _showFilterDialog,
-          ),
-        ),*/
         flexibleSpace: PreferredSize(
             child: Container(
               alignment: Alignment.topLeft,
@@ -161,17 +133,6 @@ class _HomePageState extends State<HomePage>
             ),
           ),
         ),*/
-  /*
-  FlexibleSpaceBar(
-            centerTitle: false,
-            title: Container(child: Text('瞬即')),
-            background: Image.asset(
-              "lib/asserts/images/bg_1.jpg",
-              fit: BoxFit.cover,
-            ),
-          )
-   */
-
   @override
   Widget build(BuildContext context) {
     int len = _moments?.length ?? 0;
@@ -188,16 +149,18 @@ class _HomePageState extends State<HomePage>
           elevation: 0.0,
           titleSpacing: 0.0,
           title: Text('瞬记'),
-          leading: Builder(
-            builder: (_) => IconButton(
-              icon: MenuIcon(
-                Theme.of(_).appBarTheme.iconTheme?.color ?? Colors.white,
-              ),
-              onPressed: () {
-                Scaffold.of(_).openDrawer();
-              },
-            ),
-          ),
+          leading: ModalRoute.of(context).isFirst
+              ? Builder(
+                  builder: (_) => IconButton(
+                    icon: MenuIcon(
+                      Theme.of(_).appBarTheme.iconTheme?.color ?? Colors.white,
+                    ),
+                    onPressed: () {
+                      Scaffold.of(_).openDrawer();
+                    },
+                  ),
+                )
+              : null,
           actions: <Widget>[
             IconButton(
               tooltip: '寻觅',
@@ -207,7 +170,8 @@ class _HomePageState extends State<HomePage>
           ],
         ),
         body: NestedScrollView(
-          headerSliverBuilder: _sliverBuilder,
+          headerSliverBuilder:
+              ModalRoute.of(context).isFirst ? _sliverBuilder : (_, __) => [],
           body: TabBarView(controller: _tabController, children: <Widget>[
             EasyRefresh.custom(
               controller: _controller,
@@ -230,7 +194,10 @@ class _HomePageState extends State<HomePage>
                     );
                   }
                   if (index < len) {
-                    return buildMomentCard(index);
+                    return MomentCard(
+                      moment: _moments[index],
+                      onLongPress: showDelMomentCardDialog,
+                    );
                   }
                   return null;
                 }, childCount: len + 1))
@@ -239,124 +206,6 @@ class _HomePageState extends State<HomePage>
             Center(child: Text('敬请期待')),
           ]),
         ));
-  }
-
-  Widget buildMomentCard(int index) {
-    final Moment item = _moments[index];
-    final String text =
-        item.text.length > 50 ? item.text.substring(0, 20) : item.text;
-    final String firstImg =
-        item.alum.length < 1 ? null : item.alum?.split('|')[0];
-    int face = Face.getIndexByNum(item.face);
-
-    return GestureDetector(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-        child: Card(
-          elevation: 0.5,
-          child: Column(
-            children: <Widget>[
-              ListTile(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  leading: Icon(
-                    Constants.face[face],
-                    size: 40,
-                    color: Theme.of(context).accentColor,
-                  ),
-                  title: item.title.length > 0
-                      ? Text(
-                          item.title,
-                          style: TextStyle(
-                            color: Theme.of(context).accentColor,
-                          ),
-                        )
-                      : null,
-                  subtitle: Text(text.trim()),
-                  trailing: firstImg != null
-                      ? Container(
-                          width: 80,
-//                          height: 300,
-                          color: Colors.amber,
-                          child: Img.isLocal(firstImg)
-                              ? Image.file(
-                                  File(firstImg),
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.network(
-                                  firstImg,
-                                  fit: BoxFit.cover,
-                                ),
-                        )
-                      : null),
-              ButtonTheme.bar(
-                  child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(
-                        width: 1, color: Color.fromRGBO(128, 128, 128, 0.1)),
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Icon(
-                            Icons.query_builder,
-                            color: Theme.of(context).textTheme.display3.color,
-                            size: 12,
-                          ),
-                          Text(
-                            ' ' +
-                                Date.getDateFormatMD(
-                                    ms: _moments[index].created, prefix: '.'),
-                            style: TextStyle(
-                                fontSize: 10,
-                                color:
-                                    Theme.of(context).textTheme.display3.color,
-                                textBaseline: TextBaseline.alphabetic),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Icon(
-                            Constants.weather[_moments[index].weather],
-                            color: Theme.of(context).textTheme.display3.color,
-                            size: 12,
-                          ),
-                          if (_moments[index].event.length > 0)
-                            Text(
-                              ' ${_moments[index].event}',
-                              style: TextStyle(
-                                fontSize: 10,
-                                letterSpacing: 1,
-                                color:
-                                    Theme.of(context).textTheme.display3.color,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ]),
-              ))
-            ],
-          ),
-        ),
-      ),
-      onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext context) {
-          return ViewPage(id: _moments[index].cid);
-        }));
-      },
-      onLongPress: () {
-        buildMomentCardDialog(_moments[index].cid);
-      },
-    );
   }
 
   void _showFilterDialog() {
@@ -471,7 +320,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  void buildMomentCardDialog(int cid) {
+  void showDelMomentCardDialog(int cid) {
     showDialog(
         context: context,
         builder: (BuildContext context) {

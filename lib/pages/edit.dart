@@ -225,7 +225,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                           },
                         ),
                         Container(
-                          child: new TextFormField(
+                          child: TextFormField(
                             controller: _textController,
                             style: Theme.of(context).textTheme.body2.copyWith(
                                   fontSize: 16,
@@ -237,7 +237,6 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: '内容',
-                              suffixText: '内容',
                             ),
                             onChanged: (_text) {
                               setState(() {
