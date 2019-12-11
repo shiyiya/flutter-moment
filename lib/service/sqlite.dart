@@ -33,12 +33,13 @@ class DBHelper {
 
     Database db = await openDatabase(path, version: 2,
         onUpgrade: (Database db, int o, int n) async {
+      print('$o ->>>> $n');
       if (o == 1 && n == 2) {
-        Fluttertoast.showToast(msg: '正在更新数据库', timeInSecForIos: 4);
+        Fluttertoast.showToast(msg: '正在更新数据库');
         try {
           const newSQL = [
             '''
-CREATE TABLE moment_event (
+CREATE TABLE if not exists moment_event (
 "id" INTEGER NOT NULL PRIMARY KEY,
 "authorId" int(10) default '0',
 "icon" varchar(32) default NULL,
@@ -48,7 +49,7 @@ CREATE TABLE moment_event (
 "status" int(10) default '0' )
          ''',
             '''
-            CREATE TABLE content_event (
+CREATE TABLE if not exists content_event (
 "id" INTEGER NOT NULL PRIMARY KEY,
 "authorId" int(10) default '0',
 "eid" int(10) default NULL,
@@ -56,29 +57,30 @@ CREATE TABLE moment_event (
 "created" int(10) default '0' )
 '''
           ];
-          newSQL.forEach((s) async {
-            await db.rawQuery(s);
-          });
 
-          final events = await (await DBHelper.db)
+          for (var i = 0; i < newSQL.length; i++) {
+            await db.rawQuery(newSQL[i]);
+          }
+
+          final events = await db
               .query('moment_content', columns: ['event', 'cid', 'created']);
+
           for (var i = 0; i < events.length; i++) {
             final eventID = await db.insert('moment_event', {
               'name': events[i]['event'],
             });
 
             await db.insert('content_event', {
-              'cid': events[i]['id'],
+              'cid': events[i]['cid'],
               'eid': eventID,
               'created': events[i]['created']
             });
           }
         } catch (e) {
-          Fluttertoast.showToast(
-              msg: '更新数据库数据库失败，请备份数据库并联系开发者，以免数据丢失', timeInSecForIos: 4);
+          print(e);
+          Fluttertoast.showToast(msg: '更新数据库数据库失败，请备份数据库并联系开发者，以免数据丢失 \r\n $e');
         }
-
-        print('$o ->>>> $n');
+        Fluttertoast.showToast(msg: '更新数据库数据库成功');
       }
     }, onCreate: _onCreate);
 
@@ -195,6 +197,7 @@ CREATE TABLE content_event (
         'title': '随机标题 $i',
         'text': text[i],
         'face': Random().nextInt(100),
+//        'event': event[i].name,
         'event': e,
         'created': DateTime.parse(time[i]).millisecondsSinceEpoch,
         'alum': ''
@@ -208,7 +211,7 @@ CREATE TABLE content_event (
   }
 
   initProdData(Database db) async {
-    await db.insert('moment_content', {
+    final cid = await db.insert('moment_content', {
       'title': 'Moment (瞬记)',
       'text': '''
       捕捉 & 记录生活中的美好瞬间。
@@ -218,6 +221,15 @@ CREATE TABLE content_event (
       'event': '相识',
       'created': DateTime.now().millisecondsSinceEpoch,
       'alum': '' //https://i.loli.net/2019/11/20/6wI8eTmkbYQ5Zy9.gif
+    });
+
+    final eid = await db.insert('moment_event', {
+      'name': '相识',
+    });
+    await db.insert('content_event', {
+      'cid': cid,
+      'eid': eid,
+      'created': DateTime.now().millisecondsSinceEpoch
     });
   }
 

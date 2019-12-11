@@ -87,14 +87,15 @@ class ChartSQL {
     Map<String, int> tagMap = {};
 
     if (start == null || end == null) {
-      r = await (await DBHelper.db).rawQuery('select E.name from content_event as CE left join moment_event as E on E.id = CE.eid');
+      r = await (await DBHelper.db).rawQuery(
+          'select E.name from content_event as CE left join moment_event as E on E.id = CE.eid');
     } else {
       r = await (await DBHelper.db).rawQuery(
           'select E.name from content_event as CE left join moment_event as E on E.id = CE.eid where created>=$start AND created<$end');
     }
 
     r.forEach((tag) {
-      if (tag['name'].length > 0) {
+      if (tag['name'] != null && tag['name'].length > 0) {
         if (tagMap[tag['name']] != null) {
           tagMap[tag['name']] += 1;
         } else {

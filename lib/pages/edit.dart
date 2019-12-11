@@ -475,12 +475,21 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text('事件'),
-                  IconButton(
-                    icon: Icon(Icons.refresh),
-                    onPressed: () async {
-                      await fetchRandomEvent();
-                      state(() {});
-                    },
+                  Row(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed('/eventmanager'),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.refresh),
+                        onPressed: () async {
+                          await fetchRandomEvent();
+                          state(() {});
+                        },
+                      )
+                    ],
                   )
                 ],
               ),
@@ -497,7 +506,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                               });
                             } else {
                               setState(() {
-                                newEID = e.id;
+                                newEID = null;
                               });
                             }
                             state(() {});
@@ -525,15 +534,15 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
 
   // 修改 event 关联表
   updateEvent() async {
-    final currDB = await DBHelper.db;
-    if (newEID != moment.eid) {
-      // 更新关联表
-      final r = await currDB.update('content_event', {'eid': newEID},
-          where: 'id = ?', whereArgs: [moment.ceid]);
+    if ((newEID == null && moment.eid == null) || newEID == moment.eid) return;
 
-      if (!(r is int)) {
-        Fluttertoast.showToast(msg: '更新事件失败');
-      }
+    final currDB = await DBHelper.db;
+    // 更新关联表
+    final r = await currDB.update('content_event', {'eid': newEID},
+        where: 'id = ?', whereArgs: [moment.ceid]);
+
+    if (!(r is int)) {
+      Fluttertoast.showToast(msg: '更新事件失败');
     }
   }
 

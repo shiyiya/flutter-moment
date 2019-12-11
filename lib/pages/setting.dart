@@ -238,6 +238,9 @@ class _SettingState extends State<Setting> {
 
       String picPath = (await getExternalStorageDirectory()).path + '/Pictures';
 
+      if (!await Directory(picPath).exists()) Directory(picPath).createSync();
+
+      print(await DBHelper().getDatabasePath());
       File(await DBHelper().getDatabasePath()).copySync(
           '$picPath/moment-sqlite-${Date.getDateFormatYMD()}-$timeMS.db');
 
@@ -259,6 +262,7 @@ class _SettingState extends State<Setting> {
         )
       ]);
     } catch (_) {
+      print(_);
       _showDialog(context, '失败', '备份失败了呢');
     }
   }
