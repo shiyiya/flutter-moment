@@ -19,13 +19,10 @@ class _EventPageState extends State<EventPage> {
 
   loadEvents() async {
     final db = await DBHelper.db;
-    final event = await db.query('moment_content', columns: ['event', 'face']);
+    final faceEvent = await db.rawQuery(
+        'select C.face,E.name from content_event AS CE left join moment_content as C on CE.cid = C.cid left join moment_event as E on C.cid = E.id');
 
-    final List l = event.toList();
-    l.removeWhere((_) {
-      return _['event'] == null || _['event'].length < 1;
-    });
-
+    final List l = faceEvent.toList();
     setState(() {
       _events = l;
     });
@@ -66,7 +63,7 @@ class _EventPageState extends State<EventPage> {
                     Constants.face[e['face'] < 20 ? 0 : (e['face'] ~/ 20) - 1],
                     color: Theme.of(context).primaryColor,
                   )),
-              label: Text(e['event']),
+              label: Text(e['name']),
             ),
             onPressed: () {
               Navigator.pushAndRemoveUntil(context,

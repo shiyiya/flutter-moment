@@ -132,10 +132,43 @@ class _HomePageState extends State<HomePage>
             ),
           ),
         ),*/
+
+  Widget momentWrap() {
+    int len = _moments?.length ?? 0;
+    return EasyRefresh.custom(
+      controller: _controller,
+      header: DeliveryHeader(),
+      footer: MaterialFooter(enableInfiniteLoad: false),
+      onRefresh: () async {
+        _loadMomentByPage(0);
+      },
+      onLoad: () => _loadMoreMoment(),
+      slivers: <Widget>[
+        SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+          if (index == 0 && len == 0) {
+            // 记录为空
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.75,
+              child: Center(
+                  child: Text(Constants.randomNilTip(),
+                      style: Theme.of(context).textTheme.body2)),
+            );
+          }
+          if (index < len) {
+            return MomentCard(
+              moment: _moments[index],
+              onLongPress: showDelMomentCardDialog,
+            );
+          }
+          return null;
+        }, childCount: len + 1))
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    int len = _moments?.length ?? 0;
-
     return Scaffold(
         floatingActionButton: ModalRoute.of(context).isFirst
             ? FloatingActionButton(
@@ -168,43 +201,14 @@ class _HomePageState extends State<HomePage>
             ),
           ],
         ),
-        body: NestedScrollView(
-          headerSliverBuilder:
-              ModalRoute.of(context).isFirst ? _sliverBuilder : (_, __) => [],
-          body: TabBarView(controller: _tabController, children: <Widget>[
-            EasyRefresh.custom(
-              controller: _controller,
-              header: DeliveryHeader(),
-              footer: MaterialFooter(enableInfiniteLoad: false),
-              onRefresh: () async {
-                _loadMomentByPage(0);
-              },
-              onLoad: () => _loadMoreMoment(),
-              slivers: <Widget>[
-                SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                  if (index == 0 && len == 0) {
-                    // 记录为空
-                    return Container(
-                      height: MediaQuery.of(context).size.height * 0.75,
-                      child: Center(
-                          child: Text(Constants.randomNilTip(),
-                              style: Theme.of(context).textTheme.body2)),
-                    );
-                  }
-                  if (index < len) {
-                    return MomentCard(
-                      moment: _moments[index],
-                      onLongPress: showDelMomentCardDialog,
-                    );
-                  }
-                  return null;
-                }, childCount: len + 1))
-              ],
-            ),
-            Center(child: Text('敬请期待')),
-          ]),
-        ));
+        body: ModalRoute.of(context).isFirst
+            ? NestedScrollView(
+                headerSliverBuilder: _sliverBuilder,
+                body: TabBarView(controller: _tabController, children: <Widget>[
+                  momentWrap(),
+                  Center(child: Text('敬请期待')),
+                ]))
+            : momentWrap());
   }
 
   void _showFilterDialog() {
