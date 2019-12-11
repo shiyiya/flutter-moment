@@ -79,6 +79,13 @@ class _AppState extends State<App> {
         ],
       ),
       bottomNavigationBar: CubertoBottomBar(
+        barShadow:  [
+          BoxShadow(
+            color: Colors.black12,
+            offset: Offset(0, 4),
+            blurRadius: 4,
+          ),
+        ],
         tabStyle: CubertoTabStyle.STYLE_FADED_BACKGROUND,
         initialSelection: 0,
         tabs: tabs,
