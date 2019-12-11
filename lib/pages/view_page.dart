@@ -1,11 +1,6 @@
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui show ImageByteFormat, Image;
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:moment/components/alum.dart';
 import 'package:moment/components/gallery_photo_view.dart';
@@ -16,8 +11,6 @@ import 'package:moment/service/face.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
-import "package:path/path.dart" as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:share_extend/share_extend.dart';
 
 class ViewPage extends StatefulWidget {
@@ -183,9 +176,10 @@ class _ViewPageState extends State<ViewPage> {
                 ],
               ),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Text(
-                    ' ${moment.event} ',
+                    '${moment.eName ?? ''}  ',
                     style: Theme.of(context).textTheme.caption.copyWith(
                       shadows: <Shadow>[
                         Shadow(

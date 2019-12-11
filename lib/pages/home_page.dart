@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/delivery_header.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/material_footer.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/components/drawer.dart';
 import 'package:moment/components/icon_button_with_text.dart';
 import 'package:moment/components/menu_icon.dart';
@@ -83,7 +82,7 @@ class _HomePageState extends State<HomePage>
   List<Widget> _sliverBuilder(BuildContext context, bool innerBoxIsScrolled) {
     return <Widget>[
       SliverAppBar(
-//        centerTitle: false,
+        centerTitle: false,
         expandedHeight: 20.0,
         floating: false,
         pinned: true,
@@ -422,20 +421,23 @@ class _HomePageState extends State<HomePage>
       return;
     }
 
-    String whereColumns = '';
-    where.forEach((w) => whereColumns += '${w.k} AND ');
+    print('${where.length}');
+    String whereArgs = '';
+    where.forEach((w) {
+      whereArgs += w.k.replaceAll('?', '${w.v} AND ');
+    });
 
     //从事件列进入
     if (widget.event != null && widget.event.length > 0) {
-      if (whereColumns.length > 0) {
-        whereColumns += 'event LIKE "%${widget.event}%"';
+      if (whereArgs.length > 0) {
+        whereArgs += 'event LIKE "%${widget.event}%"';
       } else {
         // by tag
-        whereColumns = 'event LIKE "%${widget.event}%"';
+        whereArgs = 'event LIKE "%${widget.event}%"';
       }
     } else {
-      if (whereColumns.length > 0) {
-        whereColumns = whereColumns.substring(0, whereColumns.length - 5);
+      if (whereArgs.length > 0) {
+        whereArgs = whereArgs.substring(0, whereArgs.length - 5);
       } else {
         setState(() {
           byFilter = false;
@@ -445,12 +447,10 @@ class _HomePageState extends State<HomePage>
       }
     }
 
-    List whereArgs = where.map((w) => w.v).toList();
-
-    print('---loade by filter page$page \r\n $whereColumns  \r\n  $whereArgs');
+    print('---loade by filter page$page  \r\n  $whereArgs');
 
     final List<Moment> momentList =
-        await SQL.queryMomentByPageWithFilter(page, whereColumns, whereArgs);
+        await SQL.queryMomentByPageWithFilter(page, whereArgs);
 
     setState(() {
       if (page == 0) {

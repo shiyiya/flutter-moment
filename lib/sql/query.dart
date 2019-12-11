@@ -44,55 +44,62 @@ class SQL {
     return MomentInfo(count: count, wordCount: wordCount, imgCount: imgCount);
   }
 
+  // todo 多 Tag
+  /*
+      1. 修改tag 需要修改关联表对应id
+      2. 首页需要手动拼接数据 先查 post 在查tag whereIn 在进行手动合并
+   */
   static Future<List<Moment>> queryMomentByPage(int page) async {
-    final res = await (await DBHelper.db).query('moment_content',
-        columns: ['*'], limit: 10, offset: page * 10, orderBy: 'created desc');
+    final res = await (await DBHelper.db).rawQuery(
+        'select C.* , E.name as eName, E.id as eid from moment_content as C left join content_event as CE on CE.cid = C.cid left join moment_event as E on E.id = CE.eid ORDER BY created desc limit 10 offset ${page * 10}');
 
+//    print(res);
     if (res.length < 1) {
       Fluttertoast.showToast(msg: '没有更多啦 ∑( 口 ||');
       return null;
     }
-//    Fluttertoast.showToast(msg: '加载成功 (#`O′)');
     return res.map((r) => Moment.fromJson(r)).toList();
   }
 
   static Future<List<Moment>> queryMomentByPageWithFilter(
-      int page, String whereColumns, List whereArgs) async {
-    final res = await (await DBHelper.db).query(
-      'moment_content',
-      columns: ['*'],
-      where: whereColumns,
-      whereArgs: whereArgs,
-      limit: 10,
-      offset: page * 10,
-      orderBy: 'created DESC',
-    );
+      int page, String whereArgs) async {
+    final res = await (await DBHelper.db).rawQuery(
+        'select C.* , E.name as eName from moment_content as C left join content_event as CE on CE.cid = C.cid left join moment_event as E on E.id = CE.eid where $whereArgs ORDER BY created desc limit 10 offset ${page * 10}');
 
     if (res.length < 1) {
       Fluttertoast.showToast(msg: '没有更多啦 ∑( 口 ||');
       return null;
     }
 
-//    Fluttertoast.showToast(msg: '加载成功 (#`O′)');
     return res.map((r) => Moment.fromJson(r)).toList();
   }
 
   static Future<Moment> queryMomentById(int id) async {
     final List<Map<String, dynamic>> res = await (await DBHelper.db)
         .rawQuery('SELECT * FROM moment_content WHERE cid = ?', [id]);
+    final eName = await (await DBHelper.db).rawQuery(
+        'select E.name,E.id,CE.id as ceid from content_event as CE left join moment_event as E on E.id = CE.eid where cid =$id');
 
     if (res.length < 1) {
       Fluttertoast.showToast(msg: '哎呀，什么都没抓到');
       return null;
     }
 
-//    Fluttertoast.showToast(msg: '加载成功 (#`O′)');
-    return Moment.fromJson(res[0]);
+    final m = Moment.fromJson(res[0]);
+    if (eName.length > 0) {
+      m.eName = eName[0]['name'];
+      m.eid = eName[0]['id'];
+      m.ceid = eName[0]['ceid'];
+    }
+
+    return m;
   }
 
   static Future<bool> delMomentById(int id) async {
     int count = await (await DBHelper.db)
         .rawDelete('DELETE FROM moment_content WHERE cid = ?', [id]);
+    await (await DBHelper.db)
+        .delete('content_event', where: 'cid = ?', whereArgs: [id]);
 
     if (count == 1) {
       Fluttertoast.showToast(msg: '删除成功');

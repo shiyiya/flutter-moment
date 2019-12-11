@@ -217,7 +217,6 @@ class _SettingState extends State<Setting> {
               ..createSync(recursive: true)
               ..writeAsBytesSync(data);
           } else {
-            print(picPath + filename);
             File(picPath + filename)
               ..createSync(recursive: true)
               ..writeAsBytesSync(data);

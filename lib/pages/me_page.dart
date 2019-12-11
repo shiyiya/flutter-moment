@@ -38,7 +38,7 @@ class _MePageState extends State<MePage> {
             Container(
               padding: EdgeInsets.fromLTRB(
                   15, MediaQueryData.fromWindow(window).padding.top, 15, 15),
-              height: MediaQuery.of(context).size.height / 5,
+              height: MediaQuery.of(context).size.height / 4,
               color: Theme.of(context).backgroundColor,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -117,7 +117,7 @@ class _MePageState extends State<MePage> {
                                   fontSize: 24,
                                   color: Theme.of(context).accentColor),
                             ),
-                            Text(' 张',
+                            Text(' 图',
                                 style: TextStyle(
                                     fontSize: 10,
                                     color: Theme.of(context)
@@ -132,16 +132,14 @@ class _MePageState extends State<MePage> {
                 ],
               ),
             ),
-            /* Container(
+            Container(
               padding: EdgeInsets.symmetric(vertical: 5),
               color: Theme.of(context).cardColor,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   MaterialButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed('/statistics');
-                    },
+                    onPressed:  () => _to('/statistics'),
                     child: Column(
                       children: <Widget>[
                         Icon(Icons.multiline_chart),
@@ -150,27 +148,15 @@ class _MePageState extends State<MePage> {
                     ),
                   ),
                   MaterialButton(
-                    onPressed: () {
-                      print('1234');
-                    },
+                    onPressed: () => _to('/eventmanager'),
                     child: Column(
                       children: <Widget>[Icon(Icons.turned_in_not), Text('事件')],
                     ),
                   )
                 ],
               ),
-            ),*/
-            SizedBox(height: 15),
-            Card(
-              elevation: 0,
-              child: ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 30),
-                title: Text('统计'),
-                leading: Icon(Icons.multiline_chart),
-                trailing: Icon(Icons.chevron_right),
-                onTap: () => _to('/statistics'),
-              ),
             ),
+            SizedBox(height: 15),
             Card(
               elevation: 0,
               child: ListTile(

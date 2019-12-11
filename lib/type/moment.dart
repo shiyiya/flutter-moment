@@ -14,6 +14,9 @@ class Moment {
   String location;
   int allowComment;
   int commentsNum;
+  String eName;
+  int eid;
+  int ceid;
 
   Moment(
       {this.cid,
@@ -30,7 +33,10 @@ class Moment {
       this.password = '',
       this.location = '',
       this.allowComment = 0,
-      this.commentsNum = 0});
+      this.commentsNum = 0,
+      this.eName,
+      this.eid,
+      this.ceid});
 
   Moment.fromJson(Map<String, dynamic> json) {
     cid = json['cid'];
@@ -48,6 +54,9 @@ class Moment {
     location = json['location'];
     allowComment = json['allowComment'];
     commentsNum = json['commentsNum'];
+    eName = json['eName'];
+    eid = json['eid'];
+    ceid = json['ceid'];
   }
 
   Map<String, dynamic> toJson() {
@@ -67,6 +76,9 @@ class Moment {
     data['location'] = this.location;
     data['allowComment'] = this.allowComment;
     data['commentsNum'] = this.commentsNum;
+    data['eName'] = this.eName;
+    data['eid'] = this.eid;
+    data['ceid'] = this.ceid;
     return data;
   }
 }

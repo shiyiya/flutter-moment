@@ -100,9 +100,9 @@ class MomentCard extends StatelessWidget {
                             color: Theme.of(context).textTheme.display3.color,
                             size: 12,
                           ),
-                          if (moment.event.length > 0)
+                          if (moment.eName != null && moment.eName.length > 0)
                             Text(
-                              ' ${moment.event}',
+                              ' ${moment.eName}',
                               style: TextStyle(
                                 fontSize: 10,
                                 letterSpacing: 1,

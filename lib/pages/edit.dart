@@ -11,6 +11,8 @@ import 'package:moment/service/event_bus.dart';
 import 'package:moment/service/face.dart';
 import 'package:moment/service/sqlite.dart';
 import 'package:moment/sql/query.dart';
+import 'package:moment/sql/query_event.dart';
+import 'package:moment/type/event.dart';
 import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -34,14 +36,14 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
 
   Moment moment = Moment();
   List<String> alum = [];
+  int newEID;
 
+  List<Event> eventList = [];
   bool showToolBar = false;
 
   @override
   void initState() {
     super.initState();
-
-    print('---- init  ${widget.id}-----');
 
     initMoment(id: widget.id);
 
@@ -49,6 +51,8 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
       // 编辑
       fetchMoment();
     }
+
+    fetchRandomEvent();
 
     /*KeyboardVisibilityNotification().addNewListener(onChange: (bool value) {
       print(value);
@@ -58,7 +62,14 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
     });*/
   }
 
-  void fetchMoment() async {
+  Future<void> fetchRandomEvent() async {
+    final list = await EventSQL.randomEvent();
+    setState(() {
+      eventList = list;
+    });
+  }
+
+  Future<void> fetchMoment() async {
     final m = await SQL.queryMomentById(widget.id);
     if (m != null) {
       final res = m;
@@ -180,7 +191,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                           ),
                           IconButton(
                             icon: Icon(Icons.loyalty),
-                            color: moment.event.length > 0
+                            color: (moment.eid != null || newEID != null)
                                 ? Theme.of(context).accentColor
                                 : Colors.grey,
                             onPressed: buildMomentEventDialog,
@@ -457,38 +468,94 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('关键词：'),
-          content: TextField(
-            controller: TextEditingController.fromValue(
-                TextEditingValue(text: moment.event)),
-            textAlignVertical: TextAlignVertical.center,
-            decoration: InputDecoration(hintText: '如：图书馆/玩新游'),
-            onChanged: (t) {
-              setState(() {
-                moment.event = t;
-              });
-            },
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text(
-                '确定',
-                style: TextStyle(color: Theme.of(context).primaryColor),
+        return StatefulBuilder(
+          builder: (_, state) {
+            return AlertDialog(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('事件'),
+                  IconButton(
+                    icon: Icon(Icons.refresh),
+                    onPressed: () async {
+                      await fetchRandomEvent();
+                      state(() {});
+                    },
+                  )
+                ],
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+              content: Wrap(
+                spacing: 10,
+                children: eventList
+                    .map((e) => FilterChip(
+                          label: Text(e.name),
+                          selected: (newEID ?? moment.eid) == e.id,
+                          onSelected: (v) {
+                            if (v) {
+                              setState(() {
+                                newEID = e.id;
+                              });
+                            } else {
+                              setState(() {
+                                newEID = e.id;
+                              });
+                            }
+                            state(() {});
+                          },
+                        ))
+                    .toList(),
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(
+                    '确定',
+                    style: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
+  // 修改 event 关联表
+  updateEvent() async {
+    final currDB = await DBHelper.db;
+    if (newEID != moment.eid) {
+      // 更新关联表
+      final r = await currDB.update('content_event', {'eid': newEID},
+          where: 'id = ?', whereArgs: [moment.ceid]);
+
+      if (!(r is int)) {
+        Fluttertoast.showToast(msg: '更新事件失败');
+      }
+    }
+  }
+
+//新建文章 新建关联
+  insertEvent(int cid, int eid) async {
+    print('---new cid$cid eid $eid--');
+    final currDB = await DBHelper.db;
+    // 更新关联表
+    final r = await currDB.insert('content_event', {
+      'cid': cid,
+      'eid': eid,
+      'created': DateTime.now().millisecondsSinceEpoch
+    });
+
+    if (!(r is int)) {
+      Fluttertoast.showToast(msg: '插入事件失败');
+    }
+  }
+
   publishMoment() async {
     if (!momentKey.currentState.validate()) {
-      Fluttertoast.showToast(msg: '内容不完整！');
+      Fluttertoast.showToast(msg: '写点什么吧！');
       return;
     }
 
@@ -509,17 +576,18 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
     //编辑
     if (moment.cid != null) {
       final u = await currDB.rawUpdate(
-          'UPDATE moment_content SET created = ?, title = ?, text = ?,  face = ?, event = ?, weather = ?, alum = ?  WHERE cid = ?',
+          'UPDATE moment_content SET created = ?, title = ?, text = ?,  face = ?, weather = ?, alum = ?  WHERE cid = ?',
           [
             moment.created,
             moment.title,
             moment.text,
             moment.face,
-            moment.event,
             moment.weather,
             _alum,
             moment.cid,
           ]);
+
+      await updateEvent();
 
       print('update moment: id -> ${moment.cid} -> $u\r\n');
 
@@ -545,14 +613,13 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
       'text': moment.text,
       'face': moment.face,
       'weather': moment.weather,
-      'event': moment.event,
       'created': moment.created,
       'alum': _alum
     });
-
     print('new moment: id -> $res');
 
     if (res is int) {
+      await insertEvent(res, newEID ?? moment.eid);
       setState(() {
         moment.cid = res;
       });

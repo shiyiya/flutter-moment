@@ -1,7 +1,10 @@
+import 'dart:math';
+
+import 'package:fluttertoast/fluttertoast.dart';
+import "package:moment/constants/app.dart";
+import 'package:moment/type/event.dart';
 import "package:path/path.dart";
 import "package:sqflite/sqflite.dart";
-import 'dart:math';
-import "package:moment/constants/app.dart";
 
 class DBHelper {
   static final DBHelper _instance = DBHelper.internal();
@@ -28,10 +31,56 @@ class DBHelper {
   init() async {
     String path = await getDatabasePath();
 
-    Database db = await openDatabase(path,
-        version: 1,
-        onUpgrade: (Database db, int o, int n) => print("---$o,----$n"),
-        onCreate: _onCreate);
+    Database db = await openDatabase(path, version: 2,
+        onUpgrade: (Database db, int o, int n) async {
+      if (o == 1 && n == 2) {
+        Fluttertoast.showToast(msg: '正在更新数据库', timeInSecForIos: 4);
+        try {
+          const newSQL = [
+            '''
+CREATE TABLE moment_event (
+"id" INTEGER NOT NULL PRIMARY KEY,
+"authorId" int(10) default '0',
+"icon" varchar(32) default NULL,
+"name" varchar(200) default NULL,
+"created" int(10) default '0',
+"description" varchar(200) default '',
+"status" int(10) default '0' )
+         ''',
+            '''
+            CREATE TABLE content_event (
+"id" INTEGER NOT NULL PRIMARY KEY,
+"authorId" int(10) default '0',
+"eid" int(10) default NULL,
+"cid" int(10) default NULL,
+"created" int(10) default '0' )
+'''
+          ];
+          newSQL.forEach((s) async {
+            await db.rawQuery(s);
+          });
+
+          final events = await (await DBHelper.db)
+              .query('moment_content', columns: ['event', 'cid', 'created']);
+          for (var i = 0; i < events.length; i++) {
+            final eventID = await db.insert('moment_event', {
+              'name': events[i]['event'],
+            });
+
+            await db.insert('content_event', {
+              'cid': events[i]['id'],
+              'eid': eventID,
+              'created': events[i]['created']
+            });
+          }
+        } catch (e) {
+          Fluttertoast.showToast(
+              msg: '更新数据库数据库失败，请备份数据库并联系开发者，以免数据丢失', timeInSecForIos: 4);
+        }
+
+        print('$o ->>>> $n');
+      }
+    }, onCreate: _onCreate);
 
     return db;
   }
@@ -40,7 +89,8 @@ class DBHelper {
     print('---create new database---');
     // final sql = await rootBundle.loadString("./lib/asserts/SQLite.sql");
 
-    const sql = '''
+    const sql = [
+      '''
 CREATE TABLE moment_content (
 "cid" INTEGER NOT NULL PRIMARY KEY,
 "title" varchar(200) default NULL ,
@@ -57,8 +107,29 @@ CREATE TABLE moment_content (
 "alum" varchar(200) default '',
 "commentsNum" int(10) default '0' ,
 "allowComment" int(10) default '0' )
-          ''';
-    await db.rawQuery(sql);
+''',
+      '''
+CREATE TABLE moment_event (
+"id" INTEGER NOT NULL PRIMARY KEY,
+"authorId" int(10) default '0',
+"icon" varchar(32) default NULL,
+"name" varchar(200) default NULL,
+"created" int(10) default '0' ,
+"description" varchar(200) default '',
+"status" int(10) default '0' )
+           ''',
+      '''
+CREATE TABLE content_event (
+"id" INTEGER NOT NULL PRIMARY KEY,
+"authorId" int(10) default '0',
+"eid" int(10) default NULL,
+"cid" int(10) default NULL,
+"created" int(10) default '0' )
+'''
+    ];
+    sql.forEach((s) async {
+      await db.rawQuery(s);
+    });
 
     if (bool.fromEnvironment('dart.vm.product')) {
       await initProdData(db);
@@ -69,7 +140,6 @@ CREATE TABLE moment_content (
 
   Future<void> initDevData(Database db) async {
     print('---init dev data---');
-    List event = ['吃饭', '睡觉', '打豆豆', '图书馆', '表白', '爬山', '看演唱会', '学习新语言', '新朋友'];
     List text = [
       '通宵值完班回到家，胡乱写了一张字，真的是胡乱写，写着写着心思就飘到别的地方去。这让我有点烦躁，一是字没写好，二是没有认真做事，不认真这件事比没得到好结果更让我愧疚且沮丧，觉得是在浪费。可能是睡眠不足的原因，我这样安慰自己。洗个澡睡个觉，起来认认真真看书写字吧。',
       '看完单词，躺床上睡不着。害 这两天有点春心荡漾，有波动很正常。克制还是放纵，这是个问题。',
@@ -99,15 +169,40 @@ CREATE TABLE moment_content (
       '20191112'
     ];
 
+    List<Event> event = [
+      Event(name: '图书馆'),
+      Event(name: '爬山'),
+      Event(name: '表白'),
+      Event(name: '看演唱会'),
+      Event(name: '学习新语言'),
+      Event(name: '新朋友'),
+      Event(name: '第一次'),
+      Event(name: '新电脑'),
+      Event(name: '新游戏'),
+      Event(name: '生日')
+    ];
+
+    for (var i = 0; i < event.length; i++) {
+      await db.insert('moment_event', {
+        'name': event[i].name,
+      });
+    }
+
     //https://www.douban.com/group/topic/156219920/
     for (var i = 0; i < text.length; i++) {
-      await db.insert('moment_content', {
+      final e = Random().nextInt(event.length - 1);
+      final cid = await db.insert('moment_content', {
         'title': '随机标题 $i',
         'text': text[i],
         'face': Random().nextInt(100),
-        'event': event[Random().nextInt(event.length - 1)],
+        'event': e,
         'created': DateTime.parse(time[i]).millisecondsSinceEpoch,
         'alum': ''
+      });
+      await db.insert('content_event', {
+        'cid': cid,
+        'eid': e,
+        'created': DateTime.parse(time[i]).millisecondsSinceEpoch
       });
     }
   }
@@ -117,7 +212,6 @@ CREATE TABLE moment_content (
       'title': 'Moment (瞬记)',
       'text': '''
       捕捉 & 记录生活中的美好瞬间。
-
       如你所见，它很简单；也许，你可以用它来写日记。
       ''',
       'face': 80,
