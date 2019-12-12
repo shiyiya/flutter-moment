@@ -62,8 +62,7 @@ class MomentCard extends StatelessWidget {
                                 ),
                         )
                       : null),
-              ButtonTheme.bar(
-                  child: Container(
+              Container(
                 decoration: BoxDecoration(
                   border: Border(
                     top: BorderSide(
@@ -113,7 +112,7 @@ class MomentCard extends StatelessWidget {
                         ],
                       ),
                     ]),
-              ))
+              )
             ],
           ),
         ),

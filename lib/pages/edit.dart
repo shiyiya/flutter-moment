@@ -88,16 +88,18 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
       showDialog(
           context: context,
           builder: (BuildContext context) {
-            return AlertDialog(title: Text('此瞬间不存在'), actions: <Widget>[
-              ButtonTheme.bar(
-                  child: ButtonBar(children: <Widget>[
-                FlatButton(
-                    child: const Text('确定'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    })
-              ]))
-            ]);
+            return AlertDialog(
+              title: Text('此瞬间不存在'),
+              actions: <Widget>[
+                ButtonBar(children: <Widget>[
+                  FlatButton(
+                      child: const Text('确定'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      })
+                ])
+              ],
+            );
           });
     }
   }
@@ -353,11 +355,13 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
 
       // todo 此流程应后置到 publishMoment
       for (var i = 0; i < resultList.length; i++) {
-        final String path = await resultList[i].filePath;
-        final String name = resultList[i].name;
+        final String dataName = resultList[i].name;
+        final ByteData data = await resultList[i].getByteData();
+
         Directory(picPath).createSync();
-        final file = await File(path).copy(picPath + name);
-        paths.add(file.path);
+        File('$picPath$dataName').writeAsBytes(data.buffer.asUint8List());
+
+        paths.add('$picPath$dataName');
       }
       if (paths.length > 0) {
         setState(() {

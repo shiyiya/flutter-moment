@@ -249,41 +249,39 @@ class _HomePageState extends State<HomePage>
                   });
                 },
               ),
-              ButtonTheme.bar(
-                child: ButtonBar(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    FlatButton(
-                      child: const Text('重置'),
-                      onPressed: () {
-                        setState(() {
-                          byFilter = false;
-                          face = null;
-                          weather = null;
-                        });
-                        _loadMomentByPage(0);
-                        Navigator.pop(context);
-                      },
-                    ),
-                    FlatButton(
-                      child: const Text('取消'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    FlatButton(
-                      child: const Text('确定'),
-                      onPressed: () {
-                        setState(() {
-                          byFilter = true;
-                        });
-                        _loadMomentByFilterWithPage(0);
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-              ),
+              ButtonBar(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  FlatButton(
+                    child: const Text('重置'),
+                    onPressed: () {
+                      setState(() {
+                        byFilter = false;
+                        face = null;
+                        weather = null;
+                      });
+                      _loadMomentByPage(0);
+                      Navigator.pop(context);
+                    },
+                  ),
+                  FlatButton(
+                    child: const Text('取消'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  FlatButton(
+                    child: const Text('确定'),
+                    onPressed: () {
+                      setState(() {
+                        byFilter = true;
+                      });
+                      _loadMomentByFilterWithPage(0);
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              )
             ],
           );
         });
@@ -330,31 +328,29 @@ class _HomePageState extends State<HomePage>
           return AlertDialog(
             title: Text('是否删除本条瞬间？'),
             actions: <Widget>[
-              ButtonTheme.bar(
-                child: ButtonBar(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    FlatButton(
-                      child: const Text('取消'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    FlatButton(
-                      child: const Text('确定'),
-                      onPressed: () async {
-                        final bool d = await SQL.delMomentById(cid);
-                        if (d) {
-                          setState(() {
-                            _moments.removeWhere((m) => m.cid == cid);
-                          });
-                        }
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-              ),
+              ButtonBar(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  FlatButton(
+                    child: const Text('取消'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  FlatButton(
+                    child: const Text('确定'),
+                    onPressed: () async {
+                      final bool d = await SQL.delMomentById(cid);
+                      if (d) {
+                        setState(() {
+                          _moments.removeWhere((m) => m.cid == cid);
+                        });
+                      }
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              )
             ],
           );
         });

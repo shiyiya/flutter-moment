@@ -191,7 +191,12 @@ class _ViewPageState extends State<ViewPage> {
                     ),
                   ),
                   Text(
-                    moment.text.length.toString() + ' 字',
+                    moment.text
+                            .replaceAll('\n', '')
+                            .replaceAll(' ', '')
+                            .length
+                            .toString() +
+                        ' 字',
                     style: Theme.of(context).textTheme.caption,
                   ),
                 ],
