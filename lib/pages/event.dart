@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:moment/constants/app.dart';
 import 'package:moment/pages/home_page.dart';
+import 'package:moment/service/face.dart';
 import 'package:moment/service/sqlite.dart';
 
 class EventPage extends StatefulWidget {
@@ -20,10 +21,12 @@ class _EventPageState extends State<EventPage> {
   loadEvents() async {
     final db = await DBHelper.db;
     final faceEvent = await db.rawQuery(
-        'select C.face,E.name from content_event AS CE left join moment_content as C on CE.cid = C.cid left join moment_event as E on C.cid = E.id');
+        'select C.face,E.name from content_event AS CE left join moment_content as C on CE.cid = C.cid left join moment_event as E on CE.eid = E.id');
+
+    print(faceEvent);
 
     final List l = faceEvent.toList();
-    l.removeWhere((l)=>l['name'].isEmpty);
+    l.removeWhere((l) => l['name'] == null || l['name'].isEmpty);
 
     setState(() {
       _events = l;
@@ -62,7 +65,7 @@ class _EventPageState extends State<EventPage> {
               avatar: CircleAvatar(
                   backgroundColor: Colors.transparent,
                   child: Icon(
-                    Constants.face[e['face'] < 20 ? 0 : (e['face'] ~/ 20) - 1],
+                    Constants.face[Face.getIndexByNum(e['face'])],
                     color: Theme.of(context).primaryColor,
                   )),
               label: Text(e['name']),

@@ -218,13 +218,13 @@ CREATE TABLE content_event (
       如你所见，它很简单；也许，你可以用它来写日记。
       ''',
       'face': 80,
-      'event': '相识',
       'created': DateTime.now().millisecondsSinceEpoch,
       'alum': '' //https://i.loli.net/2019/11/20/6wI8eTmkbYQ5Zy9.gif
     });
 
     final eid = await db.insert('moment_event', {
       'name': '相识',
+      'created': DateTime.now().millisecondsSinceEpoch,
     });
     await db.insert('content_event', {
       'cid': cid,
