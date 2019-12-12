@@ -68,7 +68,7 @@ class SQL {
 
     if (res.length < 1) {
       Fluttertoast.showToast(msg: '没有更多啦 ∑( 口 ||');
-      return null;
+      return [];
     }
 
     return res.map((r) => Moment.fromJson(r)).toList();

@@ -632,7 +632,10 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
     print('new moment: id -> $res');
 
     if (res is int) {
-      await insertEvent(res, newEID ?? moment.eid);
+      if (newEID != null) {
+        await insertEvent(res, newEID);
+      }
+
       setState(() {
         moment.cid = res;
       });

@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
-    print('----home page initstate----');
+    print('----home page initstate by event ${widget.event}----');
 
     if (widget.event != null) {
       setState(() {
@@ -421,7 +421,6 @@ class _HomePageState extends State<HomePage>
       return;
     }
 
-    print('${where.length}');
     String whereArgs = '';
     where.forEach((w) {
       whereArgs += w.k.replaceAll('?', '${w.v} AND ');
@@ -433,7 +432,7 @@ class _HomePageState extends State<HomePage>
         whereArgs += 'event LIKE "%${widget.event}%"';
       } else {
         // by tag
-        whereArgs = 'event LIKE "%${widget.event}%"';
+        whereArgs = 'name LIKE "%${widget.event}%"';
       }
     } else {
       if (whereArgs.length > 0) {

@@ -23,6 +23,8 @@ class _EventPageState extends State<EventPage> {
         'select C.face,E.name from content_event AS CE left join moment_content as C on CE.cid = C.cid left join moment_event as E on C.cid = E.id');
 
     final List l = faceEvent.toList();
+    l.removeWhere((l)=>l['name'].isEmpty);
+
     setState(() {
       _events = l;
     });
@@ -68,7 +70,7 @@ class _EventPageState extends State<EventPage> {
             onPressed: () {
               Navigator.pushAndRemoveUntil(context,
                   MaterialPageRoute(builder: (BuildContext context) {
-                return HomePage(event: e['event']);
+                return HomePage(event: e['name']);
               }), (Route<dynamic> route) => true);
             }))
         .toList();
