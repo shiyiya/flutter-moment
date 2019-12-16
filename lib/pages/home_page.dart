@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage>
 
   List<TabItem> tabs = [
     TabItem(title: '瞬 间', position: 10),
-    TabItem(title: '', icon: Icon(Icons.add))
+//    TabItem(title: '', icon: Icon(Icons.add),)
   ];
   TabController _tabController;
 
@@ -170,45 +170,48 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: ModalRoute.of(context).isFirst
-            ? FloatingActionButton(
-                onPressed: () => Navigator.pushNamed(context, "/edit"),
-                tooltip: "记录瞬间",
-                child: Icon(Icons.add))
-            : null,
-        drawer: ModalRoute.of(context).isFirst ? DrawerWidget() : null,
-        appBar: AppBar(
-          elevation: 0.0,
-          titleSpacing: 0.0,
-          title: Text('瞬记'),
-          leading: ModalRoute.of(context).isFirst
-              ? Builder(
-                  builder: (_) => IconButton(
-                    icon: MenuIcon(
-                      Theme.of(_).appBarTheme.iconTheme?.color ?? Colors.white,
-                    ),
-                    onPressed: () {
-                      Scaffold.of(_).openDrawer();
-                    },
+      floatingActionButton: ModalRoute.of(context).isFirst
+          ? FloatingActionButton(
+              onPressed: () => Navigator.pushNamed(context, "/edit"),
+              tooltip: "记录瞬间",
+              child: Icon(Icons.add))
+          : null,
+      drawer: ModalRoute.of(context).isFirst ? DrawerWidget() : null,
+      appBar: AppBar(
+        elevation: 0.0,
+        titleSpacing: 0.0,
+        title: Text('瞬记'),
+        leading: ModalRoute.of(context).isFirst
+            ? Builder(
+                builder: (_) => IconButton(
+                  icon: MenuIcon(
+                    Theme.of(_).appBarTheme.iconTheme?.color ?? Colors.white,
                   ),
-                )
-              : null,
-          actions: <Widget>[
-            IconButton(
-              tooltip: '寻觅',
-              icon: Icon(Icons.filter_list),
-              onPressed: _showFilterDialog,
-            ),
-          ],
-        ),
-        body: ModalRoute.of(context).isFirst
-            ? NestedScrollView(
-                headerSliverBuilder: _sliverBuilder,
-                body: TabBarView(controller: _tabController, children: <Widget>[
+                  onPressed: () {
+                    Scaffold.of(_).openDrawer();
+                  },
+                ),
+              )
+            : null,
+        actions: <Widget>[
+          IconButton(
+            tooltip: '寻觅',
+            icon: Icon(Icons.filter_list),
+            onPressed: _showFilterDialog,
+          ),
+        ],
+      ),
+      body: ModalRoute.of(context).isFirst
+          ? NestedScrollView(
+              headerSliverBuilder: _sliverBuilder,
+              body: TabBarView(
+                children: <Widget>[
                   momentWrap(),
-                  Center(child: Text('敬请期待')),
-                ]))
-            : momentWrap());
+//                    Center(child: Text('敬请期待')),
+                ],
+              ))
+          : momentWrap(),
+    );
   }
 
   void _showFilterDialog() {
