@@ -15,6 +15,11 @@ class Face {
 
   static int getIndexByNum(int number) {
     number = checkFaceNum(number);
+
+    if (number == 0) {
+      return 0;
+    }
+
     int index;
     if (number % 20 > 0) {
       index = number ~/ 20;

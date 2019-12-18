@@ -156,6 +156,7 @@ class _HomePageState extends State<HomePage>
             );
           }
           if (index < len) {
+            print('${_moments[index].face}');
             return MomentCard(
               moment: _moments[index],
               onLongPress: showDelMomentCardDialog,
@@ -205,6 +206,7 @@ class _HomePageState extends State<HomePage>
           ? NestedScrollView(
               headerSliverBuilder: _sliverBuilder,
               body: TabBarView(
+                controller: _tabController,
                 children: <Widget>[
                   momentWrap(),
 //                    Center(child: Text('敬请期待')),
