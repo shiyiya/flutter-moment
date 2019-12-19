@@ -37,14 +37,10 @@ class _AppState extends State<App> {
   int lastBack = 0;
 
   Future<bool> doubleBackExit() {
-    int now = DateTime
-        .now()
-        .millisecondsSinceEpoch;
+    int now = DateTime.now().millisecondsSinceEpoch;
     if (now - lastBack > 800) {
       showShortToast("再按一次退出");
-      lastBack = DateTime
-          .now()
-          .millisecondsSinceEpoch;
+      lastBack = DateTime.now().millisecondsSinceEpoch;
     } else {
       cancelToast();
       SystemNavigator.pop();
@@ -68,8 +64,8 @@ class _AppState extends State<App> {
           barShadow: [
             BoxShadow(
               color: Colors.black12,
-              offset: Offset(0, 4),
-              blurRadius: 4,
+              offset: Offset(0, -1),
+              blurRadius: 1,
             ),
           ],
           onTabChangedListener: (position, title, color) {

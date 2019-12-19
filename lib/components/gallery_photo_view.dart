@@ -93,8 +93,7 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
   PhotoViewGalleryPageOptions _buildItem(BuildContext context, int index) {
     final String item = widget.galleryItems[index];
     return PhotoViewGalleryPageOptions(
-      onTapUp: (BuildContext context,
-          TapUpDetails details,
+      onTapUp: (BuildContext context, TapUpDetails details,
           PhotoViewControllerValue controllerValue) {
         Navigator.of(context).pop();
       },

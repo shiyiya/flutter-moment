@@ -352,7 +352,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
         paths.add(path);
       }
       setState(() {
-          alum.addAll(paths);
+        alum.addAll(paths);
       });
     }
 

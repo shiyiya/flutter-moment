@@ -197,8 +197,8 @@ class _SettingState extends State<Setting> {
         type: FileType.CUSTOM, fileExtension: 'zip');
 
     if (!filePath.contains('moment-backup')) {
-      showAlertDialog(context, title: Text('错误'),
-          content: Text('格式错误，请选择正确的备份文件'));
+      showAlertDialog(context,
+          title: Text('错误'), content: Text('格式错误，请选择正确的备份文件'));
       return;
     }
 
@@ -228,8 +228,8 @@ class _SettingState extends State<Setting> {
         }
       }
     } catch (e) {}
-    showAlertDialog(context, title: Text('成功'),
-        content: Text('导入成功，一切似乎都很顺利~'), hideAction: true);
+    showAlertDialog(context,
+        title: Text('成功'), content: Text('导入成功，一切似乎都很顺利~'), hideAction: true);
     eventBus.fire(HomeRefreshEvent(true));
   }
 
@@ -254,13 +254,11 @@ class _SettingState extends State<Setting> {
       File('$picPath/moment-sqlite-${Date.getDateFormatYMD()}-$timeMS.db')
           .delete();
 
-      showAlertDialog(context, title: Text('成功'),
-          content: Text('导出成功，导出路径：/Download/$outFileName'));
-
-
+      showAlertDialog(context,
+          title: Text('成功'), content: Text('导出成功，导出路径：/Download/$outFileName'));
     } catch (_) {
-      showAlertDialog(context, title: Text('失败'),
-          content: Text('备份失败了呢  \r\n 失败原因：$_'));
+      showAlertDialog(context,
+          title: Text('失败'), content: Text('备份失败了呢  \r\n 失败原因：$_'));
     }
   }
 }

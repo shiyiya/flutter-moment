@@ -321,24 +321,23 @@ class _ViewPageState extends State<ViewPage> {
   _delMoment() async {
     showAlertDialog(context, title: Text('提示'), content: Text('确定本条瞬间么？'),
         rF: () async {
-          bool delRes = await SQL.delMomentById(_id);
-          if (delRes) {
-            eventBus.fire(HomeRefreshEvent(true));
-            Future.delayed(Duration(milliseconds: 400), () {
-              Navigator.of(context).pop();
-            });
-          }
+      bool delRes = await SQL.delMomentById(_id);
+      if (delRes) {
+        eventBus.fire(HomeRefreshEvent(true));
+        Future.delayed(Duration(milliseconds: 400), () {
+          Navigator.of(context).pop();
         });
+      }
+    });
   }
 
   _showImgView(List img, int initialIndex) {
     showDialog(
       context: context,
-      builder: (_) =>
-          GalleryPhotoViewWrapper(
-            galleryItems: img,
-            initialIndex: initialIndex,
-          ),
+      builder: (_) => GalleryPhotoViewWrapper(
+        galleryItems: img,
+        initialIndex: initialIndex,
+      ),
     );
   }
 
