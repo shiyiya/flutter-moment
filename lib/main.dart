@@ -10,16 +10,15 @@ import 'package:moment/constants/app.dart';
 import 'package:moment/pages/about_page.dart';
 import 'package:moment/pages/alum_page.dart';
 import "package:moment/pages/edit.dart";
-import 'package:moment/pages/edit_flage_page.dart';
 import 'package:moment/pages/event.dart';
 import 'package:moment/pages/event_page_manager.dart';
 import "package:moment/pages/home_page.dart";
-import 'package:moment/pages/search_page.dart';
 import 'package:moment/pages/setting.dart';
 import 'package:moment/pages/statistics_page.dart';
 import 'package:moment/pages/view_page.dart';
 import 'package:moment/provides/lang.dart';
 import 'package:moment/provides/theme.dart';
+import 'package:moment/service/instances.dart';
 import 'package:moment/utils/route.dart';
 import 'package:provider/provider.dart';
 
@@ -41,19 +40,21 @@ void main() async {
     // 替换红屏
     ErrorWidget.builder = (FlutterErrorDetails flutterErrorDetails) {
       debugPrint(flutterErrorDetails.toString());
-      return SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text('哎呀 被抓到啦（长按按钮试试）'),
-              IconButton(
-                icon: Icon(Icons.bug_report),
-                tooltip: '我是 Future<Feature> !',
-                onPressed: () {}, //todo
-              )
-            ],
+      return Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.bug_report),
+                  tooltip: '我是 Future !',
+                  onPressed: () {},
+                  //todo
+                )
+              ],
+            ),
           ),
         ),
       );
@@ -79,9 +80,13 @@ void main() async {
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
 
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   MultiProvider provider = MultiProvider(
     providers: [
-//        Provider<ThemeProvider>.value(value: themeProvide),
       ChangeNotifierProvider.value(value: ThemeProvider(theme, primaryColor)),
       ChangeNotifierProvider.value(value: LangProvider(Locale('zh', 'CN')))
     ],
@@ -131,14 +136,14 @@ class MyApp extends StatelessWidget {
           }
           return _langProvider.currentLocale;
         },
+        navigatorKey: Instances.navigatorKey,
         title: Constants.appName,
         debugShowCheckedModeBanner: false,
         theme: theme(color: _themeProvider.primaryColor),
         home: App(),
-//        initialRoute: '/home',
         routes: {
-          "/home": (_) => HomePage(),
-          "/search": (_) => SearchPage(),
+          // "/home": (_) => HomePage(),
+          // "/search": (_) => SearchPage(),
           "/edit": (_) => Edit(),
           "/view": (_) => ViewPage(),
           "/event": (_) => EventPage(),
@@ -146,7 +151,7 @@ class MyApp extends StatelessWidget {
           "/setting": (_) => Setting(),
           "/about": (_) => AboutPage(),
           "/statistics": (_) => StatisticsPage(),
-          "/new_flag": (_) => EditFlagPage(),
+          // "/new_flag": (_) => EditFlagPage(),
           "/eventmanager": (_) => EventManagerPage()
         },
         onGenerateRoute: (setting) {
