@@ -11,6 +11,7 @@ import 'package:moment/constants/app.dart';
 import 'package:moment/service/event_bus.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
+import 'package:moment/utils/dialog.dart';
 
 class Filter {
   String k;
@@ -29,22 +30,18 @@ class HomePage extends StatefulWidget {
 }
 
 class TabItem {
-  const TabItem({this.title, this.position, this.icon});
+  const TabItem({this.title, this.icon});
 
   final String title;
-  final int position;
   final Icon icon;
 }
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   EasyRefreshController _controller = EasyRefreshController();
-
-  List<TabItem> tabs = [
-    TabItem(title: '瞬 间', position: 10),
-//    TabItem(title: '', icon: Icon(Icons.add),)
-  ];
   TabController _tabController;
+
+  final tabs = [Tab(text: '瞬间', icon: null)];
 
   int _page = 0;
   List<Moment> _moments = [];
@@ -57,11 +54,8 @@ class _HomePageState extends State<HomePage>
   int timeStart;
   int timeEnd;
 
-  List<BottomNavigationBarItem> bottomBarList = [];
-
   @override
   void initState() {
-    super.initState();
     print('----home page initstate by event ${widget.event}----');
 
     if (widget.event != null) {
@@ -77,6 +71,8 @@ class _HomePageState extends State<HomePage>
       }
     });
     _tabController = new TabController(vsync: this, length: tabs.length);
+
+    super.initState();
   }
 
   List<Widget> _sliverBuilder(BuildContext context, bool innerBoxIsScrolled) {
@@ -97,12 +93,7 @@ class _HomePageState extends State<HomePage>
 //                labelPadding: EdgeInsets.symmetric(horizontal: 10),
                 indicatorSize: TabBarIndicatorSize.label,
                 isScrollable: true,
-                tabs: tabs.map((TabItem tabItem) {
-                  return new Tab(
-                    text: tabItem.title.isEmpty ? null : tabItem.title,
-                    icon: tabItem.icon,
-                  );
-                }).toList(),
+                tabs: tabs,
                 controller: _tabController,
               ),
             ),
@@ -142,7 +133,7 @@ class _HomePageState extends State<HomePage>
       onRefresh: () async {
         _loadMomentByPage(0);
       },
-      onLoad: () => _loadMoreMoment(),
+      onLoad: _loadMoreMoment,
       slivers: <Widget>[
         SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
@@ -156,7 +147,6 @@ class _HomePageState extends State<HomePage>
             );
           }
           if (index < len) {
-            print('${_moments[index].face}');
             return MomentCard(
               moment: _moments[index],
               onLongPress: showDelMomentCardDialog,
@@ -217,79 +207,84 @@ class _HomePageState extends State<HomePage>
   }
 
   void _showFilterDialog() {
-    showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Text(
-              '筛选',
-              style: TextStyle(fontWeight: FontWeight.normal),
-            ),
-            contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-            children: [
-              RowIconRadio(
-                icon: Constants.face,
-                selected: face == null ? null : face ~/ 20 - 1,
-                onTap: (i) {
+    showSimpleDialog(context,
+        contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+        children: [
+          RowIconRadio(
+            icon: Constants.face,
+            selected: face == null ? null : face ~/ 20 - 1,
+            onTap: (i) {
+              setState(() {
+                if ((i + 1) * 20 == face) {
+                  face = null;
+                } else {
+                  face = (i + 1) * 20;
+                }
+              });
+            },
+          ),
+          RowIconRadio(
+            icon: Constants.weather,
+            selected: weather,
+            onTap: (i) {
+              setState(() {
+                if (i == weather) {
+                  weather = null;
+                } else {
+                  weather = i;
+                }
+              });
+            },
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              FlatButton(
+                child: const Text(
+                  '重置',
+                  style: TextStyle(color: Colors.redAccent),
+                ),
+                onPressed: () {
                   setState(() {
-                    if ((i + 1) * 20 == face) {
-                      face = null;
-                    } else {
-                      face = (i + 1) * 20;
-                    }
+                    byFilter = false;
+                    face = null;
+                    weather = null;
                   });
+                  _loadMomentByPage(0);
+                  Navigator.pop(context);
                 },
               ),
-              RowIconRadio(
-                icon: Constants.weather,
-                selected: weather,
-                onTap: (i) {
-                  setState(() {
-                    if (i == weather) {
-                      weather = null;
-                    } else {
-                      weather = i;
-                    }
-                  });
+              FlatButton(
+                child: Text(
+                  '取消',
+                  style: TextStyle(
+                      color: Theme
+                          .of(context)
+                          .primaryColor
+                          .withOpacity(0.7)),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
                 },
               ),
-              ButtonBar(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  FlatButton(
-                    child: const Text('重置'),
-                    onPressed: () {
-                      setState(() {
-                        byFilter = false;
-                        face = null;
-                        weather = null;
-                      });
-                      _loadMomentByPage(0);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  FlatButton(
-                    child: const Text('取消'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  FlatButton(
-                    child: const Text('确定'),
-                    onPressed: () {
-                      setState(() {
-                        byFilter = true;
-                      });
-                      _loadMomentByFilterWithPage(0);
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              )
+              FlatButton(
+                child: Text(
+                  '确定',
+                  style: TextStyle(color: Theme
+                      .of(context)
+                      .primaryColor),
+                ),
+                onPressed: () {
+                  setState(() {
+                    byFilter = true;
+                  });
+                  _loadMomentByFilterWithPage(0);
+                  Navigator.pop(context);
+                },
+              ),
             ],
-          );
-        });
+          )
+        ]);
   }
 
   void _showNewsSwitch() {
@@ -327,38 +322,14 @@ class _HomePageState extends State<HomePage>
   }
 
   void showDelMomentCardDialog(int cid) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('是否删除本条瞬间？'),
-            actions: <Widget>[
-              ButtonBar(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  FlatButton(
-                    child: const Text('取消'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  FlatButton(
-                    child: const Text('确定'),
-                    onPressed: () async {
-                      final bool d = await SQL.delMomentById(cid);
-                      if (d) {
-                        setState(() {
-                          _moments.removeWhere((m) => m.cid == cid);
-                        });
-                      }
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              )
-            ],
-          );
+    showAlertDialog(context, title: Text('是否删除本条瞬间？'), rF: () async {
+      final bool r = await SQL.delMomentById(cid);
+      if (r) {
+        setState(() {
+          _moments.removeWhere((m) => m.cid == cid);
         });
+      }
+    });
   }
 
   _loadMomentByPage(int page) async {
@@ -401,7 +372,7 @@ class _HomePageState extends State<HomePage>
     }
   }
 
-  _loadMoreMoment() async {
+  Future<void> _loadMoreMoment() async {
     print('load more monent by page $_page');
 
     await _loadMomentByPage(_page + 1);

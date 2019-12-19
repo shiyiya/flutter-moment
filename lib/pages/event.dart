@@ -37,13 +37,13 @@ class _EventPageState extends State<EventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('事件'),
+          title: const Text('事件'),
         ),
         body: _events.length > 0
             ? Container(
-                padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
                 alignment: Alignment.topCenter,
-                margin: EdgeInsets.only(top: 20),
+          margin: const EdgeInsets.only(top: 20),
                 child: Wrap(
                   spacing: 10.0,
                   runSpacing: 10.0,
@@ -60,7 +60,7 @@ class _EventPageState extends State<EventPage> {
   List<Widget> buildEventTag() {
     return _events
         .map((e) => MaterialButton(
-            padding: EdgeInsets.all((0)),
+        padding: const EdgeInsets.all((0)),
             child: Chip(
               avatar: CircleAvatar(
                   backgroundColor: Colors.transparent,

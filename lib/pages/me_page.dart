@@ -139,7 +139,7 @@ class _MePageState extends State<MePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   MaterialButton(
-                    onPressed:  () => _to('/statistics'),
+                    onPressed: () => _to('/statistics'),
                     child: Column(
                       children: <Widget>[
                         Icon(Icons.multiline_chart),

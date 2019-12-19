@@ -15,6 +15,7 @@ import 'package:moment/sql/query_event.dart';
 import 'package:moment/type/event.dart';
 import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
+import 'package:moment/utils/dialog.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -386,91 +387,86 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
 
   void buildEmojioDialog() async {
     final List iconList = Constants.face;
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-            title: Text('此刻的心情'),
-            children: [
-              RowIconRadio(
-                  selected: Face.getIndexByNum(moment.face),
-                  icon: iconList,
-                  onTap: (int index) {
-                    setState(() {
-                      moment.face = (index + 1) * 20;
-                      _faceController.text = ((index + 1) * 20).toString();
-                      Navigator.of(context).pop();
-                    });
-                  }),
-              TextField(
-                controller: _faceController,
-                maxLength: 3,
-                inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                textAlignVertical: TextAlignVertical.center,
-                decoration: InputDecoration(hintText: '或者填入一百以内的数字'),
-                onChanged: (t) {
-                  if (int.parse(t) < 0) {
-                    _faceController.text = '0';
-                    Fluttertoast.showToast(msg: '心情数值异常(⊙ˍ⊙), 已自动修正');
-                    setState(() {
-                      moment.face = 0;
-                    });
-                    return;
-                  } else if (int.parse(t) > 100) {
-                    _faceController.text = '100';
-                    Fluttertoast.showToast(msg: '心情数值异常(⊙ˍ⊙), 已自动修正');
-                    setState(() {
-                      moment.face = 100;
-                    });
-                    return;
-                  }
-                  setState(() {
-                    moment.face = int.parse(t);
-                  });
-                },
+
+    showSimpleDialog(context,
+        title: Text('此刻的心情'),
+        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+        children: [
+          RowIconRadio(
+              selected: Face.getIndexByNum(moment.face),
+              icon: iconList,
+              onTap: (int index) {
+                setState(() {
+                  moment.face = (index + 1) * 20;
+                  _faceController.text = ((index + 1) * 20).toString();
+                  Navigator.of(context).pop();
+                });
+              }),
+          TextField(
+            controller: _faceController,
+            maxLength: 3,
+            inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+            textAlignVertical: TextAlignVertical.center,
+            decoration: InputDecoration(hintText: '或者填入一百以内的数字'),
+            onChanged: (t) {
+              if (int.parse(t) < 0) {
+                _faceController.text = '0';
+                Fluttertoast.showToast(msg: '心情数值异常(⊙ˍ⊙), 已自动修正');
+                setState(() {
+                  moment.face = 0;
+                });
+                return;
+              } else if (int.parse(t) > 100) {
+                _faceController.text = '100';
+                Fluttertoast.showToast(msg: '心情数值异常(⊙ˍ⊙), 已自动修正');
+                setState(() {
+                  moment.face = 100;
+                });
+                return;
+              }
+              setState(() {
+                moment.face = int.parse(t);
+              });
+            },
+          ),
+          Align(
+            child: MaterialButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                '确定',
+                style: TextStyle(color: Theme
+                    .of(context)
+                    .accentColor),
               ),
-              Align(
-                child: MaterialButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    '确定',
-                    style: TextStyle(color: Theme.of(context).accentColor),
-                  ),
-                ),
-              )
-            ]);
-      },
-    );
+            ),
+          )
+        ]);
   }
 
   void buildWeatherDialog() {
-    showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('此刻的天气'),
-            content: RowIconRadio(
-                selected: moment.weather,
-                icon: Constants.weather,
-                onTap: (int index) {
-                  setState(() {
-                    moment.weather = index;
-                    Navigator.of(context).pop();
-                  });
-                }),
-          );
-        });
+    showAlertDialog(
+      context,
+      title: Text('此刻的天气'),
+      content: RowIconRadio(
+        selected: moment.weather,
+        icon: Constants.weather,
+        onTap: (int index) {
+          setState(() {
+            moment.weather = index;
+            Navigator.of(context).pop();
+          });
+        },
+      ),
+      hideAction: true,
+    );
   }
 
+  //todo
   void buildMomentEventDialog() {
     showDialog(
       context: context,
-      barrierDismissible: true,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (_, state) {
@@ -478,7 +474,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text('事件'),
+                  const Text('事件'),
                   Row(
                     children: <Widget>[
                       IconButton(
@@ -490,7 +486,6 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                         icon: Icon(Icons.refresh),
                         onPressed: () async {
                           await fetchRandomEvent();
-                          state(() {});
                         },
                       )
                     ],
@@ -513,7 +508,6 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                                 newEID = null;
                               });
                             }
-                            state(() {});
                           },
                         ))
                     .toList(),

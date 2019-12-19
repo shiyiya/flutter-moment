@@ -1,11 +1,13 @@
 // import 'dart:io';
 // import 'package:android_intent/android_intent.dart';
 import 'package:cuberto_bottom_bar/cuberto_bottom_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:moment/pages/home_page.dart';
 import 'package:moment/pages/me_page.dart';
+import 'package:moment/utils/toast.dart';
 
-// switch tab bar 载体
 class App extends StatefulWidget {
   @override
   _AppState createState() => _AppState();
@@ -13,43 +15,12 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   int currentPageIndex = 0;
-  PageController pageController;
 
-  final List<Widget> switchPages = [HomePage(), MePage()];
-
-  final tabItems = [
-    _TabBarItem(
-      '首页',
-      Icons.home,
-    ),
-    _TabBarItem(
-      '管理',
-      Icons.person_pin,
-    )
+  final List<TabData> tabs = [
+    TabData(iconData: Icons.home, title: '首页'),
+    TabData(iconData: Icons.person_pin, title: '管理')
   ];
-
-  List<TabData> tabs = List();
-
-  @override
-  void initState() {
-    super.initState();
-    pageController = PageController(initialPage: currentPageIndex);
-
-    tabs = tabItems
-        .map((tab) => TabData(iconData: tab.iconData, title: tab.title))
-        .toList();
-  }
-
-  // 不使用 page view，避免重载
-  _getPageWidget(int index) {
-    return Offstage(
-      offstage: currentPageIndex != index,
-      child: TickerMode(
-        enabled: currentPageIndex == index,
-        child: switchPages[index],
-      ),
-    );
-  }
+  final List<Widget> tabPages = [HomePage(), MePage()];
 
   // Future<bool> _runAppBackground() async {
   //   if (Platform.isAndroid) {
@@ -63,68 +34,51 @@ class _AppState extends State<App> {
   //   return Future.value(false);
   // }
 
+  int lastBack = 0;
+
+  Future<bool> doubleBackExit() {
+    int now = DateTime
+        .now()
+        .millisecondsSinceEpoch;
+    if (now - lastBack > 800) {
+      showShortToast("再按一次退出");
+      lastBack = DateTime
+          .now()
+          .millisecondsSinceEpoch;
+    } else {
+      cancelToast();
+      SystemNavigator.pop();
+    }
+    return Future.value(false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return
-        //WillPopScope(
-        //   onWillPop: _runAppBackground,
-        //   child:
-        new Scaffold(
-//      appBar: currentPageIndex == 0 ? null : _buildAppBar(),
-//      drawer: currentPageIndex == 0 ? null : DrawerWidget(),
-      body: Stack(
-        children: <Widget>[
-          _getPageWidget(0),
-          _getPageWidget(1),
-        ],
-      ),
-      bottomNavigationBar: CubertoBottomBar(
-        selectedTab: currentPageIndex,
-        barShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            offset: Offset(0, 4),
-            blurRadius: 4,
-          ),
-        ],
-        tabStyle: CubertoTabStyle.STYLE_FADED_BACKGROUND,
-        tabs: tabs,
-        onTabChangedListener: (position, title, color) {
-          setState(() {
-            currentPageIndex = position;
-          });
-        },
-        // ),
+    return WillPopScope(
+      onWillPop: doubleBackExit,
+      child: new Scaffold(
+        body: IndexedStack(
+          index: currentPageIndex,
+          children: [for (var i = 0; i < tabs.length; i++) tabPages[i]],
+        ),
+        bottomNavigationBar: CubertoBottomBar(
+          tabs: tabs,
+          selectedTab: currentPageIndex,
+          tabStyle: CubertoTabStyle.STYLE_FADED_BACKGROUND,
+          barShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              offset: Offset(0, 4),
+              blurRadius: 4,
+            ),
+          ],
+          onTabChangedListener: (position, title, color) {
+            setState(() {
+              currentPageIndex = position;
+            });
+          },
+        ),
       ),
     );
   }
-
-//  Widget _buildAppBar() {
-//    return new AppBar(
-//      title: new Text(
-//        bottomBarListItem[currentPageIndex].name,
-//        style: new TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500),
-//      ),
-////      elevation: 0.0,
-//      brightness: Brightness.light,
-//      centerTitle: false,
-//      actions: [
-//        new InkWell(
-//          child: new Container(
-//            width: 60.0,
-//            child: Icon(Icons.search),
-//          ),
-//          onTap: () => Navigator.of(context).pushNamed('/search'),
-//        ),
-//      ],
-//    );
-//  }
-}
-
-class _TabBarItem {
-  String title;
-  IconData iconData;
-  Color tabColor;
-
-  _TabBarItem(this.title, this.iconData, {this.tabColor});
 }

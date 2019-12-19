@@ -11,6 +11,7 @@ import 'package:moment/service/face.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
+import 'package:moment/utils/dialog.dart';
 import 'package:share_extend/share_extend.dart';
 
 class ViewPage extends StatefulWidget {
@@ -115,7 +116,6 @@ class _ViewPageState extends State<ViewPage> {
                           })),
                         )
                       ],
-//                      ),
                     )
                   : ListView(
                       children: <Widget>[buildMetaCard(), buildContent()],
@@ -319,43 +319,27 @@ class _ViewPageState extends State<ViewPage> {
   }
 
   _delMoment() async {
-    showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('提示'),
-        content: new Text('确定本条删除么？'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('取消'),
-          ),
-          new FlatButton(
-            onPressed: () async {
-              bool delRes = await SQL.delMomentById(_id);
-              if (delRes) {
-                eventBus.fire(HomeRefreshEvent(true));
-                Future.delayed(Duration(milliseconds: 400), () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                });
-              }
-            },
-            child: new Text('确定'),
-          ),
-        ],
-      ),
-    );
+    showAlertDialog(context, title: Text('提示'), content: Text('确定本条瞬间么？'),
+        rF: () async {
+          bool delRes = await SQL.delMomentById(_id);
+          if (delRes) {
+            eventBus.fire(HomeRefreshEvent(true));
+            Future.delayed(Duration(milliseconds: 400), () {
+              Navigator.of(context).pop();
+            });
+          }
+        });
   }
 
   _showImgView(List img, int initialIndex) {
     showDialog(
-        context: context,
-        builder: (BuildContext _) {
-          return GalleryPhotoViewWrapper(
+      context: context,
+      builder: (_) =>
+          GalleryPhotoViewWrapper(
             galleryItems: img,
             initialIndex: initialIndex,
-          );
-        });
+          ),
+    );
   }
 
   share2Text() {

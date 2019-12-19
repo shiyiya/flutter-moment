@@ -17,8 +17,8 @@ class _AboutPageState extends State<AboutPage> {
 
   @override
   void initState() {
-    super.initState();
     getPackageInfo();
+    super.initState();
   }
 
   getPackageInfo() async {
