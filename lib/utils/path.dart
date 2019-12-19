@@ -8,6 +8,11 @@ import 'package:platform/platform.dart';
 Platform _platform = const LocalPlatform();
 
 class MPath {
+
+  static Future<String> getPicPath() async {
+    return (await getExternalStorageDirectory()).path + '/Pictures/';
+  }
+
   static Future<String> getLocalDownloadPath() async {
     prefix0.Directory dir = _platform.isAndroid
         ? (await getExternalStorageDirectory())

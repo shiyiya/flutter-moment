@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,8 +17,8 @@ import 'package:moment/type/event.dart';
 import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
 import 'package:moment/utils/dialog.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:moment/utils/path.dart';
+import 'package:path/path.dart' show basename;
 
 class Edit extends StatefulWidget {
   final int id;
@@ -335,41 +336,57 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
 
   // -----/storage/emulated/0/Android/data/com.cy.moment/files/Pictures/image_picker6866769357194578119.jpg----
   Future<void> _getImage() async {
-//    final List<File> files = await FilePicker.getMultiFile(
-//        type: FileType.IMAGE); //todo copy file to app data direct
-//    print(files[0].path);
+    final List<File> files = await FilePicker.getMultiFile(
+        type: FileType.IMAGE); //todo copy file to app data direct
 
-    List<Asset> resultList;
-    try {
-      resultList =
-          await MultiImagePicker.pickImages(maxImages: 5, enableCamera: true);
-    } on Exception catch (e) {
-      print('===error $e===');
-    }
-
-    if (!mounted) return;
-
-    if (resultList != null) {
+    if (files.length > 0) {
+      String picPath = await MPath.getPicPath();
+      Directory(picPath).createSync();
       final List<String> paths = [];
-      String picPath =
-          (await getExternalStorageDirectory()).path + '/Pictures/';
 
-      // todo 此流程应后置到 publishMoment
-      for (var i = 0; i < resultList.length; i++) {
-        final String dataName = resultList[i].name;
-        final ByteData data = await resultList[i].getByteData();
-
-        Directory(picPath).createSync();
-        File('$picPath$dataName').writeAsBytes(data.buffer.asUint8List());
-
-        paths.add('$picPath$dataName');
+      for (var i = 0; i < files.length; i++) {
+        final file = files[i];
+        final fileName = basename(files[i].path);
+        final path = picPath + fileName;
+        file.copySync(path);
+        paths.add(path);
       }
-      if (paths.length > 0) {
-        setState(() {
+      setState(() {
           alum.addAll(paths);
-        });
-      }
+      });
     }
+
+//    List<Asset> resultList;
+//    try {
+//      resultList =
+//          await MultiImagePicker().pickImages(maxImages: 5, enableCamera: true);
+//    } on Exception catch (e) {
+//      print('===error $e===');
+//    }
+//
+//    if (!mounted) return;
+//
+//    if (resultList != null) {
+//      final List<String> paths = [];
+//      String picPath =
+//          (await getExternalStorageDirectory()).path + '/Pictures/';
+//
+//      // todo 此流程应后置到 publishMoment
+//      for (var i = 0; i < resultList.length; i++) {
+//        final String dataName = resultList[i].name;
+//        final ByteData data = await resultList[i].getByteData();
+//
+//        Directory(picPath).createSync();
+//        File('$picPath$dataName').writeAsBytes(data.buffer.asUint8List());
+//
+//        paths.add('$picPath$dataName');
+//      }
+//      if (paths.length > 0) {
+//        setState(() {
+//          alum.addAll(paths);
+//        });
+//      }
+//    }
 
     //I don't plan to add support for this, however I can look into PR contributions enabling such functionality.
     //You are welcome to implement it.
