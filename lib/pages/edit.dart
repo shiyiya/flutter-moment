@@ -436,9 +436,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
               },
               child: Text(
                 '确定',
-                style: TextStyle(color: Theme
-                    .of(context)
-                    .accentColor),
+                style: TextStyle(color: Theme.of(context).accentColor),
               ),
             ),
           )
@@ -463,7 +461,6 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
     );
   }
 
-  //todo
   void buildMomentEventDialog() {
     showDialog(
       context: context,
@@ -486,6 +483,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                         icon: Icon(Icons.refresh),
                         onPressed: () async {
                           await fetchRandomEvent();
+                          state(() {});
                         },
                       )
                     ],
@@ -508,6 +506,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                                 newEID = null;
                               });
                             }
+                            state(() {});
                           },
                         ))
                     .toList(),

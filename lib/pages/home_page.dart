@@ -236,8 +236,7 @@ class _HomePageState extends State<HomePage>
               });
             },
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          ButtonBar(
             children: <Widget>[
               FlatButton(
                 child: const Text(
@@ -258,10 +257,7 @@ class _HomePageState extends State<HomePage>
                 child: Text(
                   '取消',
                   style: TextStyle(
-                      color: Theme
-                          .of(context)
-                          .primaryColor
-                          .withOpacity(0.7)),
+                      color: Theme.of(context).primaryColor.withOpacity(0.7)),
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -270,9 +266,7 @@ class _HomePageState extends State<HomePage>
               FlatButton(
                 child: Text(
                   '确定',
-                  style: TextStyle(color: Theme
-                      .of(context)
-                      .primaryColor),
+                  style: TextStyle(color: Theme.of(context).primaryColor),
                 ),
                 onPressed: () {
                   setState(() {
