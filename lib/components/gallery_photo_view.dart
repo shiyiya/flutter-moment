@@ -93,6 +93,11 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
   PhotoViewGalleryPageOptions _buildItem(BuildContext context, int index) {
     final String item = widget.galleryItems[index];
     return PhotoViewGalleryPageOptions(
+      onTapUp: (BuildContext context,
+          TapUpDetails details,
+          PhotoViewControllerValue controllerValue) {
+        Navigator.of(context).pop();
+      },
       imageProvider: FileImage(File(item)),
       initialScale: PhotoViewComputedScale.contained,
       minScale: PhotoViewComputedScale.contained * (0.5 + index / 10),
