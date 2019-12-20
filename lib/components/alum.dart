@@ -40,7 +40,7 @@ class _AlumState extends State<Alum> {
 
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 3,
+      height: MediaQuery.of(context).size.height / 3.5,
       color: imgFile.length > 0
           ? Colors.transparent
           : Theme.of(context).backgroundColor,

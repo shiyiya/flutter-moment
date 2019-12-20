@@ -66,6 +66,7 @@ class MomentCard extends StatelessWidget {
 
   Widget withImgCard(BuildContext context, Moment _) {
     final medSize = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
     return Column(
       children: <Widget>[
         Container(
@@ -94,8 +95,8 @@ class MomentCard extends StatelessWidget {
                 )
               : Text(
                   _.text,
-                  style: Theme.of(context).textTheme.body1.copyWith(
-                      color: Theme.of(context).textTheme.caption.color),
+                  style: theme.textTheme.body1
+                      .copyWith(color: theme.textTheme.caption.color),
                 ),
         ),
         bar(
@@ -104,7 +105,8 @@ class MomentCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 2),
             child: Icon(
               Constants.face[_.face],
-              size: 10,
+              size: 12,
+              color: theme.textTheme.display3.color,
             ),
           ),
         )
@@ -134,6 +136,7 @@ class MomentCard extends StatelessWidget {
   }
 
   Widget bar(BuildContext _, {Widget rChild}) {
+    final iconColor = Theme.of(_).textTheme.display3.color;
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -149,14 +152,14 @@ class MomentCard extends StatelessWidget {
               children: <Widget>[
                 Icon(
                   Icons.query_builder,
-                  color: Theme.of(_).textTheme.display3.color,
+                  color: iconColor,
                   size: 12,
                 ),
                 Text(
                   ' ${Date.getDateFormatMD(ms: moment.created, prefix: '.')}',
                   style: TextStyle(
                     fontSize: 10,
-                    color: Theme.of(_).textTheme.display3.color,
+                    color: iconColor,
                   ),
                 ),
               ],
@@ -169,17 +172,17 @@ class MomentCard extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 2),
                   child: Icon(
                     Constants.weather[moment.weather],
-                    color: Theme.of(_).textTheme.display3.color,
+                    color: iconColor,
                     size: 12,
                   ),
                 ),
                 if (moment.eName != null && moment.eName.length > 0)
                   Text(
-                    ' ${moment.eName}',
+                    '${moment.eName}',
                     style: TextStyle(
                       fontSize: 10,
                       letterSpacing: 1,
-                      color: Theme.of(_).textTheme.display3.color,
+                      color: iconColor,
                     ),
                   ),
               ],

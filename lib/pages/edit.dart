@@ -10,6 +10,7 @@ import 'package:moment/constants/app.dart';
 import 'package:moment/pages/view_page.dart';
 import 'package:moment/service/event_bus.dart';
 import 'package:moment/service/face.dart';
+import 'package:moment/service/instances.dart';
 import 'package:moment/service/sqlite.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/sql/query_event.dart';
@@ -41,7 +42,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
   int newEID;
 
   List<Event> eventList = [];
-  bool showToolBar = false;
+  bool showToolBar = true;
 
   @override
   void initState() {
@@ -87,22 +88,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
         _faceController.text = moment.face.toString();
       });
     } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('此瞬间不存在'),
-              actions: <Widget>[
-                ButtonBar(children: <Widget>[
-                  FlatButton(
-                      child: const Text('确定'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      })
-                ])
-              ],
-            );
-          });
+      showAlertDialog(context, title: Text('此瞬间不存在'), hideAction: true);
     }
   }
 
@@ -119,12 +105,15 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Instances.currentTheme;
+    final Color pcolor = Instances.currentThemeColor;
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text(moment.cid == null ? "记录瞬间" : "编辑瞬间"),
+//          title: Text(moment.cid == null ? "记录瞬间" : "编辑瞬间"),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.check),
@@ -150,7 +139,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.all(20),
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -180,7 +169,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                                     .face[Face.getIndexByNum(moment.face)]
                                 : Icons.tag_faces),
                             color: moment.face != null
-                                ? Theme.of(context).accentColor
+                                ? Instances.currentThemeColor
                                 : Colors.grey,
                             onPressed: buildEmojioDialog,
                           ),
@@ -188,28 +177,25 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                             icon: Icon(moment.weather != null
                                 ? Constants.weather[moment.weather]
                                 : Icons.brightness_high),
-                            color: moment.weather != null
-                                ? Theme.of(context).accentColor
-                                : Colors.grey,
+                            color:
+                                moment.weather != null ? pcolor : Colors.grey,
                             onPressed: buildWeatherDialog,
                           ),
                           IconButton(
                             icon: Icon(Icons.loyalty),
                             color: (moment.eid != null || newEID != null)
-                                ? Theme.of(context).accentColor
+                                ? pcolor
                                 : Colors.grey,
                             onPressed: buildMomentEventDialog,
                           ),
                           new IconButton(
                             icon: Icon(Icons.photo),
-                            color: alum.length > 0
-                                ? Theme.of(context).accentColor
-                                : Colors.grey,
+                            color: alum.length > 0 ? pcolor : Colors.grey,
                             onPressed: _getImage,
                           ),
 //                    IconButton(
 //                      icon: Icon(Icons.movie),
-//                      color: Theme.of(context).accentColor,
+//                      color: pcolor,
 //                      onPressed: () {},
 //                    ),
                         ],
@@ -219,15 +205,12 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                 ),
                 Form(
                   key: momentKey,
-                  autovalidate: true,
                   child: Container(
                     margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
                     child: Column(
                       children: <Widget>[
                         new TextFormField(
-                          style: Theme.of(context)
-                              .textTheme
-                              .body2
+                          style: theme.textTheme.body2
                               .copyWith(fontWeight: FontWeight.normal),
                           controller: _titleController,
                           textInputAction: TextInputAction.done,
@@ -243,11 +226,11 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                         Container(
                           child: TextFormField(
                             controller: _textController,
-                            style: Theme.of(context).textTheme.body2.copyWith(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.normal,
-                                  height: 1.8,
-                                ),
+                            style: theme.textTheme.body2.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              height: 1.8,
+                            ),
                             maxLines: 13,
                             maxLength: 10000,
                             decoration: InputDecoration(
@@ -269,41 +252,76 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                   ),
                 ),
               ],
-            ), /*if (showToolBar) //todo
-                  Positioned(
-                    bottom: 0.0,
-                    child: Container(
-                      color: Theme.of(context).backgroundColor,
-                      width: MediaQuery.of(context).size.width,
-                      height: 30,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: <Widget>[
-                          SizedBox(
-                            width: 45,
-                            child: FlatButton(
-                              padding: EdgeInsets.all(0),
-                              child: Text(
-                                '缩进',
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).textTheme.caption.color,
-                                ),
-                              ),
-                              onPressed: () {
-                                _textController.text += '    ';
-                                _textController.selection =
-                                    TextSelection.fromPosition(TextPosition(
-                                  affinity: TextAffinity.downstream,
-                                  offset: _textController.text.length,
-                                ));
-                              },
+            ),
+            /*if (showToolBar)
+              Positioned(
+                bottom: 0.0,
+                child: Container(
+                  color: pcolor.withOpacity(0.5),
+                  width: MediaQuery.of(context).size.width,
+                  height: 35,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: <Widget>[
+                      SizedBox(
+                        width: 45,
+                        child: FlatButton(
+                          padding: EdgeInsets.all(0),
+                          child: Text(
+                            'TAB',
+                            style: TextStyle(
+                              color: theme.textTheme.caption.color,
                             ),
                           ),
-                        ],
+                          onPressed: () {
+                            _textController.text += '        ';
+
+                            _textController = TextEditingController.fromValue(
+                              TextEditingValue(
+                                text: _textController.text,
+                                selection: TextSelection.fromPosition(
+                                  TextPosition(
+                                    affinity: TextAffinity.downstream,
+                                    offset: _textController.text.length,
+                                  ),
+                                ),
+                              ),
+                            );
+                            setState(() {});
+                          },
+                        ),
                       ),
-                    ),
-                  )*/
+                      SizedBox(
+                        width: 45,
+                        child: FlatButton(
+                          padding: EdgeInsets.all(0),
+                          child: Icon(
+                            Icons.access_time,
+                            color: theme.textTheme.caption.color,
+                          ),
+                          onPressed: () {
+                            _textController.text +=
+                                ' [ ${Date.getDateFormatHMByMS(ms: DateTime.now().millisecondsSinceEpoch)} ] ';
+
+                            _textController = TextEditingController.fromValue(
+                              TextEditingValue(
+                                text: _textController.text,
+                                selection: TextSelection.fromPosition(
+                                  TextPosition(
+                                    affinity: TextAffinity.downstream,
+                                    offset: _textController.text.length,
+                                  ),
+                                ),
+                              ),
+                            );
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )*/
           ],
         ),
       ),
@@ -336,8 +354,8 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
 
   // -----/storage/emulated/0/Android/data/com.cy.moment/files/Pictures/image_picker6866769357194578119.jpg----
   Future<void> _getImage() async {
-    final List<File> files = await FilePicker.getMultiFile(
-        type: FileType.IMAGE); //todo copy file to app data direct
+    final List<File> files =
+        await FilePicker.getMultiFile(type: FileType.IMAGE);
 
     if (files.length > 0) {
       String picPath = await MPath.getPicPath();
@@ -550,6 +568,10 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
   updateEvent() async {
     if ((newEID == null && moment.eid == null) || newEID == moment.eid) return;
 
+    if (moment.eid == null && moment.cid != null) {
+      insertEvent(moment.cid, newEID);
+    }
+
     final currDB = await DBHelper.db;
     // 更新关联表
     final r = await currDB.update('content_event', {'eid': newEID},
@@ -582,6 +604,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
       return;
     }
 
+    print(moment.event + newEID.toString());
     momentKey.currentState.save();
 
     String _alum = '';

@@ -209,19 +209,21 @@ class _ViewPageState extends State<ViewPage> {
   }
 
   Widget buildContent() {
-    return Container(
-//      color: Theme.of(context).backgroundColor,
-      padding: EdgeInsets.all(10),
-      margin: EdgeInsets.only(bottom: 100),
-      child: Text(
-        moment.text,
-        style: Theme.of(context).textTheme.body2.copyWith(
-              fontSize: 16,
-              fontWeight: FontWeight.normal,
-              height: 1.8,
-            ),
-      ),
-    );
+    return ConstrainedBox(
+        constraints:
+            BoxConstraints(minHeight: MediaQuery.of(context).size.height - 150),
+        child: Container(
+          padding: EdgeInsets.all(10),
+          margin: EdgeInsets.only(bottom: 100),
+          child: Text(
+            moment.text,
+            style: Theme.of(context).textTheme.body2.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                  height: 1.8,
+                ),
+          ),
+        ));
   }
 
   Widget buildWithAlumBar(List img) {
@@ -251,7 +253,7 @@ class _ViewPageState extends State<ViewPage> {
         ),
         collapseMode: CollapseMode.pin,
       ),
-      expandedHeight: MediaQuery.of(context).size.height / 3,
+      expandedHeight: MediaQuery.of(context).size.height / 3.5,
       floating: false,
       pinned: true,
       snap: false,
@@ -297,7 +299,6 @@ class _ViewPageState extends State<ViewPage> {
         },
       ),
       PopupMenuButton(
-        //todo 格式化内容
         icon: Icon(Icons.more_horiz),
         offset: Offset(100, 100),
         itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -319,7 +320,7 @@ class _ViewPageState extends State<ViewPage> {
   }
 
   _delMoment() async {
-    showAlertDialog(context, title: Text('提示'), content: Text('确定本条瞬间么？'),
+    showAlertDialog(context, title: Text('提示'), content: Text('确定删除本条瞬间么？'),
         rF: () async {
       bool delRes = await SQL.delMomentById(_id);
       if (delRes) {
