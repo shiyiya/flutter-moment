@@ -17,7 +17,7 @@ class MomentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String text =
-        moment.text.length > 50 ? moment.text.substring(0, 20) : moment.text;
+        moment.text.length > 50 ? moment.text.substring(0, 25) : moment.text;
     final String firstImg =
         moment.alum.length < 1 ? null : moment.alum?.split('|')[0];
     final hasImg = firstImg != null && firstImg.length > 0;
@@ -25,7 +25,7 @@ class MomentCard extends StatelessWidget {
 
     final _moment = Moment(
         title: moment.title.trim(),
-        text: text,
+        text: text.trim(),
         alum: firstImg,
         face: face,
         weather: moment.weather,
@@ -82,15 +82,32 @@ class MomentCard extends StatelessWidget {
                 ),
         ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 10),
+          padding: moment.title.length > 0
+              ? EdgeInsets.symmetric(horizontal: 10)
+              : EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           width: double.infinity,
-          child: ListTile(
-            contentPadding: EdgeInsets.all(0),
-            title: Text(moment.title),
-            subtitle: Text(_.text),
-          ),
+          child: moment.title.length > 0
+              ? ListTile(
+                  contentPadding: EdgeInsets.all(0),
+                  title: Text(moment.title),
+                  subtitle: Text(_.text),
+                )
+              : Text(
+                  _.text,
+                  style: Theme.of(context).textTheme.body1.copyWith(
+                      color: Theme.of(context).textTheme.caption.color),
+                ),
         ),
-        bar(context)
+        bar(
+          context,
+          rChild: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 2),
+            child: Icon(
+              Constants.face[_.face],
+              size: 10,
+            ),
+          ),
+        )
       ],
     );
   }
@@ -116,9 +133,7 @@ class MomentCard extends StatelessWidget {
     );
   }
 
-  Widget bar(
-    BuildContext _,
-  ) {
+  Widget bar(BuildContext _, {Widget rChild}) {
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -149,10 +164,14 @@ class MomentCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Icon(
-                  Constants.weather[moment.weather],
-                  color: Theme.of(_).textTheme.display3.color,
-                  size: 12,
+                if (rChild != null) rChild,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2),
+                  child: Icon(
+                    Constants.weather[moment.weather],
+                    color: Theme.of(_).textTheme.display3.color,
+                    size: 12,
+                  ),
                 ),
                 if (moment.eName != null && moment.eName.length > 0)
                   Text(
