@@ -87,7 +87,7 @@ class _SyncPageState extends State<SyncPage> {
             title: 'WebDAV',
             children: <Widget>[
               ListTile(
-                title: Text('拉取备份'),
+                title: Text('拉取云端备份'),
                 subtitle: Text('此操作将会覆盖本地内容且不可逆'),
                 trailing: trailingWidget,
                 onTap: _webdavLoad,
