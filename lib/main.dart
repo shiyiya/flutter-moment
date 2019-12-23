@@ -15,6 +15,7 @@ import 'package:moment/pages/event_page_manager.dart';
 import "package:moment/pages/home_page.dart";
 import 'package:moment/pages/setting.dart';
 import 'package:moment/pages/statistics_page.dart';
+import 'package:moment/pages/sync_page.dart';
 import 'package:moment/pages/view_page.dart';
 import 'package:moment/provides/lang.dart';
 import 'package:moment/provides/theme.dart';
@@ -152,7 +153,8 @@ class MyApp extends StatelessWidget {
           "/about": (_) => AboutPage(),
           "/statistics": (_) => StatisticsPage(),
           // "/new_flag": (_) => EditFlagPage(),
-          "/eventmanager": (_) => EventManagerPage()
+          "/eventmanager": (_) => EventManagerPage(),
+          "/sync": (_) => SyncPage()
         },
         onGenerateRoute: (setting) {
           return MRouter.fadeIn(HomePage());

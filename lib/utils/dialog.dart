@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:moment/components/CircularProgressDialog.dart';
 
 Widget _alertDialog(BuildContext _,
     {Widget title,
     Widget content,
     void Function() lF,
     void Function() rF,
-    hideAction = false}) {
+    hideAction = false,
+    hideCancel = false}) {
   final p = Theme.of(_).primaryColor;
 
   return AlertDialog(
@@ -14,13 +16,14 @@ Widget _alertDialog(BuildContext _,
     actions: hideAction
         ? null
         : <Widget>[
-            FlatButton(
-              child: Text('取消', style: TextStyle(color: p.withOpacity(0.7))),
-              onPressed: () {
-                if (lF != null) lF();
-                Navigator.pop(_);
-              },
-            ),
+            if (!hideCancel)
+              FlatButton(
+                child: Text('取消', style: TextStyle(color: p.withOpacity(0.7))),
+                onPressed: () {
+                  if (lF != null) lF();
+                  Navigator.pop(_);
+                },
+              ),
             FlatButton(
               child: Text(
                 '确定',
@@ -52,17 +55,17 @@ void showAlertDialog(BuildContext context,
     Widget content,
     void Function() lF,
     void Function() rF,
-    hideAction = false}) {
+    hideAction = false,
+    hideCancel = false}) {
   showDialog(
     context: context,
-    builder: (_) => _alertDialog(
-      _,
-      title: title,
-      content: content,
-      lF: lF,
-      rF: rF,
-      hideAction: hideAction,
-    ),
+    builder: (_) => _alertDialog(_,
+        title: title,
+        content: content,
+        lF: lF,
+        rF: rF,
+        hideAction: hideAction,
+        hideCancel: hideCancel),
   );
 }
 
@@ -73,8 +76,21 @@ void showSimpleDialog(BuildContext context,
     builder: (_) => _simpleDialog(
       _,
       title: title,
-      contentPadding: contentPadding,
+      contentPadding:
+          contentPadding ?? const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 16.0),
       children: children,
     ),
+  );
+}
+
+void showCircularProgressDialog(BuildContext context) {
+  showAlertDialog(
+    context,
+    content: Container(
+      width: 100,
+      height: 100,
+      child: CircularProgressDialog(),
+    ),
+    hideAction: true,
   );
 }

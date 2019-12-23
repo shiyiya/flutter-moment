@@ -8,6 +8,7 @@ import 'package:moment/constants/app.dart';
 import 'package:moment/pages/edit.dart';
 import 'package:moment/service/event_bus.dart';
 import 'package:moment/service/face.dart';
+import 'package:moment/service/instances.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
@@ -136,9 +137,10 @@ class _ViewPageState extends State<ViewPage> {
   }
 
   Widget buildMetaCard() {
+    final ThemeData theme = Instances.currentTheme;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      color: Theme.of(context).cardColor,
+      color: theme.cardColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -147,12 +149,12 @@ class _ViewPageState extends State<ViewPage> {
             children: <Widget>[
               Text(
                 '捕捉于${Date.getWeekByMS(ms: moment.created)}',
-                style: Theme.of(context).textTheme.caption,
+                style: theme.textTheme.caption,
               ),
               SizedBox(height: 5),
               Text(
                 '${Date.getDateFormatYMD(ms: moment.created, prefix: '-')} ${Date.getDateFormatHMByMS(ms: moment.created)}',
-                style: Theme.of(context).textTheme.caption,
+                style: theme.textTheme.caption,
               ),
             ],
           ),
@@ -162,7 +164,7 @@ class _ViewPageState extends State<ViewPage> {
                 children: <Widget>[
                   Icon(
                     Constants.face[Face.getIndexByNum(moment.face)],
-                    color: Theme.of(context).textTheme.caption.color,
+                    color: theme.textTheme.caption.color,
                     size: 20,
                   ),
                   SizedBox(
@@ -170,7 +172,7 @@ class _ViewPageState extends State<ViewPage> {
                   ),
                   Icon(
                     Constants.weather[moment.weather],
-                    color: Theme.of(context).textTheme.caption.color,
+                    color: theme.textTheme.caption.color,
                     size: 20,
                   )
                 ],
@@ -180,10 +182,10 @@ class _ViewPageState extends State<ViewPage> {
                 children: <Widget>[
                   Text(
                     '${moment.eName ?? ''}  ',
-                    style: Theme.of(context).textTheme.caption.copyWith(
+                    style: theme.textTheme.caption.copyWith(
                       shadows: <Shadow>[
                         Shadow(
-                          color: Theme.of(context).accentColor,
+                          color: theme.accentColor,
                           offset: Offset(0, 0),
                           blurRadius: 8,
                         )
@@ -197,7 +199,7 @@ class _ViewPageState extends State<ViewPage> {
                             .length
                             .toString() +
                         ' 字',
-                    style: Theme.of(context).textTheme.caption,
+                    style: theme.textTheme.caption,
                   ),
                 ],
               )
@@ -215,13 +217,15 @@ class _ViewPageState extends State<ViewPage> {
         child: Container(
           padding: EdgeInsets.all(10),
           margin: EdgeInsets.only(bottom: 100),
+//          decoration: BoxDecoration(
+//            image: DecorationImage(
+//                image: AssetImage('lib/asserts/images/bg_test.jpg'),
+//                fit: BoxFit.cover),
+//          ),
           child: Text(
             moment.text,
             style: Theme.of(context).textTheme.body2.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                  height: 1.8,
-                ),
+                fontSize: 16, fontWeight: FontWeight.normal, height: 1.8),
           ),
         ));
   }
