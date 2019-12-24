@@ -175,9 +175,7 @@ class _HomePageState extends State<HomePage>
         leading: ModalRoute.of(context).isFirst
             ? Builder(
                 builder: (_) => IconButton(
-                  icon: MenuIcon(
-                    Theme.of(_).appBarTheme.iconTheme?.color ?? Colors.white,
-                  ),
+                  icon: MenuIcon(Colors.white),
                   onPressed: () {
                     Scaffold.of(_).openDrawer();
                   },

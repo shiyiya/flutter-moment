@@ -14,7 +14,7 @@ class StatisticsPage extends StatefulWidget {
 class _StatisticsPagePageState extends State<StatisticsPage>
     with SingleTickerProviderStateMixin /*, AutomaticKeepAliveClientMixin*/ {
   TabController tabController;
-  final _tabs = const ['情绪管理', '事件管理'];
+  final List<Tab> _tabs = const [Tab(text: '情绪管理'), Tab(text: '事件管理')];
 
 //事件
   Map<String, int> pie = Map();
@@ -94,19 +94,16 @@ class _StatisticsPagePageState extends State<StatisticsPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('图表'),
         centerTitle: true,
-        bottom: TabBar(
+        title: TabBar(
           controller: tabController,
-          tabs: _tabs
-              .map((String name) => Container(
-                    child: Text(
-                      name,
-                    ),
-                    padding: const EdgeInsets.only(bottom: 5.0),
-                  ))
-              .toList(),
+          indicatorWeight: 2,
+          indicatorPadding: const EdgeInsets.only(left: 5, right: 5),
+          indicatorSize: TabBarIndicatorSize.label,
+          isScrollable: true,
+          tabs: _tabs,
         ),
+        titleSpacing: 0,
       ),
       body: TabBarView(
         controller: tabController,
@@ -116,7 +113,7 @@ class _StatisticsPagePageState extends State<StatisticsPage>
               MLine(
                 lineDate,
                 isYearView: isYearView,
-                title: '情感线',
+                title: '情绪波动',
                 actions: <Widget>[
                   PopupMenuButton(
                     child: Padding(

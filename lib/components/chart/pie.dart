@@ -44,6 +44,7 @@ class _MPieChartState extends State<MPieChart> {
     return Column(
       children: <Widget>[
         Card(
+          elevation: 0.0,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,36 +117,37 @@ class _MPieChartState extends State<MPieChart> {
           ),
         ),
         Card(
+            elevation: 0.0,
             child: Padding(
-          padding: EdgeInsets.all(10),
-          child: len < 1
-              ? Center(
-                  child: Text(
-                    '暂无数据',
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              : Column(
-                  children: List.generate(len, (i) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                          child: Indicator(
-                            color: colors[i],
-                            text: top8Key[i],
-                            textColor: colors[i],
-                            isSquare: true,
-                          ),
-                        ),
-                        Text((top8Val[i]?.toString()) ?? '0')
-                      ],
-                    );
-                  }),
-                ),
-        ))
+              padding: EdgeInsets.all(10),
+              child: len < 1
+                  ? Center(
+                      child: Text(
+                        '暂无数据',
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : Column(
+                      children: List.generate(len, (i) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 5, vertical: 5),
+                              child: Indicator(
+                                color: colors[i],
+                                text: top8Key[i],
+                                textColor: colors[i],
+                                isSquare: true,
+                              ),
+                            ),
+                            Text((top8Val[i]?.toString()) ?? '0')
+                          ],
+                        );
+                      }),
+                    ),
+            ))
       ],
     );
   }

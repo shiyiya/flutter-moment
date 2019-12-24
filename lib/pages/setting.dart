@@ -3,19 +3,20 @@ import 'package:flutter_colorpicker/material_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/components/card_with_title.dart';
 import 'package:moment/provides/theme.dart';
+import 'package:moment/service/instances.dart';
 import 'package:provider/provider.dart';
 
-class Setting extends StatefulWidget {
-  @override
-  _SettingState createState() => _SettingState();
-}
+class Setting extends StatelessWidget {
+  final Widget trailing = Icon(
+    Icons.chevron_right,
+    color: Instances.currentThemeColor,
+  );
 
-class _SettingState extends State<Setting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('设置'),
+        title: const Text('设置'),
       ),
       body: ListView(
         children: <Widget>[
@@ -23,18 +24,16 @@ class _SettingState extends State<Setting> {
             title: '外观',
             children: <Widget>[
               ListTile(
-                title: Text('主题'),
-                leading: Icon(Icons.format_color_fill),
-                trailing: Icon(Icons.chevron_right,
-                    color: Theme.of(context).accentColor),
-                onTap: _buildThemeSwitchDialog,
+                title: const Text('主题'),
+                leading: const Icon(Icons.format_color_fill),
+                trailing: trailing,
+                onTap: () => _buildThemeSwitchDialog(context),
               ),
               ListTile(
-                title: Text('主题强调色'),
-                leading: Icon(Icons.color_lens),
-                trailing: Icon(Icons.chevron_right,
-                    color: Theme.of(context).accentColor),
-                onTap: _showColorPicker,
+                title: const Text('主题强调色'),
+                leading: const Icon(Icons.color_lens),
+                trailing: trailing,
+                onTap: () => _showColorPicker(context),
               ),
 //              ListTile(
 //                title: Text('自动切换夜间模式'),
@@ -53,19 +52,15 @@ class _SettingState extends State<Setting> {
             title: '其他',
             children: <Widget>[
               ListTile(
-                title: Text('备份 & 恢复'),
-                leading: Icon(Icons.local_library),
-                trailing: Icon(
-                  Icons.chevron_right,
-                  color: Theme.of(context).accentColor,
-                ),
+                title: const Text('备份 & 恢复'),
+                leading: const Icon(Icons.sync),
+                trailing: trailing,
                 onTap: () => Navigator.of(context).pushNamed('/sync'),
               ),
               ListTile(
-                title: Text('关于'),
-                leading: Icon(Icons.info),
-                trailing: Icon(Icons.chevron_right,
-                    color: Theme.of(context).accentColor),
+                title: const Text('关于'),
+                leading: const Icon(Icons.info),
+                trailing: trailing,
                 onTap: () => Navigator.of(context).pushNamed('/about'),
               ),
             ],
@@ -75,7 +70,7 @@ class _SettingState extends State<Setting> {
     );
   }
 
-  _buildThemeSwitchDialog() {
+  void _buildThemeSwitchDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (BuildContext context) => Consumer(
@@ -84,39 +79,39 @@ class _SettingState extends State<Setting> {
                 RadioListTile(
                   groupValue: theme.value,
                   value: 0,
-                  title: Text('Light'),
-                  onChanged: (i) => setTheme(theme, i),
+                  title: const Text('Light'),
+                  onChanged: (i) => setTheme(context, theme, i),
                 ),
                 RadioListTile(
                   groupValue: theme.value,
                   value: 1,
-                  title: Text('Dark'),
-                  onChanged: (i) => setTheme(theme, i),
+                  title: const Text('Dark'),
+                  onChanged: (i) => setTheme(context, theme, i),
                 ),
                 RadioListTile(
                   groupValue: theme.value,
                   value: 2,
-                  title: Text('夜间模式'),
-                  onChanged: (i) => setTheme(theme, i),
+                  title: const Text('夜间模式'),
+                  onChanged: (i) => setTheme(context, theme, i),
                 )
               ]),
             ));
   }
 
-  setTheme(ThemeProvider theme, int i) {
+  void setTheme(BuildContext context, ThemeProvider theme, int i) {
     theme.setTheme(i);
     Navigator.of(context).pop();
   }
 
-  void _showColorPicker() {
+  void _showColorPicker(BuildContext context) {
     showDialog(
         context: context,
         builder: (ctx) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                borderRadius: BorderRadius.all(Radius.circular(4.0))),
             elevation: 0.0,
-            title: Text('选择'),
+            title: const Text('选择主色调'),
             content: SingleChildScrollView(
               child: MaterialPicker(
                 pickerColor: Theme.of(context).primaryColor,
@@ -156,7 +151,7 @@ class _SettingState extends State<Setting> {
                 },
               ),
               FlatButton(
-                child: Text('确认'),
+                child: const Text('确认'),
                 onPressed: () async {
                   Navigator.of(context).pop();
                 },

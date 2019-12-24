@@ -214,8 +214,8 @@ CREATE TABLE content_event (
     final cid = await db.insert('moment_content', {
       'title': 'Moment (瞬记)',
       'text': '''
-      捕捉 & 记录生活中的美好瞬间。
-      如你所见，它很简单；也许，你可以用它来写日记。
+捕捉 & 记录生活中的美好瞬间。
+如你所见，它很简单；也许，你可以用它来写日记。
       ''',
       'face': 80,
       'created': DateTime.now().millisecondsSinceEpoch,

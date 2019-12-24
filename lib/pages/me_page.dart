@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:moment/provides/theme.dart';
 import 'package:moment/service/event_bus.dart';
+import 'package:moment/service/instances.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
 import 'package:moment/utils/launcher.dart';
@@ -74,8 +75,9 @@ class _MePageState extends State<MePage> {
                             Text(
                               _momentInfo.count.toString(),
                               style: TextStyle(
-                                  fontSize: 24,
-                                  color: Theme.of(context).accentColor),
+                                fontSize: 24,
+                                color: Instances.currentThemeColor,
+                              ),
                             ),
                             Text(' 条',
                                 style: TextStyle(
@@ -91,12 +93,11 @@ class _MePageState extends State<MePage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text(
-                              _momentInfo.wordCount.toString(),
-                              style: TextStyle(
+                            Text(_momentInfo.wordCount.toString(),
+                                style: TextStyle(
                                   fontSize: 24,
-                                  color: Theme.of(context).accentColor),
-                            ),
+                                  color: Instances.currentThemeColor,
+                                )),
                             Text(' 字',
                                 style: TextStyle(
                                     fontSize: 10,
@@ -114,8 +115,9 @@ class _MePageState extends State<MePage> {
                             Text(
                               _momentInfo.imgCount.toString(),
                               style: TextStyle(
-                                  fontSize: 24,
-                                  color: Theme.of(context).accentColor),
+                                fontSize: 24,
+                                color: Instances.currentThemeColor,
+                              ),
                             ),
                             Text(' 图',
                                 style: TextStyle(
@@ -142,15 +144,30 @@ class _MePageState extends State<MePage> {
                     onPressed: () => _to('/statistics'),
                     child: Column(
                       children: <Widget>[
-                        Icon(Icons.multiline_chart),
-                        Text('统计')
+                        Icon(
+                          Icons.multiline_chart,
+                          color: Instances.currentTheme.iconTheme.color,
+                        ),
+                        Text(
+                          '统计',
+                          style: TextStyle(fontWeight: FontWeight.normal),
+                        )
                       ],
                     ),
                   ),
                   MaterialButton(
                     onPressed: () => _to('/eventmanager'),
                     child: Column(
-                      children: <Widget>[Icon(Icons.turned_in_not), Text('事件')],
+                      children: <Widget>[
+                        Icon(
+                          Icons.turned_in_not,
+                          color: Instances.currentTheme.iconTheme.color,
+                        ),
+                        Text(
+                          '事件',
+                          style: TextStyle(fontWeight: FontWeight.normal),
+                        )
+                      ],
                     ),
                   )
                 ],
@@ -161,7 +178,7 @@ class _MePageState extends State<MePage> {
               elevation: 0,
               child: ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: 30),
-                title: Text('夜间模式'),
+                title: const Text('夜间模式'),
                 leading: Icon(Icons.brightness_2),
                 trailing: Switch(
                   value: Provider.of<ThemeProvider>(context).isNightTheme,
@@ -202,8 +219,9 @@ class _MePageState extends State<MePage> {
                   trailing: Icon(Icons.chevron_right),
                   onTap: () {
                     ShareExtend.share(
-                        '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/com.cy.moment',
-                        'text');
+                      '让我们记录这美好的瞬间~ (≧∇≦)ﾉ \r\n https://www.coolapk.com/apk/com.cy.moment',
+                      'text',
+                    );
                   }),
             )
           ],

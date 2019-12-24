@@ -20,6 +20,7 @@ import 'package:moment/pages/view_page.dart';
 import 'package:moment/provides/lang.dart';
 import 'package:moment/provides/theme.dart';
 import 'package:moment/service/instances.dart';
+import 'package:moment/utils/launcher.dart';
 import 'package:moment/utils/route.dart';
 import 'package:provider/provider.dart';
 
@@ -51,8 +52,9 @@ void main() async {
                 IconButton(
                   icon: Icon(Icons.bug_report),
                   tooltip: '我是 Future !',
-                  onPressed: () {},
-                  //todo
+                  onPressed: () {
+                    launchURL('https://www.coolapk.com/apk/249316');
+                  },
                 )
               ],
             ),
@@ -62,11 +64,11 @@ void main() async {
     };
 
     // 错误捕获
-    FlutterError.onError = (FlutterErrorDetails flutterErrorDetails) {
-      // FlutterError.dumpErrorToConsole(details);
-      Zone.current.handleUncaughtError(
-          flutterErrorDetails.exception, flutterErrorDetails.stack);
-    };
+//    FlutterError.onError = (FlutterErrorDetails flutterErrorDetails) {
+//      // FlutterError.dumpErrorToConsole(details);
+//      Zone.current.handleUncaughtError(
+//          flutterErrorDetails.exception, flutterErrorDetails.stack);
+//    };
   }
 
   int theme = await getTheme();
@@ -94,12 +96,11 @@ void main() async {
     child: MyApp(),
   );
 
-  runZoned<Future<void>>(() async {
-    runApp(provider);
-  }, onError: (error, stackTrace) async {
-    Fluttertoast.showToast(msg: error + stackTrace);
-    //todo
-  });
+//  runZoned<Future<void>>(() async {
+//    runApp(provider);
+//  }, onError: (error, stackTrace) async {
+//    Fluttertoast.showToast(msg: error + stackTrace);
+//  });
 
   runApp(provider);
 }

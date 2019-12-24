@@ -25,47 +25,50 @@ class MLine extends StatelessWidget {
     return Column(
       children: [
         Card(
+            elevation: 0.0,
             child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-                  child: Text(
-                    title ?? '',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2),
-                    textAlign: TextAlign.left,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                      child: Text(
+                        title ?? '',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 2),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(children: actions ?? []),
+                    )
+                  ],
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(children: actions ?? []),
+                Container(
+                  height: MediaQuery.of(context).size.height / 3,
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: AspectRatio(
+                    aspectRatio: 1.23,
+                    child: Container(
+                      child: Padding(
+                          padding:
+                              const EdgeInsets.only(right: 16.0, left: 6.0),
+                          child: LineChart(
+                            sampleData1(),
+                            swapAnimationDuration: Duration(milliseconds: 250),
+                          )),
+                    ),
+                  ),
                 )
               ],
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height / 3,
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: AspectRatio(
-                aspectRatio: 1.23,
-                child: Container(
-                  child: Padding(
-                      padding: const EdgeInsets.only(right: 16.0, left: 6.0),
-                      child: LineChart(
-                        sampleData1(),
-                        swapAnimationDuration: Duration(milliseconds: 250),
-                      )),
-                ),
-              ),
-            )
-          ],
-        ))
+            ))
       ],
     );
   }

@@ -64,7 +64,7 @@ class _SyncPageState extends State<SyncPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('数据'),
+        title: const Text('数据'),
       ),
       body: ListView(
         children: <Widget>[
@@ -72,12 +72,14 @@ class _SyncPageState extends State<SyncPage> {
             title: '本地',
             children: <Widget>[
               ListTile(
-                title: Text('覆盖导入'),
+                title: const Text('本地导入'),
+                subtitle: const Text('此操作将会覆盖本地数据且不可逆'),
                 trailing: trailingWidget,
                 onTap: _import,
               ),
               ListTile(
-                title: Text('本地备份'),
+                title: const Text('本地备份'),
+                subtitle: const Text('此操作将会将数据导出到 /Download 目录下'),
                 trailing: trailingWidget,
                 onTap: _export,
               ),
@@ -88,22 +90,22 @@ class _SyncPageState extends State<SyncPage> {
             children: <Widget>[
               ListTile(
                 title: Text('拉取云端备份'),
-                subtitle: Text('此操作将会覆盖本地内容且不可逆'),
+                subtitle: Text('此操作将会覆盖本地数据且不可逆'),
                 trailing: trailingWidget,
-                onTap: _webdavLoad,
+                onTap: _webDAVavLoad,
               ),
               ListTile(
                 title: Text('推送到云端'),
-                subtitle: Text('此操作将会覆盖云端内容且不可逆'),
+                subtitle: Text('此操作将会覆盖云端数据且不可逆'),
                 trailing: trailingWidget,
-                onTap: _webdavSync,
+                onTap: _webDAVSync,
               ),
               ListTile(
-                title: Text('WebDAV 网址'),
-                subtitle: Text(url ?? ''),
+                title: const Text('WebDAV 网址'),
+                subtitle: Text(url ?? '点击填入网址'),
                 onTap: () {
                   showAlertDialog(context,
-                      title: Text('WebDAV 网址'),
+                      title: const Text('WebDAV 网址'),
                       content: TextField(
                         controller: TextEditingController(text: url),
                         autofocus: true,
@@ -116,11 +118,11 @@ class _SyncPageState extends State<SyncPage> {
                 },
               ),
               ListTile(
-                title: Text('WebDAV 账户'),
-                subtitle: Text(username ?? ''),
+                title: const Text('WebDAV 账户'),
+                subtitle: Text(username ?? '点击填入账户'),
                 onTap: () {
                   showAlertDialog(context,
-                      title: Text('WebDAV 账户'),
+                      title: const Text('WebDAV 账户'),
                       content: TextField(
                         controller: TextEditingController(text: username),
                         autofocus: true,
@@ -133,11 +135,11 @@ class _SyncPageState extends State<SyncPage> {
                 },
               ),
               ListTile(
-                title: Text('WebDAV 密码'),
-                subtitle: Text(password ?? ''),
+                title: const Text('WebDAV 密码'),
+                subtitle: Text(password ?? '点击填入密码'),
                 onTap: () {
                   showAlertDialog(context,
-                      title: Text('WebDAV 密码'),
+                      title: const Text('WebDAV 密码'),
                       content: TextField(
                         autofocus: true,
                         controller: TextEditingController(text: password),
@@ -150,11 +152,11 @@ class _SyncPageState extends State<SyncPage> {
                 },
               ),
               ListTile(
-                title: Text('WebDAV 路径'),
+                title: const Text('WebDAV 路径'),
                 subtitle: Text(wpath ?? 'dav/'),
                 onTap: () {
                   showAlertDialog(context,
-                      title: Text('WebDAV 路径'),
+                      title: const Text('WebDAV 路径'),
                       content: TextField(
                         autofocus: true,
                         controller: TextEditingController(text: wpath),
@@ -252,7 +254,7 @@ class _SyncPageState extends State<SyncPage> {
     return true;
   }
 
-  _webdavSync() async {
+  _webDAVSync() async {
     if (!check()) {
       return;
     }
@@ -299,7 +301,7 @@ class _SyncPageState extends State<SyncPage> {
     setSp();
   }
 
-  _webdavLoad() async {
+  _webDAVavLoad() async {
     if (!check()) {
       return;
     }

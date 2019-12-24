@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/components/alum.dart';
 import 'package:moment/components/row-icon-radio.dart';
@@ -42,12 +43,10 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
   int newEID;
 
   List<Event> eventList = [];
-  bool showToolBar = true;
+  bool showToolBar = false;
 
   @override
   void initState() {
-    super.initState();
-
     initMoment(id: widget.id);
 
     if (widget.id != null) {
@@ -56,13 +55,14 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
     }
 
     fetchRandomEvent();
+    super.initState();
 
-    /*KeyboardVisibilityNotification().addNewListener(onChange: (bool value) {
+    KeyboardVisibilityNotification().addNewListener(onChange: (bool value) {
       print(value);
       setState(() {
         showToolBar = value;
       });
-    });*/
+    });
   }
 
   Future<void> fetchRandomEvent() async {
@@ -113,10 +113,10 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-//          title: Text(moment.cid == null ? "记录瞬间" : "编辑瞬间"),
+          title: Text(moment.cid == null ? "记录瞬间" : "编辑瞬间"),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.check),
+              icon: const Icon(Icons.check),
               onPressed: publishMoment,
             ),
           ],
@@ -129,35 +129,36 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                   img: alum,
                   emptyPlaceholder: Center(
                     child: IconButton(
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.photo_camera,
                         size: 40,
                       ),
-                      color: Theme.of(context).buttonColor,
+                      color: theme.buttonColor,
                       onPressed: _getImage,
                     ),
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Row(
                         children: <Widget>[
                           Icon(
-                            Icons.calendar_today,
-                            size: 20,
-                            color: Theme.of(context).textTheme.display3.color,
+                            Icons.access_time,
+                            size: 15,
+                            color: theme.textTheme.display3.color,
                           ),
                           Text(
                             moment.cid == null
-                                ? '  ${Date.getDateFormatYMD()}'
-                                : '  ${Date.getDateFormatYMD(ms: moment.created)}',
+                                ? ' ${Date.getDateFormatYMD()}'
+                                : ' ${Date.getDateFormatYMD(ms: moment.created)}',
                             style: TextStyle(
-                                fontSize: 14,
-                                color:
-                                    Theme.of(context).textTheme.display3.color),
+                              fontSize: 14,
+                              color: theme.textTheme.display3.color,
+                            ),
                           )
                         ],
                       ),
@@ -182,14 +183,14 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                             onPressed: buildWeatherDialog,
                           ),
                           IconButton(
-                            icon: Icon(Icons.loyalty),
+                            icon: const Icon(Icons.loyalty),
                             color: (moment.eid != null || newEID != null)
                                 ? pcolor
                                 : Colors.grey,
                             onPressed: buildMomentEventDialog,
                           ),
-                          new IconButton(
-                            icon: Icon(Icons.photo),
+                          IconButton(
+                            icon: const Icon(Icons.photo),
                             color: alum.length > 0 ? pcolor : Colors.grey,
                             onPressed: _getImage,
                           ),
@@ -206,12 +207,11 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                 Form(
                   key: momentKey,
                   child: Container(
-                    margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                     child: Column(
                       children: <Widget>[
-                        new TextFormField(
-                          style: theme.textTheme.body2
-                              .copyWith(fontWeight: FontWeight.normal),
+                        TextFormField(
                           controller: _titleController,
                           textInputAction: TextInputAction.done,
                           decoration: InputDecoration(
@@ -223,43 +223,36 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                             });
                           },
                         ),
-                        Container(
-                          child: TextFormField(
+                        TextFormField(
                             controller: _textController,
-                            style: theme.textTheme.body2.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                              height: 1.8,
-                            ),
+                            style: const TextStyle(
+                                height: 1.4, letterSpacing: 1.1),
                             maxLines: 13,
                             maxLength: 10000,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: InputBorder.none,
-                              hintText: '内容',
+                              hintText: '写点什么吧 :-D',
                             ),
                             onChanged: (_text) {
                               setState(() {
                                 moment.text = _text;
                               });
                             },
-                            validator: (val) {
-                              return val.isEmpty ? "写点什么吧~ ,,ԾㅂԾ,," : null;
-                            },
-                          ),
-                        ),
+                            validator: (val) =>
+                                val.isEmpty ? '写点什么吧 :-D' : null)
                       ],
                     ),
                   ),
                 ),
               ],
             ),
-            /*if (showToolBar)
+            if (true)
               Positioned(
                 bottom: 0.0,
                 child: Container(
                   color: pcolor.withOpacity(0.5),
                   width: MediaQuery.of(context).size.width,
-                  height: 35,
+                  height: 30,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: <Widget>[
@@ -274,20 +267,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                             ),
                           ),
                           onPressed: () {
-                            _textController.text += '        ';
-
-                            _textController = TextEditingController.fromValue(
-                              TextEditingValue(
-                                text: _textController.text,
-                                selection: TextSelection.fromPosition(
-                                  TextPosition(
-                                    affinity: TextAffinity.downstream,
-                                    offset: _textController.text.length,
-                                  ),
-                                ),
-                              ),
-                            );
-                            setState(() {});
+                            insert2Control('        ');
                           },
                         ),
                       ),
@@ -300,32 +280,42 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                             color: theme.textTheme.caption.color,
                           ),
                           onPressed: () {
-                            _textController.text +=
+                            final insertText =
                                 ' [ ${Date.getDateFormatHMByMS(ms: DateTime.now().millisecondsSinceEpoch)} ] ';
-
-                            _textController = TextEditingController.fromValue(
-                              TextEditingValue(
-                                text: _textController.text,
-                                selection: TextSelection.fromPosition(
-                                  TextPosition(
-                                    affinity: TextAffinity.downstream,
-                                    offset: _textController.text.length,
-                                  ),
-                                ),
-                              ),
-                            );
-                            setState(() {});
+                            insert2Control(insertText);
                           },
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ),
-              )*/
+              )
           ],
         ),
       ),
     );
+  }
+
+  void insert2Control(String insertText) {
+    final oldText = _textController.text;
+    final cursorPos = _textController.selection.start;
+    final befText = oldText.substring(0, cursorPos);
+    final afText = oldText.substring(cursorPos, oldText.length);
+    final newText = befText + insertText + afText;
+
+    if (cursorPos > _textController.text.length)
+      _textController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _textController.text.length));
+    else
+      _textController.value = _textController.value.copyWith(
+        text: newText,
+        selection: TextSelection.fromPosition(
+          TextPosition(
+            affinity: TextAffinity.downstream,
+            offset: (befText + insertText).length,
+          ),
+        ),
+      );
   }
 
   Future<bool> _onWillPop() {
@@ -357,7 +347,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
     final List<File> files =
         await FilePicker.getMultiFile(type: FileType.IMAGE);
 
-    if (files.length > 0) {
+    if (files != null && files.length > 0) {
       String picPath = await MPath.getPicPath();
       Directory(picPath).createSync();
       final List<String> paths = [];
@@ -443,6 +433,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
             inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
             textAlignVertical: TextAlignVertical.center,
             decoration: InputDecoration(hintText: '或者填入一百以内的数字'),
+            keyboardType: TextInputType.numberWithOptions(),
             onChanged: (t) {
               if (int.parse(t) < 0) {
                 _faceController.text = '0';
