@@ -347,9 +347,16 @@ class _ViewPageState extends State<ViewPage> {
   }
 
   share2Text() {
-    ShareExtend.share(
-        '${moment.title} \r\n ${Date.getDateFormatMDHM(ms: moment.created)} \r\n ${moment.text}',
-        'text');
+    final List<String> result = [
+      moment.title,
+      '时间： ${Date.getDateFormatMDHM(ms: moment.created)}',
+      '心情值： ${Face.getIndexByNum(moment.face)}',
+      moment.text
+    ]..removeWhere((String _) => _ == null || _.length < 0);
+
+    final String s = result.reduce((String _, String __) => _ + '\r\n' + __);
+
+    ShareExtend.share(s, 'text');
   }
 
 //  share2Image() async {

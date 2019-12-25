@@ -68,7 +68,7 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
               itemCount: widget.galleryItems.length,
 //              loadingChild: widget.loadingChild,
 //              backgroundDecoration: widget.backgroundDecoration,
-//              pageController: widget.pageController,
+              pageController: widget.pageController,
               onPageChanged: onPageChanged,
 //              scrollDirection: widget.scrollDirection,
             ),

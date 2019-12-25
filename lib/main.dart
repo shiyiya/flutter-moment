@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'dart:io';
 
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/app.dart';
 import 'package:moment/constants/app.dart';
 import 'package:moment/pages/about_page.dart';

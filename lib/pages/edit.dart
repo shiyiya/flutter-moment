@@ -246,7 +246,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                 ),
               ],
             ),
-            if (true)
+            if (showToolBar)
               Positioned(
                 bottom: 0.0,
                 child: Container(
