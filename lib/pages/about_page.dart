@@ -38,27 +38,23 @@ class _AboutPageState extends State<AboutPage> {
       appBar: AppBar(title: Text('关于')),
       body: Column(
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Card(
-              child: Column(
-                children: <Widget>[
-                  ListTile(
-                    leading: Icon(Icons.bug_report),
-                    title: Text(appName),
-                    subtitle: Text('@ 2019 CY'),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.info),
-                    title: Text('版本'),
-                    subtitle: Text('$version ($buildNumber)'),
-                  ),
-                ],
-              ),
+          Card(
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                  leading: Icon(Icons.bug_report),
+                  title: Text(appName),
+                  subtitle: Text('@ 2019 CY'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.info),
+                  title: Text('版本'),
+                  subtitle: Text('$version ($buildNumber)'),
+                ),
+              ],
             ),
           ),
           CardWithTitle(
-            padding: EdgeInsets.all(8),
             title: '分享 & 反馈',
             children: <Widget>[
               ListTile(
