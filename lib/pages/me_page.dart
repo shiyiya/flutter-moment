@@ -1,12 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:moment/pages/tucao_page.dart';
 import 'package:moment/provides/theme.dart';
 import 'package:moment/service/event_bus.dart';
 import 'package:moment/service/instances.dart';
 import 'package:moment/sql/query.dart';
 import 'package:moment/type/moment.dart';
-import 'package:moment/utils/launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:share_extend/share_extend.dart';
 
@@ -24,9 +24,7 @@ class _MePageState extends State<MePage> {
     _queryAllMomentInfo();
 
     eventBus.on<HomeRefreshEvent>().listen((event) {
-      if (event.needRefresh) {
-        _queryAllMomentInfo();
-      }
+      _queryAllMomentInfo();
     });
   }
 
@@ -134,58 +132,39 @@ class _MePageState extends State<MePage> {
                 ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 5),
-              color: Theme.of(context).cardColor,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  MaterialButton(
-                    onPressed: () => _to('/statistics'),
-                    child: Column(
-                      children: <Widget>[
-                        Icon(
-                          Icons.multiline_chart,
-                          color: Instances.currentTheme.iconTheme.color,
-                        ),
-                        Text(
-                          '统计',
-                          style: TextStyle(fontWeight: FontWeight.normal),
-                        )
-                      ],
-                    ),
-                  ),
-                  MaterialButton(
-                    onPressed: () => _to('/eventmanager'),
-                    child: Column(
-                      children: <Widget>[
-                        Icon(
-                          Icons.turned_in_not,
-                          color: Instances.currentTheme.iconTheme.color,
-                        ),
-                        Text(
-                          '事件',
-                          style: TextStyle(fontWeight: FontWeight.normal),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
             SizedBox(height: 15),
             Card(
               elevation: 0,
               child: ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: 30),
                 title: const Text('夜间模式'),
-                leading: Icon(Icons.brightness_2),
+                leading: Icon(Icons.brightness_3),
                 trailing: Switch(
                   value: Provider.of<ThemeProvider>(context).isNightTheme,
                   onChanged: (bool val) {
                     Provider.of<ThemeProvider>(context).switchNightTheme(val);
                   },
                 ),
+              ),
+            ),
+            Card(
+              elevation: 0,
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 30),
+                title: const Text('图表'),
+                leading: const Icon(Icons.multiline_chart),
+                trailing: Icon(Icons.chevron_right),
+                onTap: () => _to('/statistics'),
+              ),
+            ),
+            Card(
+              elevation: 0,
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 30),
+                title: const Text('事件库'),
+                leading: const Icon(Icons.turned_in_not),
+                trailing: Icon(Icons.chevron_right),
+                onTap: () => _to('/eventmanager'),
               ),
             ),
             Card(
@@ -202,11 +181,14 @@ class _MePageState extends State<MePage> {
               elevation: 0,
               child: ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: 30),
-                leading: Icon(Icons.mode_comment),
-                title: Text('反馈 - 酷安'),
+                leading: const Icon(Icons.chat_bubble_outline),
+                title: Text('吐个槽'),
                 trailing: Icon(Icons.chevron_right),
                 onTap: () {
-                  launchURL('market://details?id=com.cy.moment');
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => TuCaoPage()),
+                      (Route<dynamic> route) => true);
                 },
               ),
             ),

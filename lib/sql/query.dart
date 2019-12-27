@@ -44,6 +44,24 @@ class SQL {
     return MomentInfo(count: count, wordCount: wordCount, imgCount: imgCount);
   }
 
+  static Future<List<Moment>> queryAllMoment() async {
+    final res = await (await DBHelper.db).rawQuery(
+        'select C.* , E.name as eName, E.id as eid from moment_content as C left join content_event as CE on CE.cid = C.cid left join moment_event as E on E.id = CE.eid ORDER BY created desc');
+
+    if (res.length < 1) {
+      Fluttertoast.showToast(msg: '没有更多啦 ∑( 口 ||');
+    }
+    return res.map((r) => Moment.fromJson(r)).toList();
+  }
+
+  static Future<List<Moment>> queryAllMomentByFilter(String whereArgs) async {
+    final res = await (await DBHelper.db).rawQuery(
+        'select C.* , E.name as eName from moment_content as C left join content_event as CE on CE.cid = C.cid left join moment_event as E on E.id = CE.eid where $whereArgs ORDER BY created desc');
+
+    return res.map((r) => Moment.fromJson(r)).toList();
+  }
+
+
   // todo 多 Tag
   /*
       1. 修改tag 需要修改关联表对应id
@@ -53,11 +71,6 @@ class SQL {
     final res = await (await DBHelper.db).rawQuery(
         'select C.* , E.name as eName, E.id as eid from moment_content as C left join content_event as CE on CE.cid = C.cid left join moment_event as E on E.id = CE.eid ORDER BY created desc limit 10 offset ${page * 10}');
 
-//    print(res);
-    if (res.length < 1) {
-      Fluttertoast.showToast(msg: '没有更多啦 ∑( 口 ||');
-      return null;
-    }
     return res.map((r) => Moment.fromJson(r)).toList();
   }
 
@@ -82,7 +95,6 @@ class SQL {
 
     if (res.length < 1) {
       Fluttertoast.showToast(msg: '哎呀，什么都没抓到');
-      return null;
     }
 
     final m = Moment.fromJson(res[0]);

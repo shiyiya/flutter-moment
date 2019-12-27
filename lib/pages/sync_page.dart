@@ -213,7 +213,7 @@ class _SyncPageState extends State<SyncPage> {
     } catch (e) {}
     showAlertDialog(context,
         title: Text('成功'), content: Text('导入成功，一切似乎都很顺利~'), hideAction: true);
-    eventBus.fire(HomeRefreshEvent(true));
+    eventBus.fire(HomeRefreshEvent());
   }
 
   _export() async {

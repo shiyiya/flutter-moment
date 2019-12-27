@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/components/alum.dart';
 import 'package:moment/components/row-icon-radio.dart';
@@ -31,9 +30,14 @@ class Edit extends StatefulWidget {
   _EditState createState() => _EditState();
 }
 
-class _EditState extends State<Edit> with WidgetsBindingObserver {
+class _EditState extends State<Edit> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _textController = TextEditingController();
+  FocusNode _textFocus = FocusNode(onKey: (FocusNode node, RawKeyEvent event){
+    print(node);
+    print(event);
+    return true;
+  });
   TextEditingController _faceController = TextEditingController();
 
   GlobalKey<FormState> momentKey = new GlobalKey<FormState>();
@@ -50,63 +54,26 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
     initMoment(id: widget.id);
 
     if (widget.id != null) {
-      // 编辑
       fetchMoment();
     }
 
     fetchRandomEvent();
+
+//    _textFocus.addListener(() {
+//      print('focus');
+//    });
+
+//    _textController.addListener(() {
+//      print('controller lis');
+//    });
+
     super.initState();
-
-    KeyboardVisibilityNotification().addNewListener(onChange: (bool value) {
-      print(value);
-      setState(() {
-        showToolBar = value;
-      });
-    });
-  }
-
-  Future<void> fetchRandomEvent() async {
-    final list = await EventSQL.randomEvent();
-    setState(() {
-      eventList = list;
-    });
-  }
-
-  Future<void> fetchMoment() async {
-    final m = await SQL.queryMomentById(widget.id);
-    if (m != null) {
-      final res = m;
-
-      final List<String> _alum = res.alum.split('|');
-      _alum.removeWhere((e) => e.length < 1);
-
-      setState(() {
-        moment = m;
-        alum = _alum;
-        _titleController.text = moment.title;
-        _textController.text = moment.text;
-        _faceController.text = moment.face.toString();
-      });
-    } else {
-      showAlertDialog(context, title: Text('此瞬间不存在'), hideAction: true);
-    }
-  }
-
-  void initMoment({int id}) {
-    int now = DateTime.now().millisecondsSinceEpoch;
-    setState(() {
-      moment = Moment(
-        cid: id,
-        created: now,
-        modified: now,
-      );
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Instances.currentTheme;
-    final Color pcolor = Instances.currentThemeColor;
+    final Color pColor = Instances.currentThemeColor;
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -179,24 +146,24 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                                 ? Constants.weather[moment.weather]
                                 : Icons.brightness_high),
                             color:
-                                moment.weather != null ? pcolor : Colors.grey,
+                                moment.weather != null ? pColor : Colors.grey,
                             onPressed: buildWeatherDialog,
                           ),
                           IconButton(
                             icon: const Icon(Icons.loyalty),
                             color: (moment.eid != null || newEID != null)
-                                ? pcolor
+                                ? pColor
                                 : Colors.grey,
                             onPressed: buildMomentEventDialog,
                           ),
                           IconButton(
                             icon: const Icon(Icons.photo),
-                            color: alum.length > 0 ? pcolor : Colors.grey,
+                            color: alum.length > 0 ? pColor : Colors.grey,
                             onPressed: _getImage,
                           ),
 //                    IconButton(
 //                      icon: Icon(Icons.movie),
-//                      color: pcolor,
+//                      color: pColor,
 //                      onPressed: () {},
 //                    ),
                         ],
@@ -204,53 +171,56 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                     ],
                   ),
                 ),
-                Form(
-                  key: momentKey,
-                  child: Container(
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                    child: Column(
-                      children: <Widget>[
-                        TextFormField(
-                          controller: _titleController,
-                          textInputAction: TextInputAction.done,
-                          decoration: InputDecoration(
-                            hintText: '标题 (选填)',
-                          ),
-                          onChanged: (text) {
-                            setState(() {
-                              moment.title = text;
-                            });
-                          },
-                        ),
-                        TextFormField(
-                            controller: _textController,
-                            style: const TextStyle(
-                                height: 1.4, letterSpacing: 1.1),
-                            maxLines: 13,
-                            maxLength: 10000,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: '写点什么吧 :-D',
+                Container(
+                  child: Form(
+                    key: momentKey,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 0),
+                      child: Column(
+                        children: <Widget>[
+                          TextFormField(
+                            controller: _titleController,
+                            textInputAction: TextInputAction.done,
+                            decoration: InputDecoration(
+                              hintText: '标题 (选填)',
                             ),
-                            onChanged: (_text) {
+                            onChanged: (text) {
                               setState(() {
-                                moment.text = _text;
+                                moment.title = text;
                               });
                             },
-                            validator: (val) =>
-                                val.isEmpty ? '写点什么吧 :-D' : null)
-                      ],
+                          ),
+                          TextFormField(
+                              controller: _textController,
+                              focusNode: _textFocus,
+                              style: const TextStyle(
+                                  height: 1.4, letterSpacing: 1.1),
+                              maxLines: 13,
+                              maxLength: 10000,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: '写点什么吧 :-D',
+                              ),
+                              onChanged: (_text) {
+                                setState(() {
+                                  moment.text = _text;
+                                });
+                              },
+                              validator: (val) =>
+                                  val.isEmpty ? '写点什么吧 :-D' : null)
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                )
               ],
             ),
             if (showToolBar)
               Positioned(
                 bottom: 0.0,
                 child: Container(
-                  color: pcolor.withOpacity(0.5),
+                  color: pColor.withOpacity(0.5),
                   width: MediaQuery.of(context).size.width,
                   height: 30,
                   child: ListView(
@@ -294,6 +264,44 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  Future<void> fetchRandomEvent() async {
+    final list = await EventSQL.randomEvent();
+    setState(() {
+      eventList = list;
+    });
+  }
+
+  Future<void> fetchMoment() async {
+    final m = await SQL.queryMomentById(widget.id);
+    if (m != null) {
+      final res = m;
+
+      final List<String> _alum = res.alum.split('|');
+      _alum.removeWhere((e) => e.length < 1);
+
+      setState(() {
+        moment = m;
+        alum = _alum;
+        _titleController.text = moment.title;
+        _textController.text = moment.text;
+        _faceController.text = moment.face.toString();
+      });
+    } else {
+      showAlertDialog(context, title: Text('此瞬间不存在'), hideAction: true);
+    }
+  }
+
+  void initMoment({int id}) {
+    int now = DateTime.now().millisecondsSinceEpoch;
+    setState(() {
+      moment = Moment(
+        cid: id,
+        created: now,
+        modified: now,
+      );
+    });
   }
 
   void insert2Control(String insertText) {
@@ -640,7 +648,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
         });
       }
 
-      eventBus.fire(HomeRefreshEvent(true));
+      eventBus.fire(HomeRefreshEvent());
       return;
     }
 
@@ -664,7 +672,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
         moment.cid = res;
       });
       Fluttertoast.showToast(msg: '成功记录瞬间！');
-      eventBus.fire(HomeRefreshEvent(true));
+      eventBus.fire(HomeRefreshEvent());
       Future.delayed(Duration(microseconds: 700), () {
         Navigator.pop(context);
         Navigator.push(context,

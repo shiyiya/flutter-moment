@@ -36,17 +36,6 @@ class Setting extends StatelessWidget {
                 trailing: trailing,
                 onTap: () => _showColorPicker(context),
               ),
-//              ListTile(
-//                title: Text('自动切换夜间模式'),
-//                leading: Icon(Icons.brightness_2),
-//                trailing: Switch(
-//                  value: Provider.of<ThemeProvider>(context).isNightTheme,
-//                  onChanged: (bool val) {
-//                    Provider.of<ThemeProvider>(context).switchNightTheme(val);
-//                  },
-//                ),
-//                onTap: _buildThemeSwitchDialog,
-//              ),
             ],
           ),
           CardWithTitle(

@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easyrefresh/delivery_header.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:flutter_easyrefresh/material_footer.dart';
 import 'package:moment/components/drawer.dart';
-import 'package:moment/components/icon_button_with_text.dart';
-import 'package:moment/components/menu_icon.dart';
 import 'package:moment/components/moment_card.dart';
 import 'package:moment/components/row-icon-radio.dart';
 import 'package:moment/constants/app.dart';
@@ -38,12 +33,11 @@ class TabItem {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  EasyRefreshController _controller = EasyRefreshController();
   TabController _tabController;
+  ScrollController _scrollController = ScrollController();
 
   final tabs = [Tab(text: '瞬间', icon: null)];
 
-  int _page = 0;
   List<Moment> _moments = [];
 
   // 筛选条件
@@ -56,38 +50,43 @@ class _HomePageState extends State<HomePage>
 
   @override
   void initState() {
-    print('----home page initstate by event ${widget.event}----');
+    eventBus.on<HomeRefreshEvent>().listen((event) {
+      _loadAllMoment();
+    });
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        print('todo');
+        // todo
+      }
+    });
 
     if (widget.event != null) {
       setState(() {
         byFilter = true;
       });
+    } else {
+      _loadAllMomentByFilter();
     }
-    _loadMomentByPage(0);
 
-    eventBus.on<HomeRefreshEvent>().listen((event) {
-      if (event.needRefresh) {
-        _loadMomentByPage(-1);
-      }
-    });
     _tabController = new TabController(vsync: this, length: tabs.length);
-
     super.initState();
   }
 
   List<Widget> _sliverBuilder(BuildContext context, bool innerBoxIsScrolled) {
     return <Widget>[
       SliverAppBar(
-        centerTitle: false,
-        expandedHeight: 20.0,
-        floating: false,
         pinned: true,
-        titleSpacing: 10,
-        leading: SizedBox.shrink(),
-        flexibleSpace: PreferredSize(
+        floating: true,
+        forceElevated: innerBoxIsScrolled,
+        snap: true,
+        title: Text('瞬记'),
+        bottom: PreferredSize(
+            preferredSize: Size(double.infinity, kToolbarHeight),
             child: Container(
               alignment: Alignment.topLeft,
-              child: new TabBar(
+              child: TabBar(
                 indicatorWeight: 2,
                 indicatorPadding: EdgeInsets.only(left: 5, right: 5),
 //                labelPadding: EdgeInsets.symmetric(horizontal: 10),
@@ -96,66 +95,18 @@ class _HomePageState extends State<HomePage>
                 tabs: tabs,
                 controller: _tabController,
               ),
-            ),
-            preferredSize: new Size(double.infinity, 18.0)),
+            )),
+        actions: ModalRoute.of(context).isFirst
+            ? <Widget>[
+                IconButton(
+                  tooltip: '寻觅',
+                  icon: Icon(Icons.filter_list),
+                  onPressed: _showFilterDialog,
+                ),
+              ]
+            : [],
       ),
     ];
-  }
-
-  /*flexibleSpace: FlexibleSpaceBarSettings(
-          toolbarOpacity: 0.5,
-          minExtent: 1,
-          maxExtent: 1,
-          currentExtent: 1,
-          child: Container(
-            height: double.infinity,
-//            decoration: BoxDecoration(
-//              image: DecorationImage(
-//                image: AssetImage('lib/asserts/images/bg_1.jpg'),
-//                fit: BoxFit.cover,
-//              ),
-//            ),
-            child: Text(
-              Date.getDateFormatYMD(
-                ms: DateTime.now().millisecondsSinceEpoch,
-              ),
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-        ),*/
-
-  Widget momentWrap() {
-    int len = _moments?.length ?? 0;
-    return EasyRefresh.custom(
-      controller: _controller,
-      header: DeliveryHeader(),
-      footer: MaterialFooter(enableInfiniteLoad: false),
-      onRefresh: () async {
-        _loadMomentByPage(0);
-      },
-      onLoad: _loadMoreMoment,
-      slivers: <Widget>[
-        SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-          if (index == 0 && len == 0) {
-            // 记录为空
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.75,
-              child: Center(
-                  child: Text(Constants.randomNilTip(),
-                      style: Theme.of(context).textTheme.body2)),
-            );
-          }
-          if (index < len) {
-            return MomentCard(
-              moment: _moments[index],
-              onLongPress: showDelMomentCardDialog,
-            );
-          }
-          return null;
-        }, childCount: len + 1))
-      ],
-    );
   }
 
   @override
@@ -168,41 +119,55 @@ class _HomePageState extends State<HomePage>
               child: Icon(Icons.add))
           : null,
       drawer: ModalRoute.of(context).isFirst ? DrawerWidget() : null,
-      appBar: AppBar(
-        elevation: 0.0,
-        titleSpacing: 0.0,
-        title: Text('瞬记'),
-        leading: ModalRoute.of(context).isFirst
-            ? Builder(
-                builder: (_) => IconButton(
-                  icon: MenuIcon(Colors.white),
-                  onPressed: () {
-                    Scaffold.of(_).openDrawer();
-                  },
-                ),
-              )
-            : null,
-        actions: <Widget>[
-          IconButton(
-            tooltip: '寻觅',
-            icon: Icon(Icons.filter_list),
-            onPressed: _showFilterDialog,
-          ),
-        ],
+      body: NestedScrollView(
+        controller: _scrollController,
+        headerSliverBuilder: _sliverBuilder,
+        body: TabBarView(
+          controller: _tabController,
+          children: <Widget>[
+            _moments.length > 0
+                ? ListView.builder(
+                    itemBuilder: (BuildContext context, int index) {
+                      return MomentCard(
+                        moment: _moments[index],
+                        onLongPress: showDelMomentCardDialog,
+                      );
+                    },
+                    itemCount: _moments.length,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    physics: const BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics()),
+                  )
+                : Container(
+                    height: MediaQuery.of(context).size.height * 0.75,
+                    child: Center(
+                      child: Text(
+                        Constants.randomNilTip(),
+                        style: Theme.of(context).textTheme.body2,
+                      ),
+                    ),
+                  ),
+          ],
+        ),
       ),
-      body: ModalRoute.of(context).isFirst
-          ? NestedScrollView(
-              headerSliverBuilder: _sliverBuilder,
-              body: TabBarView(
-                controller: _tabController,
-                children: <Widget>[
-                  momentWrap(),
-//                    Center(child: Text('敬请期待')),
-                ],
-              ))
-          : momentWrap(),
     );
   }
+
+  /* Positioned(
+                bottom: 20.0,
+                left: MediaQuery.of(context).size.width / 2 - 20,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                      color: Theme.of(context).scaffoldBackgroundColor),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                  ),
+                ),
+              ),*/
 
   void _showFilterDialog() {
     showSimpleDialog(context,
@@ -247,7 +212,7 @@ class _HomePageState extends State<HomePage>
                     face = null;
                     weather = null;
                   });
-                  _loadMomentByPage(0);
+                  _loadAllMoment();
                   Navigator.pop(context);
                 },
               ),
@@ -270,7 +235,7 @@ class _HomePageState extends State<HomePage>
                   setState(() {
                     byFilter = true;
                   });
-                  _loadMomentByFilterWithPage(0);
+                  _loadAllMomentByFilter();
                   Navigator.pop(context);
                 },
               ),
@@ -279,7 +244,7 @@ class _HomePageState extends State<HomePage>
         ]);
   }
 
-  void _showNewsSwitch() {
+  /* void _showNewsSwitch() {
     showModalBottomSheet(
       context: context,
       builder: (_) => Container(
@@ -311,7 +276,7 @@ class _HomePageState extends State<HomePage>
             ),
           )),
     );
-  }
+  }*/
 
   void showDelMomentCardDialog(int cid) {
     showAlertDialog(context, title: Text('是否删除本条瞬间？'), rF: () async {
@@ -324,53 +289,16 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-  _loadMomentByPage(int page) async {
-//    await _queryAllMomentInfo();
-
-    // 刷新
-    if (page < 0) {
-      _loadMomentByPage(_page);
-      return;
-    }
-
-    // 筛选
-    if (byFilter) {
-      await _loadMomentByFilterWithPage(page);
-      return;
-    }
-
-    print('refresh monent by page $page');
-
-    final List<Moment> momentList = await SQL.queryMomentByPage(page);
-
-    if (momentList != null) {
+  Future<void> _loadAllMoment() async {
+    final List<Moment> momentList = await SQL.queryAllMoment();
+    await Future.delayed(Duration(milliseconds: 500), () {
       setState(() {
-        if (page == 0) {
-          _moments = momentList;
-        } else {
-          _moments.addAll(momentList);
-        }
-        _controller.finishRefresh(success: true);
-        _page = page;
+        _moments = momentList;
       });
-    } else {
-      if (page == 0) {
-        //刷新
-        setState(() {
-          _moments = [];
-        });
-      }
-      _controller.finishLoad(success: true, noMore: false);
-    }
+    });
   }
 
-  Future<void> _loadMoreMoment() async {
-    print('load more monent by page $_page');
-
-    await _loadMomentByPage(_page + 1);
-  }
-
-  _loadMomentByFilterWithPage(int page) async {
+  Future<void> _loadAllMomentByFilter() async {
     List<Filter> where = [
       Filter('face > ?', face == null ? null : (face ?? 20) - 20),
       Filter('face <= ?', face),
@@ -385,7 +313,7 @@ class _HomePageState extends State<HomePage>
         face = null;
         weather = null; // event 不可重置
       });
-      _loadMomentByPage(0);
+      _loadAllMoment();
       return;
     }
 
@@ -409,24 +337,17 @@ class _HomePageState extends State<HomePage>
         setState(() {
           byFilter = false;
         });
-        _loadMomentByPage(page);
+        _loadAllMoment();
         return;
       }
     }
 
-    print('---loade by filter page$page  \r\n  $whereArgs');
+    print('---loade by filter \r\n  $whereArgs');
 
-    final List<Moment> momentList =
-        await SQL.queryMomentByPageWithFilter(page, whereArgs);
+    final List<Moment> momentList = await SQL.queryAllMomentByFilter(whereArgs);
 
     setState(() {
-      if (page == 0) {
-        _moments = momentList;
-      } else {
-        _moments.addAll(momentList);
-      }
-      _controller.finishRefresh(success: true);
-      _page = page;
+      _moments = momentList;
     });
   }
 }

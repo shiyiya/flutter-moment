@@ -328,7 +328,7 @@ class _ViewPageState extends State<ViewPage> {
         rF: () async {
       bool delRes = await SQL.delMomentById(_id);
       if (delRes) {
-        eventBus.fire(HomeRefreshEvent(true));
+        eventBus.fire(HomeRefreshEvent());
         Future.delayed(Duration(milliseconds: 400), () {
           Navigator.of(context).pop();
         });
