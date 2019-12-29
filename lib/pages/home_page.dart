@@ -124,6 +124,7 @@ class _HomePageState extends State<HomePage>
         headerSliverBuilder: _sliverBuilder,
         body: TabBarView(
           controller: _tabController,
+          physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             _moments.length > 0
                 ? ListView.builder(
@@ -135,11 +136,11 @@ class _HomePageState extends State<HomePage>
                     },
                     itemCount: _moments.length,
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    physics: const BouncingScrollPhysics(
-                        parent: AlwaysScrollableScrollPhysics()),
+                    physics: NeverScrollableScrollPhysics(
+                      parent: NeverScrollableScrollPhysics(),
+                    ),
                   )
                 : Container(
-                    height: MediaQuery.of(context).size.height * 0.75,
                     child: Center(
                       child: Text(
                         Constants.randomNilTip(),

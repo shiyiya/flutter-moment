@@ -25,6 +25,8 @@ class SyncPage extends StatefulWidget {
 }
 
 class _SyncPageState extends State<SyncPage> {
+  SharedPreferences _sp;
+
   String url;
   String username;
   String password;
@@ -45,6 +47,7 @@ class _SyncPageState extends State<SyncPage> {
     final sp = await SharedPreferences.getInstance();
 
     setState(() {
+      _sp = sp;
       url = sp.getString('webdavurl');
       username = sp.getString('webdavusername');
       password = sp.getString('webdavpassword');
@@ -53,11 +56,13 @@ class _SyncPageState extends State<SyncPage> {
   }
 
   setSp() async {
-    final sp = await SharedPreferences.getInstance();
-    sp.setString('webdavurl', url);
-    sp.setString('webdavusername', username);
-    sp.setString('webdavpassword', password);
-    sp.setString('webdavpath', wpath);
+    final k = ['webdavurl', 'webdavusername', 'webdavpassword', 'webdavpath'];
+    final field = [url, username, password, wpath]
+      ..removeWhere((_) => _.length < 1 || _ == null);
+
+    for (int i = 0; i < field.length; i++) {
+      _sp.setString(k[i], field[i]);
+    }
   }
 
   @override
@@ -113,6 +118,7 @@ class _SyncPageState extends State<SyncPage> {
                           setState(() {
                             url = v;
                           });
+                          setSp();
                         },
                       ));
                 },
@@ -130,6 +136,7 @@ class _SyncPageState extends State<SyncPage> {
                           setState(() {
                             username = v;
                           });
+                          setSp();
                         },
                       ));
                 },
@@ -147,6 +154,7 @@ class _SyncPageState extends State<SyncPage> {
                           setState(() {
                             password = v;
                           });
+                          setSp();
                         },
                       ));
                 },
@@ -164,6 +172,7 @@ class _SyncPageState extends State<SyncPage> {
                           setState(() {
                             wpath = v;
                           });
+                          setSp();
                         },
                       ));
                 },
@@ -245,7 +254,7 @@ class _SyncPageState extends State<SyncPage> {
     }
   }
 
-  bool check() {
+  Future<bool> check() async {
     if (url == null || username == null || password == null) {
       showAlertDialog(context,
           title: Text('提示'), content: Text('请填写配置信息'), hideCancel: true);
@@ -255,7 +264,7 @@ class _SyncPageState extends State<SyncPage> {
   }
 
   _webDAVSync() async {
-    if (!check()) {
+    if (!await check()) {
       return;
     }
 
@@ -280,17 +289,21 @@ class _SyncPageState extends State<SyncPage> {
     try {
       await webDAV.mkdir('/moment');
       await webDAV.uploadFile(dbPath, '/moment/${Constants.dbName}');
-      final List<FileSystemEntity> imgList = Directory(picPath).listSync();
-      imgList.forEach((f) {
-        final name = basename(f.path);
-        webDAV.upload(File(f.path).readAsBytesSync(), '/moment/$name');
-      });
-    } on WebDavException catch (e) {
+
+      if (Directory(picPath).existsSync()) {
+        final List<FileSystemEntity> imgList = Directory(picPath).listSync();
+        imgList.forEach((f) {
+          final name = basename(f.path);
+          webDAV.upload(File(f.path).readAsBytesSync(), '/moment/$name');
+        });
+      }
+    } catch (e) {
       Navigator.pop(context);
+      final _e = e.statusCode != null ? e.statusCode : e;
       showAlertDialog(
         context,
         title: Text('提示'),
-        content: Text('同步失败，状态码 ${e.statusCode}'),
+        content: Text('同步失败，错误详情 $_e'),
         hideCancel: true,
       );
 
@@ -302,7 +315,7 @@ class _SyncPageState extends State<SyncPage> {
   }
 
   _webDAVavLoad() async {
-    if (!check()) {
+    if (!await check()) {
       return;
     }
 
@@ -311,6 +324,8 @@ class _SyncPageState extends State<SyncPage> {
     showCircularProgressDialog(context);
 
     try {
+      await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+
       Client webDAV = Client(
         url,
         username,
@@ -322,6 +337,7 @@ class _SyncPageState extends State<SyncPage> {
       String picPath = await MPath.getPicPath();
       final dbPath = await DBHelper().getDatabasePath();
       final files = await webDAV.ls('/moment');
+      if (!Directory(picPath).existsSync()) Directory(picPath).createSync();
 
       String __path = wpath ?? 'dav/';
 
@@ -347,12 +363,14 @@ class _SyncPageState extends State<SyncPage> {
       }
     } catch (e) {
       Navigator.pop(context);
+      final _e = e.statusCode != null ? e.statusCode : e;
       showAlertDialog(
         context,
         title: Text('提示'),
-        content: Text('拉取失败，错误详情 $e}'),
+        content: Text('拉取失败，错误详情 $_e}'),
         hideCancel: true,
       );
+      print(e);
       return;
     }
     setSp();
