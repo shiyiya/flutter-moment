@@ -33,7 +33,7 @@ class Edit extends StatefulWidget {
 class _EditState extends State<Edit> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _textController = TextEditingController();
-  FocusNode _textFocus = FocusNode(onKey: (FocusNode node, RawKeyEvent event){
+  FocusNode _textFocus = FocusNode(onKey: (FocusNode node, RawKeyEvent event) {
     print(node);
     print(event);
     return true;

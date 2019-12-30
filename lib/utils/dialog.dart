@@ -11,7 +11,7 @@ Widget _alertDialog(BuildContext _,
   final p = Theme.of(_).primaryColor;
 
   return AlertDialog(
-    title: title,
+    title: title ?? Text('提示'),
     content: content,
     actions: hideAction
         ? null

@@ -2,7 +2,10 @@ import 'dart:io';
 import 'dart:io' as prefix0;
 
 import 'package:archive/archive_io.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:moment/utils/dialog.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:platform/platform.dart';
 
 Platform _platform = const LocalPlatform();
@@ -38,5 +41,17 @@ class MPath {
 
     encoder.zipDirectory(Directory(dirPath),
         filename: (await getLocalDownloadPath()) + '/$outName');
+  }
+
+  static Future<bool> getStoragePermission(
+      {BuildContext c, String failText}) async {
+    final status =
+        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    if (status[PermissionGroup.storage] == PermissionStatus.granted) {
+      return true;
+    }
+
+    showAlertDialog(c, content: Text(failText), hideCancel: true);
+    return false;
   }
 }

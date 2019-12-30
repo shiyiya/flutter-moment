@@ -15,7 +15,6 @@ import 'package:moment/utils/path.dart';
 import 'package:moment/utils/toast.dart';
 import 'package:moment/utils/webdav.dart';
 import 'package:path/path.dart' show basename;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -53,16 +52,6 @@ class _SyncPageState extends State<SyncPage> {
       password = sp.getString('webdavpassword');
       wpath = sp.getString('webdavpath');
     });
-  }
-
-  setSp() async {
-    final k = ['webdavurl', 'webdavusername', 'webdavpassword', 'webdavpath'];
-    final field = [url, username, password, wpath]
-      ..removeWhere((_) => _.length < 1 || _ == null);
-
-    for (int i = 0; i < field.length; i++) {
-      _sp.setString(k[i], field[i]);
-    }
   }
 
   @override
@@ -118,7 +107,7 @@ class _SyncPageState extends State<SyncPage> {
                           setState(() {
                             url = v;
                           });
-                          setSp();
+                          _sp.setString('webdavurl', v);
                         },
                       ));
                 },
@@ -136,7 +125,7 @@ class _SyncPageState extends State<SyncPage> {
                           setState(() {
                             username = v;
                           });
-                          setSp();
+                          _sp.setString('webdavusername', v);
                         },
                       ));
                 },
@@ -154,7 +143,7 @@ class _SyncPageState extends State<SyncPage> {
                           setState(() {
                             password = v;
                           });
-                          setSp();
+                          _sp.setString('webdavpassword', v);
                         },
                       ));
                 },
@@ -172,7 +161,7 @@ class _SyncPageState extends State<SyncPage> {
                           setState(() {
                             wpath = v;
                           });
-                          setSp();
+                          _sp.setString('webdavpath', v);
                         },
                       ));
                 },
@@ -226,7 +215,9 @@ class _SyncPageState extends State<SyncPage> {
   }
 
   _export() async {
-    await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    if (!await MPath.getStoragePermission(c: context, failText: '请授予存储权限以导出')) {
+      return;
+    }
 
     try {
       String timeMS = DateTime.now().millisecondsSinceEpoch.toString();
@@ -311,7 +302,6 @@ class _SyncPageState extends State<SyncPage> {
     }
     Navigator.pop(context);
     showShortToast('同步成功');
-    setSp();
   }
 
   _webDAVavLoad() async {
@@ -322,10 +312,7 @@ class _SyncPageState extends State<SyncPage> {
     print('$url $username $password $wpath');
 
     showCircularProgressDialog(context);
-
     try {
-      await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-
       Client webDAV = Client(
         url,
         username,
@@ -341,6 +328,7 @@ class _SyncPageState extends State<SyncPage> {
 
       String __path = wpath ?? 'dav/';
 
+      // 下载时移除多余路径  /path | path/ 皆可
       if (__path.endsWith('/')) {
         //   /dav/ -> /dav
         __path = __path.substring(0, __path.length - 1);
@@ -354,6 +342,8 @@ class _SyncPageState extends State<SyncPage> {
         final name = basename(files[i].path);
 
         final p = files[i].path.replaceFirst(__path, '');
+
+        print('云端path ${files[i].path} $p');
 
         if (p.endsWith('db')) {
           await webDAV.download(p, '$dbPath');
@@ -373,7 +363,6 @@ class _SyncPageState extends State<SyncPage> {
       print(e);
       return;
     }
-    setSp();
     Navigator.pop(context);
     showShortToast('拉取成功');
   }

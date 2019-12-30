@@ -66,8 +66,9 @@ class _HomePageState extends State<HomePage>
       setState(() {
         byFilter = true;
       });
-    } else {
       _loadAllMomentByFilter();
+    } else {
+      _loadAllMoment();
     }
 
     _tabController = new TabController(vsync: this, length: tabs.length);
