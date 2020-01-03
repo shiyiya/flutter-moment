@@ -142,9 +142,12 @@ class _MePageState extends State<MePage> {
                 trailing: Switch(
                   value: Provider.of<ThemeProvider>(context).isNightTheme,
                   onChanged: (bool val) {
-                    Provider.of<ThemeProvider>(context).switchNightTheme(val);
+                    Provider.of<ThemeProvider>(context)
+                        .switchNightTheme(value: val);
                   },
                 ),
+                onTap: () =>
+                    Provider.of<ThemeProvider>(context).switchNightTheme(),
               ),
             ),
             Card(

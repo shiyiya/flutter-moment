@@ -290,7 +290,11 @@ class _SyncPageState extends State<SyncPage> {
       }
     } catch (e) {
       Navigator.pop(context);
-      final _e = e.statusCode != null ? e.statusCode : e;
+      var _e = e;
+      if (e is WebDavException) {
+        _e = e.statusCode;
+      }
+
       showAlertDialog(
         context,
         title: Text('提示'),
@@ -328,16 +332,6 @@ class _SyncPageState extends State<SyncPage> {
 
       String __path = wpath ?? 'dav/';
 
-      // 下载时移除多余路径  /path | path/ 皆可
-      if (__path.endsWith('/')) {
-        //   /dav/ -> /dav
-        __path = __path.substring(0, __path.length - 1);
-      }
-      // dav -> /dav
-      if (!__path.startsWith('/')) {
-        __path = '/' + __path;
-      }
-
       for (int i = 1; i < files.length; i++) {
         final name = basename(files[i].path);
 
@@ -353,17 +347,23 @@ class _SyncPageState extends State<SyncPage> {
       }
     } catch (e) {
       Navigator.pop(context);
-      final _e = e.statusCode != null ? e.statusCode : e;
+      var _e = e;
+      if (e is WebDavException) {
+        _e = e.statusCode;
+      }
+
+      print(e);
       showAlertDialog(
         context,
         title: Text('提示'),
-        content: Text('拉取失败，错误详情 $_e}'),
+        content: Text('拉取失败，错误详情 $_e'),
         hideCancel: true,
       );
-      print(e);
       return;
     }
     Navigator.pop(context);
     showShortToast('拉取成功');
+
+    Instances.eventBus.fire(HomeRefreshEvent());
   }
 }

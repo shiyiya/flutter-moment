@@ -7,11 +7,12 @@ Widget _alertDialog(BuildContext _,
     void Function() lF,
     void Function() rF,
     hideAction = false,
-    hideCancel = false}) {
+    hideCancel = false,
+    barrierDismissible}) {
   final p = Theme.of(_).primaryColor;
 
   return AlertDialog(
-    title: title ?? Text('提示'),
+    title: title,
     content: content,
     actions: hideAction
         ? null
@@ -56,16 +57,20 @@ void showAlertDialog(BuildContext context,
     void Function() lF,
     void Function() rF,
     hideAction = false,
-    hideCancel = false}) {
+    hideCancel = false,
+    barrierDismissible = true}) {
   showDialog(
     context: context,
-    builder: (_) => _alertDialog(_,
-        title: title,
-        content: content,
-        lF: lF,
-        rF: rF,
-        hideAction: hideAction,
-        hideCancel: hideCancel),
+    barrierDismissible: barrierDismissible,
+    builder: (_) => _alertDialog(
+      _,
+      title: title,
+      content: content,
+      lF: lF,
+      rF: rF,
+      hideAction: hideAction,
+      hideCancel: hideCancel,
+    ),
   );
 }
 
@@ -86,6 +91,7 @@ void showSimpleDialog(BuildContext context,
 void showCircularProgressDialog(BuildContext context) {
   showAlertDialog(
     context,
+    barrierDismissible: false,
     content: Container(
       width: 100,
       height: 100,

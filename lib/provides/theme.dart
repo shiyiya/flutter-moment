@@ -32,8 +32,8 @@ class ThemeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> switchNightTheme(bool value) async {
-    isNightTheme = value;
+  Future<void> switchNightTheme({bool value}) async {
+    isNightTheme = value ?? !isNightTheme;
 
     SharedPreferences sp = await SharedPreferences.getInstance();
     await sp.setInt("isNightTheme", value ? 1 : 0);
