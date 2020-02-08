@@ -7,6 +7,7 @@ import 'package:moment/service/face.dart';
 import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
 import 'package:moment/utils/img.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class MomentCard extends StatelessWidget {
   final Moment moment;
@@ -91,7 +92,7 @@ class MomentCard extends StatelessWidget {
               ? ListTile(
                   contentPadding: EdgeInsets.all(0),
                   title: Text(moment.title),
-                  subtitle: Text(_.text),
+                  subtitle: MarkdownBody(data: moment.text.trim()),
                 )
               : Text(
                   _.text,
@@ -127,7 +128,7 @@ class MomentCard extends StatelessWidget {
               color: Theme.of(context).accentColor,
             ),
             title: Text(_.title),
-            subtitle: Text(_.text.trim()),
+            subtitle: MarkdownBody(data: _.text.trim()),
           ),
           bar(context)
         ],

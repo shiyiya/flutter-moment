@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:moment/pages/tucao_page.dart';
+// import 'package:moment/pages/tucao_page.dart';
 import 'package:moment/provides/theme.dart';
 import 'package:moment/service/event_bus.dart';
 import 'package:moment/service/instances.dart';
@@ -180,21 +180,21 @@ class _MePageState extends State<MePage> {
                 onTap: () => _to('/setting'),
               ),
             ),
-            Card(
-              elevation: 0,
-              child: ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 30),
-                leading: const Icon(Icons.chat_bubble_outline),
-                title: Text('吐个槽'),
-                trailing: Icon(Icons.chevron_right),
-                onTap: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (_) => TuCaoPage()),
-                      (Route<dynamic> route) => true);
-                },
-              ),
-            ),
+            // Card(
+            //   elevation: 0,
+            //   child: ListTile(
+            //     contentPadding: EdgeInsets.symmetric(horizontal: 30),
+            //     leading: const Icon(Icons.chat_bubble_outline),
+            //     title: Text('吐个槽'),
+            //     trailing: Icon(Icons.chevron_right),
+            //     onTap: () {
+            //       Navigator.pushAndRemoveUntil(
+            //           context,
+            //           MaterialPageRoute(builder: (_) => TuCaoPage()),
+            //           (Route<dynamic> route) => true);
+            //     },
+            //   ),
+            // ),
             Card(
               elevation: 0,
               child: ListTile(

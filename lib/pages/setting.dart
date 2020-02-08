@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/material_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/components/card_with_title.dart';
-import 'package:moment/pages/tucao_page.dart';
+// import 'package:moment/pages/tucao_page.dart';
 import 'package:moment/provides/theme.dart';
 import 'package:moment/service/instances.dart';
 import 'package:provider/provider.dart';
@@ -47,17 +47,17 @@ class Setting extends StatelessWidget {
                 trailing: trailing,
                 onTap: () => Navigator.of(context).pushNamed('/sync'),
               ),
-              ListTile(
-                title: const Text('吐个槽'),
-                leading: const Icon(Icons.chat_bubble_outline),
-                trailing: trailing,
-                onTap: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (_) => TuCaoPage()),
-                      (Route<dynamic> route) => true);
-                },
-              ),
+              // ListTile(
+              //   title: const Text('吐个槽'),
+              //   leading: const Icon(Icons.chat_bubble_outline),
+              //   trailing: trailing,
+              //   onTap: () {
+              //     Navigator.pushAndRemoveUntil(
+              //         context,
+              //         MaterialPageRoute(builder: (_) => TuCaoPage()),
+              //         (Route<dynamic> route) => true);
+              //   },
+              // ),
               ListTile(
                 title: const Text('关于'),
                 leading: const Icon(Icons.info_outline),

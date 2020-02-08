@@ -14,6 +14,7 @@ import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
 import 'package:moment/utils/dialog.dart';
 import 'package:share_extend/share_extend.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ViewPage extends StatefulWidget {
   final int id;
@@ -222,11 +223,7 @@ class _ViewPageState extends State<ViewPage> {
 //                image: AssetImage('lib/asserts/images/bg_test.jpg'),
 //                fit: BoxFit.cover),
 //          ),
-          child: Text(
-            moment.text,
-            style: Theme.of(context).textTheme.body2.copyWith(
-                fontSize: 16, fontWeight: FontWeight.normal, height: 1.8),
-          ),
+          child: MarkdownBody(data: moment.text),
         ));
   }
 
