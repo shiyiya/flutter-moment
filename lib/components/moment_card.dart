@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:moment/components/md_body.dart';
 import 'package:moment/constants/app.dart';
 import 'package:moment/pages/view_page.dart';
 import 'package:moment/service/face.dart';
 import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
 import 'package:moment/utils/img.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 
 class MomentCard extends StatelessWidget {
   final Moment moment;
@@ -18,7 +18,7 @@ class MomentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String text =
-        moment.text.length > 50 ? moment.text.substring(0, 25) : moment.text;
+        moment.text.length > 50 ? moment.text.substring(0, 28) : moment.text;
     final String firstImg =
         moment.alum.length < 1 ? null : moment.alum?.split('|')[0];
     final hasImg = firstImg != null && firstImg.length > 0;
@@ -84,21 +84,17 @@ class MomentCard extends StatelessWidget {
                 ),
         ),
         Container(
-          padding: moment.title.length > 0
+          padding: _.title.length > 0
               ? EdgeInsets.symmetric(horizontal: 10)
               : EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           width: double.infinity,
-          child: moment.title.length > 0
+          child: _.title.length > 0
               ? ListTile(
                   contentPadding: EdgeInsets.all(0),
-                  title: Text(moment.title),
-                  subtitle: MarkdownBody(data: moment.text.trim()),
+                  title: Text(_.title),
+                  subtitle: MDBody(_.text),
                 )
-              : Text(
-                  _.text,
-                  style: theme.textTheme.body1
-                      .copyWith(color: theme.textTheme.caption.color),
-                ),
+              : MDBody(_.text),
         ),
         bar(
           context,
@@ -128,7 +124,7 @@ class MomentCard extends StatelessWidget {
               color: Theme.of(context).accentColor,
             ),
             title: Text(_.title),
-            subtitle: MarkdownBody(data: _.text.trim()),
+            subtitle: MDBody(_.text),
           ),
           bar(context)
         ],

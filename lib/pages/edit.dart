@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -30,16 +31,10 @@ class Edit extends StatefulWidget {
   _EditState createState() => _EditState();
 }
 
-class _EditState extends State<Edit> {
+class _EditState extends State<Edit> with WidgetsBindingObserver {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _textController = TextEditingController();
-  FocusNode _textFocus = FocusNode(onKey: (FocusNode node, RawKeyEvent event) {
-    print(node);
-    print(event);
-    return true;
-  });
   TextEditingController _faceController = TextEditingController();
-
   GlobalKey<FormState> momentKey = new GlobalKey<FormState>();
 
   Moment moment = Moment();
@@ -58,16 +53,18 @@ class _EditState extends State<Edit> {
     }
 
     fetchRandomEvent();
-
-//    _textFocus.addListener(() {
-//      print('focus');
-//    });
-
-//    _textController.addListener(() {
-//      print('controller lis');
-//    });
-
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        showToolBar = window.viewInsets.bottom > 0;
+      });
+    });
   }
 
   @override
@@ -193,7 +190,6 @@ class _EditState extends State<Edit> {
                           ),
                           TextFormField(
                               controller: _textController,
-                              focusNode: _textFocus,
                               style: const TextStyle(
                                   height: 1.4, letterSpacing: 1.1),
                               maxLines: 13,
@@ -226,42 +222,32 @@ class _EditState extends State<Edit> {
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: <Widget>[
-                      SizedBox(
-                        width: 45,
-                        child: FlatButton(
-                          padding: EdgeInsets.all(0),
-                          child: Text(
-                            'TAB',
-                            style: TextStyle(
-                              color: theme.textTheme.caption.color,
-                            ),
-                          ),
-                          onPressed: () {
-                            insert2Control('        ');
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: 45,
-                        child: FlatButton(
-                          padding: EdgeInsets.all(0),
-                          child: Icon(
-                            Icons.access_time,
-                            color: theme.textTheme.caption.color,
-                          ),
-                          onPressed: () {
-                            final insertText =
-                                ' [ ${Date.getDateFormatHMByMS(ms: DateTime.now().millisecondsSinceEpoch)} ] ';
-                            insert2Control(insertText);
-                          },
-                        ),
-                      )
+                      buildToolbarItem(Icons.keyboard_tab, () {
+                        insert2Control('        ');
+                      }),
+                      buildToolbarItem(Icons.access_time, () {
+                        final insertText =
+                            ' [ ${Date.getDateFormatHMByMS(ms: DateTime.now().millisecondsSinceEpoch)} ] ';
+                        insert2Control(insertText);
+                      }),
                     ],
                   ),
                 ),
               )
           ],
         ),
+      ),
+    );
+  }
+
+  SizedBox buildToolbarItem(IconData icon, VoidCallback onPressed) {
+    final iconColor = Theme.of(context).textTheme.caption.color;
+    return SizedBox(
+      width: 45,
+      child: FlatButton(
+        padding: EdgeInsets.all(0),
+        child: Icon(icon, color: iconColor),
+        onPressed: onPressed,
       ),
     );
   }
@@ -314,7 +300,7 @@ class _EditState extends State<Edit> {
     if (cursorPos > _textController.text.length)
       _textController.selection = TextSelection.fromPosition(
           TextPosition(offset: _textController.text.length));
-    else
+    else {
       _textController.value = _textController.value.copyWith(
         text: newText,
         selection: TextSelection.fromPosition(
@@ -324,6 +310,8 @@ class _EditState extends State<Edit> {
           ),
         ),
       );
+      moment.text = newText;
+    }
   }
 
   Future<bool> _onWillPop() {

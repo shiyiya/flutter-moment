@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:moment/components/alum.dart';
 import 'package:moment/components/gallery_photo_view.dart';
+import 'package:moment/components/md_body.dart';
 import 'package:moment/constants/app.dart';
 import 'package:moment/pages/edit.dart';
 import 'package:moment/service/event_bus.dart';
@@ -14,7 +15,6 @@ import 'package:moment/type/moment.dart';
 import 'package:moment/utils/date.dart';
 import 'package:moment/utils/dialog.dart';
 import 'package:share_extend/share_extend.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ViewPage extends StatefulWidget {
   final int id;
@@ -213,18 +213,19 @@ class _ViewPageState extends State<ViewPage> {
 
   Widget buildContent() {
     return ConstrainedBox(
-        constraints:
-            BoxConstraints(minHeight: MediaQuery.of(context).size.height - 150),
-        child: Container(
-          padding: EdgeInsets.all(10),
-          margin: EdgeInsets.only(bottom: 100),
+      constraints:
+          BoxConstraints(minHeight: MediaQuery.of(context).size.height - 150),
+      child: Container(
+        padding: EdgeInsets.all(10),
+        margin: EdgeInsets.only(bottom: 100),
 //          decoration: BoxDecoration(
 //            image: DecorationImage(
 //                image: AssetImage('lib/asserts/images/bg_test.jpg'),
 //                fit: BoxFit.cover),
 //          ),
-          child: MarkdownBody(data: moment.text),
-        ));
+        child: MDBody(moment.text),
+      ),
+    );
   }
 
   Widget buildWithAlumBar(List img) {

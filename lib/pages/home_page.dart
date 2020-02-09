@@ -54,13 +54,13 @@ class _HomePageState extends State<HomePage>
       _loadAllMoment();
     });
 
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        print('todo');
-        // todo
-      }
-    });
+    // _scrollController.addListener(() {
+    //   if (_scrollController.position.pixels ==
+    //       _scrollController.position.maxScrollExtent) {
+    //     print('todo');
+    //     // todo
+    //   }
+    // });
 
     if (widget.event != null) {
       setState(() {

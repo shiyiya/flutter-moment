@@ -23,14 +23,14 @@ class _StatisticsPagePageState extends State<StatisticsPage>
 
 // 情绪
   bool isYearView = true;
-  int lineYear = 2019;
-  int lineMonth = 11;
+  int lineYear = DateTime.now().year;
+  int lineMonth = DateTime.now().month;
   Map<double, dynamic> lineDate = Map();
   Map<double, dynamic> mothDate = Map();
   Map<String, int> facePie = Map();
 
-//  @override
-//  bool get wantKeepAlive => true;
+  // @override
+  // bool get wantKeepAlive => true;
 
   @override
   void initState() {
