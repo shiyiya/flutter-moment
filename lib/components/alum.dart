@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:moment/utils/img.dart';
+import 'package:card_swiper/card_swiper.dart';
 
 typedef AlumOnTap = void Function(int index);
 

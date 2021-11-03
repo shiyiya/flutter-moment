@@ -1,6 +1,5 @@
 // import 'dart:io';
 // import 'package:android_intent/android_intent.dart';
-import 'package:cuberto_bottom_bar/cuberto_bottom_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,10 +15,10 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   int currentPageIndex = 0;
 
-  final List<TabData> tabs = [
-    TabData(iconData: Icons.home, title: '首页'),
-    TabData(iconData: Icons.person_pin, title: '管理')
-  ];
+  // final List<TabData> tabs = [
+  //   TabData(iconData: Icons.home, title: '首页'),
+  //   TabData(iconData: Icons.person_pin, title: '管理')
+  // ];
   final List<Widget> tabPages = [HomePage(), MePage()];
 
   // Future<bool> _runAppBackground() async {
@@ -55,25 +54,25 @@ class _AppState extends State<App> {
       child: new Scaffold(
         body: IndexedStack(
           index: currentPageIndex,
-          children: [for (var i = 0; i < tabs.length; i++) tabPages[i]],
+          children: tabPages,
         ),
-        bottomNavigationBar: CubertoBottomBar(
-          tabs: tabs,
-          selectedTab: currentPageIndex,
-          tabStyle: CubertoTabStyle.STYLE_FADED_BACKGROUND,
-          barShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              offset: Offset(0, -1),
-              blurRadius: 1,
-            ),
-          ],
-          onTabChangedListener: (position, title, color) {
-            setState(() {
-              currentPageIndex = position;
-            });
-          },
-        ),
+        // bottomNavigationBar: CubertoBottomBar(
+        //   tabs: tabs,
+        //   selectedTab: currentPageIndex,
+        //   tabStyle: CubertoTabStyle.STYLE_FADED_BACKGROUND,
+        //   barShadow: [
+        //     BoxShadow(
+        //       color: Colors.black12,
+        //       offset: Offset(0, -1),
+        //       blurRadius: 1,
+        //     ),
+        //   ],
+        //   onTabChangedListener: (position, title, color) {
+        //     setState(() {
+        //       currentPageIndex = position;
+        //     });
+        //   },
+        // ),
       ),
     );
   }

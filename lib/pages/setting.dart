@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/material_picker.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moment/components/card_with_title.dart';
 // import 'package:moment/pages/tucao_page.dart';

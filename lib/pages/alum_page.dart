@@ -66,7 +66,7 @@ class _AlumPage extends State<AlumPage> {
                   alignment: Alignment.center,
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Text(Constants.randomNilTip(),
-                      style: Theme.of(context).textTheme.body2),
+                      style: Theme.of(context).textTheme.subtitle2),
                 ),
               ));
   }

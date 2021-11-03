@@ -174,8 +174,8 @@ class _SyncPageState extends State<SyncPage> {
   }
 
   _import() async {
-    String filePath = await FilePicker.getFilePath(
-        type: FileType.CUSTOM, fileExtension: 'zip');
+    String filePath = null;
+    // await FilePicker.getFilePath(type: FileType.CUSTOM, fileExtension: 'zip');
 
     if (!filePath.contains('moment-backup')) {
       showAlertDialog(context,

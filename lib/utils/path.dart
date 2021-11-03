@@ -45,13 +45,13 @@ class MPath {
 
   static Future<bool> getStoragePermission(
       {BuildContext c, String failText}) async {
-    final status =
-        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-    if (status[PermissionGroup.storage] == PermissionStatus.granted) {
-      return true;
-    }
+    // final status =
+    //     await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    // if (status[PermissionGroup.storage] == PermissionStatus.granted) {
+    //   return true;
+    // }
 
-    showAlertDialog(c, content: Text(failText), hideCancel: true);
+    // showAlertDialog(c, content: Text(failText), hideCancel: true);
     return false;
   }
 }

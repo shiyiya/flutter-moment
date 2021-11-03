@@ -82,7 +82,7 @@ class _MePageState extends State<MePage> {
                                     fontSize: 10,
                                     color: Theme.of(context)
                                         .textTheme
-                                        .display3
+                                        .headline3
                                         .color)),
                           ],
                         ),
@@ -101,7 +101,7 @@ class _MePageState extends State<MePage> {
                                     fontSize: 10,
                                     color: Theme.of(context)
                                         .textTheme
-                                        .display3
+                                        .headline3
                                         .color)),
                           ],
                         ),
@@ -122,7 +122,7 @@ class _MePageState extends State<MePage> {
                                     fontSize: 10,
                                     color: Theme.of(context)
                                         .textTheme
-                                        .display3
+                                        .headline3
                                         .color)),
                           ],
                         ),

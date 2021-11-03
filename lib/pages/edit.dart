@@ -113,7 +113,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                           Icon(
                             Icons.access_time,
                             size: 15,
-                            color: theme.textTheme.display3.color,
+                            color: theme.textTheme.headline3.color,
                           ),
                           Text(
                             moment.cid == null
@@ -121,7 +121,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                                 : ' ${Date.getDateFormatYMD(ms: moment.created)}',
                             style: TextStyle(
                               fontSize: 14,
-                              color: theme.textTheme.display3.color,
+                              color: theme.textTheme.headline3.color,
                             ),
                           )
                         ],
@@ -340,25 +340,25 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
 
   // -----/storage/emulated/0/Android/data/com.cy.moment/files/Pictures/image_picker6866769357194578119.jpg----
   Future<void> _getImage() async {
-    final List<File> files =
-        await FilePicker.getMultiFile(type: FileType.IMAGE);
+    // final List<File> files =
+    //     await FilePicker.getMultiFile(type: FileType.IMAGE);
 
-    if (files != null && files.length > 0) {
-      String picPath = await MPath.getPicPath();
-      Directory(picPath).createSync();
-      final List<String> paths = [];
+    // if (files != null && files.length > 0) {
+    //   String picPath = await MPath.getPicPath();
+    //   Directory(picPath).createSync();
+    //   final List<String> paths = [];
 
-      for (var i = 0; i < files.length; i++) {
-        final file = files[i];
-        final fileName = basename(files[i].path);
-        final path = picPath + fileName;
-        file.copySync(path);
-        paths.add(path);
-      }
-      setState(() {
-        alum.addAll(paths);
-      });
-    }
+    //   for (var i = 0; i < files.length; i++) {
+    //     final file = files[i];
+    //     final fileName = basename(files[i].path);
+    //     final path = picPath + fileName;
+    //     file.copySync(path);
+    //     paths.add(path);
+    //   }
+    //   setState(() {
+    //     alum.addAll(paths);
+    //   });
+    // }
 
 //    List<Asset> resultList;
 //    try {

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:card_swiper/card_swiper.dart';
 import 'package:moment/components/alum.dart';
 import 'package:moment/components/gallery_photo_view.dart';
 import 'package:moment/components/md_body.dart';

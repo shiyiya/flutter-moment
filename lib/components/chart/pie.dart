@@ -87,19 +87,20 @@ class _MPieChartState extends State<MPieChart> {
                               child: PieChart(
                                 PieChartData(
                                     pieTouchData: PieTouchData(
-                                        touchCallback: (pieTouchResponse) {
-                                      setState(() {
-                                        if (pieTouchResponse.touchInput
-                                                is FlLongPressEnd ||
-                                            pieTouchResponse.touchInput
-                                                is FlPanEnd) {
-                                          touchedIndex = -1;
-                                        } else {
-                                          touchedIndex = pieTouchResponse
-                                              .touchedSectionIndex;
-                                        }
-                                      });
-                                    }),
+                                        //     touchCallback: (pieTouchResponse) {
+                                        //   setState(() {
+                                        //     if (pieTouchResponse.touchInput
+                                        //             is FlLongPressEnd ||
+                                        //         pieTouchResponse.touchInput
+                                        //             is FlPanEnd) {
+                                        //       touchedIndex = -1;
+                                        //     } else {
+                                        //       touchedIndex = pieTouchResponse
+                                        //           .touchedSectionIndex;
+                                        //     }
+                                        //   });
+                                        // }
+                                        ),
                                     borderData: FlBorderData(
                                       show: false,
                                     ),

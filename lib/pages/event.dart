@@ -53,7 +53,7 @@ class _EventPageState extends State<EventPage> {
               )
             : Center(
                 child: Text(Constants.randomNilTip(),
-                    style: Theme.of(context).textTheme.body2),
+                    style: Theme.of(context).textTheme.subtitle2),
               ));
   }
 

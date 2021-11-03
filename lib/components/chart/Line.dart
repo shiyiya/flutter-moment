@@ -79,31 +79,28 @@ class MLine extends StatelessWidget {
         touchTooltipData: LineTouchTooltipData(
           tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
         ),
-        touchCallback: (LineTouchResponse touchResponse) {
-//          print(touchResponse);
-        },
         handleBuiltInTouches: true,
       ),
-      gridData: const FlGridData(show: true, horizontalInterval: 20),
+      gridData: FlGridData(show: true, horizontalInterval: 20),
       titlesData: FlTitlesData(
         bottomTitles: SideTitles(
           showTitles: true,
           reservedSize: 22,
-          textStyle: TextStyle(
-            color: const Color(0xff72719b),
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-          ),
+          // textStyle: TextStyle(
+          //   color: const Color(0xff72719b),
+          //   fontWeight: FontWeight.bold,
+          //   fontSize: 12,
+          // ),
           margin: 10,
           getTitles: getTitle,
         ),
         leftTitles: SideTitles(
           showTitles: true,
-          textStyle: TextStyle(
-            color: const Color(0xff75729e),
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
+          // textStyle: TextStyle(
+          //   color: const Color(0xff75729e),
+          //   fontWeight: FontWeight.bold,
+          //   fontSize: 14,
+          // ),
           getTitles: (value) {
             switch (value.toInt()) {
               case 0:

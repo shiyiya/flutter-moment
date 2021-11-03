@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:moment/utils/dialog.dart';
@@ -23,7 +21,7 @@ class MDBody extends StatelessWidget {
           ),
           a: TextStyle(color: theme.primaryColor),
         ),
-        onTapLink: (url) async {
+        onTapLink: (_, href, __) async {
           showAlertDialog(
             context,
             title: const Text('提示'),
@@ -32,13 +30,13 @@ class MDBody extends StatelessWidget {
                 children: <Widget>[
                   const Text('是否使用外部打开该链接？'),
                   const SizedBox(height: 10),
-                  Text('$url', style: TextStyle(color: theme.primaryColor))
+                  Text('$href', style: TextStyle(color: theme.primaryColor))
                 ],
               ),
             ),
             rF: () async {
-              if (await canLaunch(url)) {
-                await launch(url);
+              if (await canLaunch(href)) {
+                await launch(href);
               } else {
                 showCenterErrorShortToast('打开链接失败');
               }

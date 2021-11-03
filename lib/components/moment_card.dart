@@ -103,7 +103,7 @@ class MomentCard extends StatelessWidget {
             child: Icon(
               Constants.face[_.face],
               size: 12,
-              color: theme.textTheme.display3.color,
+              color: theme.textTheme.headline3.color,
             ),
           ),
         )
@@ -133,7 +133,7 @@ class MomentCard extends StatelessWidget {
   }
 
   Widget bar(BuildContext _, {Widget rChild}) {
-    final iconColor = Theme.of(_).textTheme.display3.color;
+    final iconColor = Theme.of(_).textTheme.headline3.color;
     return Container(
       decoration: BoxDecoration(
         border: Border(
