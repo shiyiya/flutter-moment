@@ -186,7 +186,7 @@ class _ViewPageState extends State<ViewPage> {
                     style: theme.textTheme.caption.copyWith(
                       shadows: <Shadow>[
                         Shadow(
-                          color: theme.accentColor,
+                          color: theme.colorScheme.secondary,
                           offset: Offset(0, 0),
                           blurRadius: 8,
                         )
@@ -246,7 +246,7 @@ class _ViewPageState extends State<ViewPage> {
             // color: Theme.of(context).primaryColor,
             shadows: <Shadow>[
               Shadow(
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).colorScheme.secondary,
                 offset: Offset(0, 0),
                 blurRadius: 10,
               )

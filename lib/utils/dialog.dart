@@ -18,14 +18,14 @@ Widget _alertDialog(BuildContext _,
         ? null
         : <Widget>[
             if (!hideCancel)
-              FlatButton(
+              TextButton(
                 child: Text('取消', style: TextStyle(color: p.withOpacity(0.7))),
                 onPressed: () {
                   if (lF != null) lF();
                   Navigator.pop(_);
                 },
               ),
-            FlatButton(
+            TextButton(
               child: Text(
                 '确定',
                 style: TextStyle(color: p),

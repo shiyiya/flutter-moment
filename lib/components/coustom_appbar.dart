@@ -36,7 +36,7 @@ class _CustomAppbarState extends State<CustomAppbar> {
   Widget build(BuildContext context) {
     return new Container(
       color: widget.navigationBarBackgroundColor ??
-          Theme.of(context).appBarTheme.color,
+          Theme.of(context).appBarTheme.backgroundColor,
       child: new SafeArea(
         top: true,
         child: new Container(

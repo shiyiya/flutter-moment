@@ -199,7 +199,7 @@ class _HomePageState extends State<HomePage>
           ),
           ButtonBar(
             children: <Widget>[
-              FlatButton(
+              TextButton(
                 child: const Text(
                   '重置',
                   style: TextStyle(color: Colors.redAccent),
@@ -214,7 +214,7 @@ class _HomePageState extends State<HomePage>
                   Navigator.pop(context);
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text(
                   '取消',
                   style: TextStyle(
@@ -224,7 +224,7 @@ class _HomePageState extends State<HomePage>
                   Navigator.pop(context);
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text(
                   '确定',
                   style: TextStyle(color: Theme.of(context).primaryColor),

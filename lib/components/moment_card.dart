@@ -121,7 +121,7 @@ class MomentCard extends StatelessWidget {
             leading: Icon(
               Constants.face[_.face],
               size: 40,
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).colorScheme.secondary,
             ),
             title: Text(_.title),
             subtitle: MDBody(_.text),

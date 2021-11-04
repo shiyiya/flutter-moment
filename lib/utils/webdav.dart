@@ -151,7 +151,8 @@ class Client {
           this.cd(dir);
         }
       }
-    } catch (e) {} finally {
+    } catch (e) {
+    } finally {
       this.cd(oldCwd);
     }
   }
@@ -256,10 +257,11 @@ String prop(dynamic prop, String name, [String defaultVal]) {
 
 List<FileInfo> treeFromWebDavXml(String xmlStr) {
   // Initialize a list to store the FileInfo Objects
-  var tree = new List<FileInfo>();
+  var tree = <FileInfo>[];
 
   // parse the xml using the xml.parse method
-  var xmlDocument = xml.parse(xmlStr);
+
+  var xmlDocument = xml.XmlDocument.parse(xmlStr);
 
   // Iterate over the response to find all folders / files and parse the information
   findAllElementsFromDocument(xmlDocument, "response").forEach((response) {

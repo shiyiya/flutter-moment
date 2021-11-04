@@ -19,7 +19,7 @@ class CardWithTitle extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 18,
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           )),
     ];

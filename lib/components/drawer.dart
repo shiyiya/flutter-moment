@@ -31,7 +31,8 @@ class DrawerWidget extends StatelessWidget {
               Container(
                 child: Text(
                   Constants.appDes,
-                  style: TextStyle(color: Theme.of(context).accentColor),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
                 ),
                 margin: EdgeInsets.only(top: 10),
               )

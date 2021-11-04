@@ -131,7 +131,7 @@ class Setting extends StatelessWidget {
               ),
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text(
                   '取消',
                   style: TextStyle(color: Colors.redAccent),
@@ -140,7 +140,7 @@ class Setting extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text(
                   '默认',
                   style: TextStyle(color: Colors.redAccent),
@@ -151,7 +151,7 @@ class Setting extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: const Text('确认'),
                 onPressed: () async {
                   Navigator.of(context).pop();

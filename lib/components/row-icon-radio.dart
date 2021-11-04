@@ -57,8 +57,9 @@ class _RowIconRadioState extends State<RowIconRadio> {
                   });
                   widget.onTap(i);
                 },
-                color:
-                    _active == i ? Theme.of(context).accentColor : Colors.grey),
+                color: _active == i
+                    ? Theme.of(context).colorScheme.secondary
+                    : Colors.grey),
           )
           .toList(),
     );

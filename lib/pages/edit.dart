@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:file_picker/file_picker.dart';
@@ -244,8 +243,8 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
     final iconColor = Theme.of(context).textTheme.caption.color;
     return SizedBox(
       width: 45,
-      child: FlatButton(
-        padding: EdgeInsets.all(0),
+      child: TextButton(
+        // padding: EdgeInsets.all(0),
         child: Icon(icon, color: iconColor),
         onPressed: onPressed,
       ),
@@ -322,11 +321,11 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
               title: new Text('提示'),
               content: new Text('确定返回么？可能有未保存的内容哦'),
               actions: <Widget>[
-                new FlatButton(
+                new TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
                   child: new Text('取消'),
                 ),
-                new FlatButton(
+                new TextButton(
                   onPressed: () => Navigator.of(context).pop(true),
                   child: new Text('确定'),
                 ),
@@ -426,7 +425,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
           TextField(
             controller: _faceController,
             maxLength: 3,
-            inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             textAlignVertical: TextAlignVertical.center,
             decoration: InputDecoration(hintText: '或者填入一百以内的数字'),
             keyboardType: TextInputType.numberWithOptions(),
@@ -458,7 +457,8 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
               },
               child: Text(
                 '确定',
-                style: TextStyle(color: Theme.of(context).accentColor),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
             ),
           )
@@ -534,7 +534,7 @@ class _EditState extends State<Edit> with WidgetsBindingObserver {
                     .toList(),
               ),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text(
                     '确定',
                     style: TextStyle(color: Theme.of(context).primaryColor),

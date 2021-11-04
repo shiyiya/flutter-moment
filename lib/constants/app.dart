@@ -25,13 +25,13 @@ class Constants {
     },
     ({Color color}) {
       return ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: color,
-        accentColor: color,
-        backgroundColor: color?.withOpacity(0.7),
-        textSelectionColor: color?.withOpacity(0.5),
-        textSelectionHandleColor: color?.withOpacity(0.5),
-      );
+          brightness: Brightness.dark,
+          primaryColor: color,
+          accentColor: color,
+          backgroundColor: color?.withOpacity(0.7),
+          textSelectionColor: color?.withOpacity(0.5),
+          textSelectionTheme: TextSelectionThemeData(
+              selectionHandleColor: color?.withOpacity(0.5)));
     },
     ({Color color}) {
       return ThemeData.dark();
@@ -107,7 +107,7 @@ class Constants {
 }
 
 class DrawTabItem {
-  Icon icon;
+  Icon/*!*//*?*/ icon;
   Text text;
   Function f;
   String path;

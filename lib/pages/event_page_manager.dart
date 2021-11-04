@@ -137,13 +137,13 @@ class _EventManagerPageState extends State<EventManagerPage> {
               ],
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text('取消'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text('确认'),
                 onPressed: () {
                   newEvent();

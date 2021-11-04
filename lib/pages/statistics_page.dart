@@ -242,7 +242,7 @@ class _StatisticsPagePageState extends State<StatisticsPage>
         showTitle: true,
         confirm: Text(
           '确定',
-          style: TextStyle(color: Theme.of(context).accentColor),
+          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
         ),
         cancel:
             Text('取消', style: TextStyle(color: Theme.of(context).hintColor)),

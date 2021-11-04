@@ -14,5 +14,5 @@ class Instances {
 
   static ThemeData get currentTheme => Theme.of(navigatorState.context);
 
-  static Color get currentThemeColor => currentTheme.accentColor;
+  static Color get currentThemeColor => currentTheme.colorScheme.secondary;
 }
