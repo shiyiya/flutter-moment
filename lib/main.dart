@@ -142,8 +142,6 @@ class MyApp extends StatelessWidget {
         theme: theme(color: _themeProvider.primaryColor),
         home: App(),
         routes: {
-          // "/home": (_) => HomePage(),
-          // "/search": (_) => SearchPage(),
           "/edit": (_) => Edit(),
           "/view": (_) => ViewPage(),
           "/event": (_) => EventPage(),

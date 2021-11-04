@@ -50,5 +50,5 @@ Future<int> getTheme() async {
 Future<Color> getThemePrimaryColor() async {
   SharedPreferences sp = await SharedPreferences.getInstance();
   int primaryColor = sp.getInt("primaryColor");
-  return null == primaryColor ? Colors.teal : Color(primaryColor);
+  return null == primaryColor ? Colors.blue : Color(primaryColor);
 }

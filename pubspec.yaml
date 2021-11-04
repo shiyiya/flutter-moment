@@ -48,6 +48,7 @@ dependencies:
   #  multi_image_picker: ^4.6.0
   # flutter_webview_plugin: ^0.3.10
   flutter_markdown: ^0.6.8
+  persistent_bottom_nav_bar: ^4.0.2
 
   # for webdav
   retry: ^3.1.0
